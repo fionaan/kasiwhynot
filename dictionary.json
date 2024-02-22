@@ -1,0 +1,188 @@
+[
+    {
+        "term": "npm",
+        "type": "term",
+        "short_description": "node package manager",
+        "long_description": "It's a library and registry for JavaScript software packages. npm also has command-line tools to help you install the different packages and manage their dependencies."
+    },
+    {
+        "term": "npm init",
+        "type": "command",
+        "short_description": "npm initializer",
+        "long_description": "This keyword can be used to set up a new or existing npm package. Output is a package.json."
+    },
+    {
+        "term": "package.json",
+        "type": "file",
+        "short_description": "",
+        "long_description": "This file focuses on project metadata and specifying the desired versions of dependencies"
+    },
+    {
+        "term": "package-lock.json",
+        "type": "file",
+        "short_description": "",
+        "long_description": "It includes the specific resolved versions of all the dependencies, their sub-dependencies, and their exact installation locations. It acts as a snapshot of the dependency tree for ensuring consistent installations."
+    },
+    {
+        "term": "npm install",
+        "type": "command",
+        "short_description": "",
+        "long_description": "This keyword can be used to install packages. Before NPM v5, this keyword only install packages but does not include packages as dependencies."
+    },
+    {
+        "term": "npm install --save",
+        "type": "command",
+        "short_description": "",
+        "long_description": "Before npm v5, this keyword can be used to install packages and include these packages as project dependencies in the package.json file."
+    },
+    {
+        "term": "npm install --save-dev",
+        "type": "command",
+        "short_description": "",
+        "long_description": "This keyword can be used to install packages as dev dependencies."
+    },
+    {
+        "term": "dependencies",
+        "type": "term",
+        "short_description": "",
+        "long_description": "These are packages that are required for your production-ready site or app to work."
+    },
+    {
+        "term": "devDependencies",
+        "type": "term",
+        "short_description": "",
+        "long_description": "These are packages used for development purposes, e.g for running tests or transpiling your code. "
+    },
+    {
+        "term": "package.json scripts",
+        "type": "term",
+        "short_description": "They are terminal commands that perform a set of actions.",
+        "long_description": "An npm script is a convenient way to bundle common shell commands like a set of built-in and custom scripts for your project. They are typically terminal commands or a string of terminal commands that help automate repetitive tasks."
+    },
+    {
+        "term": "npm start",
+        "type": "command",
+        "short_description": "command for running the project.",
+        "long_description": "If there is a server.js file in the root of your package, then the npm will default the start command to node server.js"
+    },
+    {
+        "term": "express",
+        "type": "packages",
+        "short_description": "A JS framework that helps manage servers and routes.",
+        "long_description": "A framework With a myriad of HTTP utility methods and middleware at your disposal, therefore, creating a robust API as quick and easy."
+    },
+    {
+        "term": "mysql",
+        "type": "packages",
+        "short_description": "a nodejs driver for mysql",
+        "long_description": "A package for handling mysql queries and connection."
+    },
+    {
+        "term": "morgan",
+        "type": "packages",
+        "short_description": "an HTTP request logger middleware for node.js",
+        "long_description": "This package logs the http method, endpoint of a client request as well as the status code of response."
+    },
+    {
+        "term": "body-parser",
+        "type": "packages",
+        "short_description": "Node.js body parsing middleware.",
+        "long_description": "This package parse incoming request bodies in a middleware before your handlers, available under the req.body property."
+    },
+    {
+        "term": "server.js",
+        "type": "file",
+        "short_description": "A file that creates and listens request to a server.",
+        "long_description": "This is the file where you create your server and creates a listener for client requests going to that server."
+    },
+    {
+        "term": "require()",
+        "type": "function",
+        "short_description": "a built-in JS function that imports file or packages",
+        "long_description": "This keyword is used to import a file or packages."
+    },
+    {
+        "term": "http",
+        "type": "package",
+        "short_description": "built-in package for a nodeJS project for http functions.",
+        "long_description": "A package that can be used to handle or use http built-in functions."
+    },
+    {
+        "term": "origin",
+        "type": "term",
+        "short_description": "protocol, hostname, and port of a web.",
+        "long_description": "Web content's origin is defined by the scheme (protocol), hostname (domain), and port of the URL used to access it. Two objects have the same origin only when the scheme, hostname, and port all match."
+    },
+    {
+        "term": "Access-Control-Request-Headers",
+        "type": "term",
+        "short_description": "Sends by browsers to let which HTTP requests the client might send.",
+        "long_description": "The Access-Control-Request-Headers request header is used by browsers when issuing a preflight request to let the server know which HTTP headers the client might send when the actual request is made"
+    },
+    {
+        "term": "models",
+        "type": "file",
+        "short_description": "These files are related to database connections/schema.",
+        "long_description": "This folder should contain files related only to database configuration/schema of the database."
+    },
+    {
+        "term": "routers",
+        "type": "file",
+        "short_description": "These files are related to http routes of each API",
+        "long_description": "This folder should contain files for the routes of each API. There should only be 1 router file for each API module. 1 user router for Users module, 1 product router for Products module, etc."
+    },
+    {
+        "term": "controllers",
+        "type": "file",
+        "short_description": "These files are related to the logic of the API",
+        "long_description": "This folder should contain files that holds the logic/implementations of the API. There should only be 1 controller file for each API module. 1 user controller for Users module, 1 product controller for Products module, etc."
+    },
+    {
+        "term": "arrow function vs regular function",
+        "type": "tips",
+        "short_description": "Which should you use for certain scenarios.",
+        "long_description": "Use arrow functions for concise, simple functions that don't require their own 'this' binding or other special features. Use regular functions when you need more control over 'this', when defining methods within classes, or when working with constructor functions."
+    },
+    {
+        "term": "200",
+        "type": "status codes",
+        "short_description": "200 - OK",
+        "long_description": "Indicates that the server successfully processed the client request."
+    },
+    {
+        "term": "400",
+        "type": "status codes",
+        "short_description": "400 - BAD REQUEST",
+        "long_description": "Indicates that the server cannot or will not process the request due to something that is perceived to be a client error."
+    },
+    {
+        "term": "401",
+        "type": "status codes",
+        "short_description": "401 - UNAUTHORIZED",
+        "long_description": "This status code request occurs when authentication is required but has failed or not been provided."
+    },
+    {
+        "term": "403",
+        "type": "status codes",
+        "short_description": "403 - FORBIDDEN",
+        "long_description": "Happens when a valid request was sent, but the server refuses to accept it. This happens if a client/user requires the necessary permission or they may need an account to access the resource. Unlike a status code 401, authentication will not apply here."
+    },
+    {
+        "term": "404",
+        "type": "status codes",
+        "short_description": "404 - NOT FOUND",
+        "long_description": "Indicates that the server cannot find the file or page that the client is requesting."
+    },
+    {
+        "term": "500",
+        "type": "status codes",
+        "short_description": "500 - Internal Server Error",
+        "long_description": "Instead of the problem being with pages missing or not found, this status code indicates a problem with the server."
+    },
+    {
+        "term": "ERRINUSE",
+        "type": "tips",
+        "short_description": "This is an error that means port is already in use.",
+        "long_description": "If you encountered this error, the fix is to kill the terminal and start again."
+    }
+]
