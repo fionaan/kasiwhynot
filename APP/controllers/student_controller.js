@@ -99,7 +99,7 @@ const filterStudents = async (req, res, next)=>{
         })   
     }
 }
-
+//test
 const deleteStudent = async(req,res,next)=>{
     try{
         let result = await Student.deleteOne({_id: req.params.id})
