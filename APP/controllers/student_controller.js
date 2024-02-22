@@ -1,6 +1,7 @@
 const Student = require('../models/student_model')
 //bago
 //another one
+//another two
 const addStudent = (req, res, next)=>{
     const {first_name, last_name, age, gender, address, subject} = req.body
 
