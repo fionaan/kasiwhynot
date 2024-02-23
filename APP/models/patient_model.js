@@ -1,7 +1,9 @@
 const mongoose = require('mongoose')
 
+const Schema = mongoose.Schema
+
 //Base Schema
-const baseSchema = new mongoose.Schema({
+const baseSchema = new Schema({
     basicInfo: {
         firstName: {type: String, required: true},
         middleName: {type: String, required: true},
@@ -150,7 +152,7 @@ const baseSchema = new mongoose.Schema({
 })
 
 // Student Schema
-const studentSchema = new mongoose.Schema({
+const studentSchema = new Schema({
     studentNo: {type: String, required: true},
     course: {type: String, required: true},
     year: {type: String, required: true},
@@ -158,7 +160,7 @@ const studentSchema = new mongoose.Schema({
 })
 
 //Employee Schema
-const employeeSchema = new mongoose.Schema({
+const employeeSchema = new Schema({
     employeeNo: {type: String, required: true},
     department: {type: String, required: true}
 })
