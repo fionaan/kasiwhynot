@@ -10,7 +10,8 @@ const db = require('./APP/models/con_db')
 
 //IMPORT ALL ROUTERS NEEDED
 //sample: const userRouter = require('./APP/routers/user_router');
-const studentRouter = require('./APP/routers/student_router');
+const patientRouter = require('./APP/routers/patient_router');
+const userRouter = require('./APP/routers/user_router');
 
 //INITIALIZE EXPRESS APPLICATION AND STORE TO app
 const app = express();
@@ -58,7 +59,8 @@ app.use((req, res, next)=>{
 
 
 //MIDDLEWARE FOR THE ROUTERS
-app.use('/students', studentRouter);
+app.use('/patients', patientRouter);
+app.use('/users', userRouter);
 
 
 //ERROR MIDDLEWARES

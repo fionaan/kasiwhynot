@@ -1,4 +1,4 @@
 module.exports = {
-    "PASSWORD": "eme123456",
-    "DB_NAME": "Cluster0"
+    "PASSWORD": "04malusog04",
+    "DB_NAME": "healthy"
 }

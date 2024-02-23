@@ -1,4 +1,6 @@
-const Student = require('../models/student_model')
+// just a reference from our previous demo
+
+const Student = require('../models/patient_model')
 
 const addStudent = (req, res, next)=>{
     const {first_name, last_name, age, gender, address, subject} = req.body
@@ -99,7 +101,7 @@ const filterStudents = async (req, res, next)=>{
         })   
     }
 }
-//test
+
 const deleteStudent = async(req,res,next)=>{
     try{
         let result = await Student.deleteOne({_id: req.params.id})
@@ -174,5 +176,3 @@ module.exports = {
     deleteStudent,
     updateStudent
 }
-
-//hello world
