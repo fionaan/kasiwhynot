@@ -1,6 +1,5 @@
 const Student = require('../models/student_model')
 
-//confirm(50)
 const addStudent = (req, res, next)=>{
     const {first_name, last_name, age, gender, address, subject} = req.body
 
