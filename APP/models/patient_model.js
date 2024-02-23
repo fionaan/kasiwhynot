@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const DentalRecord = require('./dentalRecord');
 
 //Base Schema
 const baseSchema = new mongoose.Schema({
