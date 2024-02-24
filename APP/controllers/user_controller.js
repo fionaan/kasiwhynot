@@ -40,6 +40,7 @@ const addUser = (req, res, next)=>{
         })
     }
 
+    //add try catch for data type mismatch
     let user = new User ({
         name: name,
         emailAddress: emailAddress,
