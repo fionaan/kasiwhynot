@@ -10,7 +10,6 @@ const addUser = (req, res, next)=>{
         emptyOrNullVariables.push('full name')
     }else{
         if (!name.firstName || name.firstName == "" || name.firstName === null) emptyOrNullVariables.push('first name')
-        if (!name.middleName || name.middleName == "" || name.middleName === null) emptyOrNullVariables.push('middle name')
         if (!name.lastName || name.lastName == "" || name.lastName === null) emptyOrNullVariables.push('last name')
     }
 
