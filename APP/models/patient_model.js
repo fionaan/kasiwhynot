@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 //Base Schema
 const baseSchema = new mongoose.Schema({
     basicInfo: {
+        isStudent: {type: Boolean, required: true, default: true},
         firstName: {type: String, required: true},
         middleName: {type: String, required: true},
         lastName: {type: String, required: true},

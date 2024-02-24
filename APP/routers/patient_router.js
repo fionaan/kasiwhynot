@@ -9,8 +9,8 @@ const router = express.Router()
 // router.delete('/delete/:id', studentController.deleteStudent)
 // router.put('/update/:id', studentController.updateStudent)
 
-router.get('/getAll/:category')
-router.get('/search', patientController.searchPatient)
+router.get('/:category', patientController.getPatient)
+router.get('/search/:search', patientController.searchPatient)
 
 module.exports = router
 

@@ -1,8 +1,8 @@
-const Patient = require('../models/patient_model')
+const {Student, Employee} = require('../models/patient_model')
 
 const searchFilterer = async (search) => {
     try {
-        const patients = await Patient.find({
+        const patients = await Student.find({
             $or: [
                 {'studentRecord.basicInfo.studentNo': { $regex: new RegExp(search, 'i')}},
                 {'studentRecord.basicInfo.firstName': { $regex: new RegExp(search, 'i')}},

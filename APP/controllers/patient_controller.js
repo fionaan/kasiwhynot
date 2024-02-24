@@ -1,18 +1,19 @@
-const Patient = require('../models/patient_model')
+const {Student, Employee} = require('../models/patient_model')
 const searchFilterer = require('./extra_functions')
 
-const getPatient = async (req, res, next) => {
+const getPatient = async (req, res, next) => { 
     const category = req.params.category
-    const student = {'isStudent': true}
-    const employee = {'isStudent': false}
-
+    const student = {isStudent: true}
+    const employee = {isStudent: false}
+    console.log(student)
     try {
         let patient
-        if (category == 'student'){
-            patient = await Patient.find(student)
+        if (category == 'students'){
+            patient = await Student.find(student)
         }
-        else if (category == 'employee'){
-            patient = await Patient.find(employee)
+        else if (category == 'employees'){
+            patient = await Employee.find(employee)
+            
         }
 
 
@@ -41,12 +42,12 @@ const getPatient = async (req, res, next) => {
 }
 
 const searchPatient = async (req, res, next) => {
-    const searchQuery = req.query.search
+    const searchQuery = req.params.search
 
     try {
         let patient = await searchFilterer(searchQuery)
-
-        if (patient === ""){
+        console.log(patient)
+        if (patient === "" || patient === null || patient == [] || patient == {}){
             res.status(404).send({
                 successful: false,
                 message: "No patient found in the records"
