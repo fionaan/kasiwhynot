@@ -2,7 +2,7 @@ const historyLog = require('../models/historylog_model')
 
 const getAllLogs = async(req, res, next)=>{
     try{
-        let logs = await historyLogs.find()
+        let logs = await historyLog.find()
         if(logs === ""){
             res.status(404).send({
                 successful: false,
