@@ -1,7 +1,7 @@
 const User = require('../models/user_model')
 
 const addUser = (req, res, next)=>{
-    const {name, emailAddress, userType, status, dateCreated, dateUpdated} = req.body
+    const {name, emailAddress, userType, dateCreated, dateUpdated} = req.body
 
     // check if fields are null or empty
     const emptyOrNullVariables = []
@@ -16,7 +16,6 @@ const addUser = (req, res, next)=>{
 
     if (!emailAddress || emailAddress == "" || emailAddress === null) emptyOrNullVariables.push('emailAddress')
     if (!userType || userType == "" || userType === null) emptyOrNullVariables.push('userType')
-    if (!status || status == "" || status === null) emptyOrNullVariables.push('status')
     if (!dateCreated || dateCreated == "" || dateCreated === null) emptyOrNullVariables.push('dateCreated')
     if (!dateUpdated || dateUpdated == "" || dateUpdated === null) emptyOrNullVariables.push('dateUpdated')
 
@@ -35,13 +34,6 @@ const addUser = (req, res, next)=>{
         })
     }
 
-    if(status !== "Active" || status !== "Inactive"){
-        res.status(404).send({
-            successful: false,
-            message: "Invalid status value."
-        })
-    }
-
     if (dateUpdated < dateCreated){
         res.status(404).send({
             successful: false,
@@ -53,7 +45,7 @@ const addUser = (req, res, next)=>{
         name: name,
         emailAddress: emailAddress,
         userType: userType,
-        status: status,
+        status: "Active",
         dateCreated: dateCreated,
         dateUpdated: dateUpdated
     })

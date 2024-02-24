@@ -9,7 +9,7 @@ const router = express.Router()
 // router.delete('/delete/:id', studentController.deleteStudent)
 // router.put('/update/:id', studentController.updateStudent)
 
-router.post('/add', userController.addUser)
+router.post('/create', userController.addUser)
 
 module.exports = router
 
