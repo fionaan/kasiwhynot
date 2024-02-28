@@ -1,3 +1,7 @@
+const { dateTimeRegex,
+    nameRegex,
+    checkIfNull,
+    toProperCase } = require('../../utils')
 const historyLog = require('../models/historylog_model')
 
 const getAllLogs = async(req, res, next)=>{
@@ -25,48 +29,77 @@ const getAllLogs = async(req, res, next)=>{
     }
 }
 
-const addLog = (req, res, next, historyType, recordClass, patientName) => {
-    const {dateTime, editedBy} = req.body
+const addLog = (req, res, next) => {
+    try{
 
-    //check if null or empty
-    const emptyOrNullVariables = []
+        let {dateTime, editedBy, historyType, recordClass, patientName} = req.body
+
+        //CHECK FOR NULL OR EMPTY FIELDS
+        const nullFields = []
+        if (checkIfNull(dateTime)) nullFields.push('date & time')
+        if (checkIfNull(editedBy)) nullFields.push('edited by')
+        if (checkIfNull(historyType)) nullFields.push('history type')
+        if (checkIfNull(recordClass)) nullFields.push('record class')
+        if (checkIfNull(patientName)) nullFields.push('patient name')
+
+        if(nullFields.length > 0){
+            res.status(404).send({
+                successful: false,
+                message: `Missing data in the following fields: ${nullFields.join(', ')}`
+            })
+        } 
+        else {
+
+            historyType = historyType.trim().toUpperCase()
+            recordClass = recordClass.trim().toProperCase()
+
+            //CHECK FOR FIELDS W INVALID VALUES
+            const invalidFields = []
+            if (!dateTimeRegex.test(dateTime)) invalidFields.push('date & time')
+            if (!nameRegex.test(editedBy)) invalidFields.push('edited by')
+            if (historyType !== "ADD" && historyType !== "UPDATE" && historyType !== "ARCHIVE" &&
+            historyType !== "UNARCHIVE") invalidFields.push('history type')
+            if (recordClass !== "Medical" && recordClass !== "Dental") invalidFields.push('record class')
+            if (!nameRegex.test(patientName)) invalidFields.push('patient name')
+            
+            if (invalidFields.length > 0){
+                res.status(404).send({
+                    successful: false,
+                    message: `Invalid values detected for the following fields: ${invalidFields.join(', ')}`
+                })
+            }
+            else {
+                const log = new historyLog ({
+                    dateTime: dateTime,
+                    editedBy: editedBy,
+                    historyType: historyType,
+                    recordClass: recordClass,
+                    patientName: patientName
+                })
     
-    if (!dateTime || dateTime == "" || dateTime === null) emptyOrNullVariables.push('date & time')
-    if (!editedBy || editedBy == "" || editedBy === null) emptyOrNullVariables.push('edited by')
-    if (historyType == "" || historyType === null) emptyOrNullVariables.push('history type')
-    if (recordClass == "" || recordClass === null) emptyOrNullVariables.push('record class')
-    if (patientName == "" || patientName === null) emptyOrNullVariables.push('patient name')
-
-
-    if(emptyOrNullVariables.length > 0){
-        res.status(404).send({
-            successful: false,
-            message: `Missing data in the following fields: ${emptyOrNullVariables.join(', ')}`
-        })
+                log.save()
+                .then((result)=>{
+                    res.status(200).send({
+                        successful: true,
+                        message: "Successfully added a new history log.",
+                        id: result._id
+                    })
+                })
+                .catch((error) => {
+                    res.status(500).send({
+                        successful: false,
+                        message: error.message
+                    })
+                })
+            }
+        }
     }
-
-    const log = new historyLog ({
-        dateTime: dateTime,
-        editedBy: editedBy,
-        historyType: historyType,
-        recordClass: recordClass,
-        patientName: patientName
-    })
-
-    log.save()
-    .then((result)=>{
-        res.status(200).send({
-            successful: true,
-            message: "Successfully added a new history log.",
-            id: result._id
-        })
-    })
-    .catch((error) => {
+    catch(err){
         res.status(500).send({
             successful: false,
-            message: error.message
+            message: err.message
         })
-    })
+    }
 
 }
 
