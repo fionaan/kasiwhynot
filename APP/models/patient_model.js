@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 //Base Schema
 const baseSchema = new mongoose.Schema({
     basicInfo: {
-        isStudent: {type: Boolean, required: true, default: true},
+        campus: {type: String, required: true},
         firstName: {type: String, required: true},
         middleName: {type: String, required: true},
         lastName: {type: String, required: true},
@@ -156,24 +156,25 @@ const studentSchema = new mongoose.Schema({
     course: {type: String, required: true},
     year: {type: String, required: true},
     section: {type: String, required: true},
+    details: {
+        type: mongoose.ObjectId,
+        ref: "BasePatients"
+    }
 })
-
 //Employee Schema
 const employeeSchema = new mongoose.Schema({
     employeeNo: {type: String, required: true},
-    department: {type: String, required: true}
+    department: {type: String, required: true},
+    details: {
+        type: mongoose.ObjectId,
+        ref: "BasePatients"
+    }
 })
 
-// Discriminator Key
-const options = {discriminatorKey: 'category'};
+const BaseModel = mongoose.model('BasePatients', baseSchema)
 
-// Create the base model. Syntax is model('collection_name', Schema)
-const BaseModel = mongoose.model('Base', baseSchema);
+const Student = mongoose.model('Students',studentSchema)
 
-// Create the Student model by extending the base model
-const Student = BaseModel.discriminator('Student', studentSchema, options);
+const Employee = mongoose.model('Employees', employeeSchema)
 
-// Create the Employee model by extending the base model
-const Employee = BaseModel.discriminator('Employee', employeeSchema, options);
-
-module.exports = {Student, Employee};
+module.exports = {Student, Employee, BaseModel}

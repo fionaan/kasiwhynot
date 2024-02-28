@@ -2,7 +2,7 @@
 
 //CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
 const checkIfNull = (data)=>{
-    return (data == null || data == "null" || data == "" || data.trim() == "" || (typeof data === "undefined"))
+    return (data == null || data == "null" || data == "" || (typeof data === "undefined"))
 }
 
 //CHECKS IF THE VALUE OF A MANDATORY FIELD IS NULL OR NOT. RETURNS TRUE IF ALL MANDATORY FIELDS ARE NOT NULL, OTHERWISE RETURNS FALSE.

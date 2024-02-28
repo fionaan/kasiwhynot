@@ -62,7 +62,7 @@ app.use((req, res, next)=>{
 app.use('/patients', patientRouter);
 app.use('/users', userRouter);
 
-
+app.use(express.json())
 //ERROR MIDDLEWARES
 app.use((req, res, next)=>{
     //THIS CODE CREATE A NEW ERROR OBJECT FOR UNKNOWN ENDPOINTS. MEANING, THE REQUEST DID NOT PROCEED WITH THE MIDDLEWARE ABOVE.
