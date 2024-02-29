@@ -1,8 +1,11 @@
+const historyLog = require('../models/historylog_model')
 const { dateTimeRegex,
     nameRegex,
+    historyTypeList,
+    recordClassList,
     checkIfNull,
     toProperCase } = require('../../utils')
-const historyLog = require('../models/historylog_model')
+
 
 const getAllLogs = async(req, res, next)=>{
     try{
@@ -57,9 +60,8 @@ const addLog = (req, res, next) => {
             const invalidFields = []
             if (!dateTimeRegex.test(dateTime)) invalidFields.push('date & time')
             if (!nameRegex.test(editedBy)) invalidFields.push('edited by')
-            if (historyType !== "ADD" && historyType !== "UPDATE" && historyType !== "ARCHIVE" &&
-            historyType !== "UNARCHIVE") invalidFields.push('history type')
-            if (recordClass !== "Medical" && recordClass !== "Dental") invalidFields.push('record class')
+            if (!historyTypeList.includes(historyType)) invalidFields.push('history type')
+            if (!recordClassList.includes(recordClass)) invalidFields.push('record class')
             if (!nameRegex.test(patientName)) invalidFields.push('patient name')
             
             if (invalidFields.length > 0){

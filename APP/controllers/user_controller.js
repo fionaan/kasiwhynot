@@ -1,69 +1,98 @@
 const User = require('../models/user_model')
+const { nameRegex,
+        emailRegex,
+        userTypeList,
+        dateRegex,
+        toProperCase,
+        checkObjNull,
+        checkIfNull } = require('../../utils')
 
 const addUser = (req, res, next)=>{
-    const {name, emailAddress, userType, dateCreated, dateUpdated} = req.body
+    
+    try {
+        let {name, emailAddress, userType, dateCreated} = req.body
 
-    // check if fields are null or empty
-    const emptyOrNullVariables = []
+        //CHECK FOR NULL OR EMPTY FIELDS
+        const nullFields = []
+        
+        if (checkObjNull(name)) {
+            nullFields.push('full name')
+        }else{
+            
+            if (checkIfNull(name.firstName)) nullFields.push('first name')
+            if (!(typeof name.middleName === "undefined") && (checkIfNull(name.middleName))) nullFields.push('middle name')
 
-    if (!name || name == "" || name === null) {
-        emptyOrNullVariables.push('full name')
-    }else{
-        if (!name.firstName || name.firstName == "" || name.firstName === null) emptyOrNullVariables.push('first name')
-        if (!name.lastName || name.lastName == "" || name.lastName === null) emptyOrNullVariables.push('last name')
+            if (checkIfNull(name.lastName)) nullFields.push('last name')
+        }
+
+        if (checkIfNull(emailAddress)) nullFields.push('email address')
+        if (checkIfNull(userType)) nullFields.push('user type')
+        if (checkIfNull(dateCreated)) nullFields.push('date created')
+
+        if (nullFields.length > 0) {
+            res.status(404).send({
+                successful: false,
+                message: `Missing data in the following fields: ${nullFields.join(', ')}`
+            })       
+        } 
+        else {
+            
+            userType = userType.trim().toProperCase()
+            name.firstName = name.firstName.trim()
+            name.lastName = name.lastName.trim()
+            if (!checkIfNull(name.middleName)) name.middleName = name.middleName.trim()
+
+            //CHECK FOR FIELDS W INVALID VALUES
+            const invalidFields = []
+            if (!nameRegex.test(name.firstName)) invalidFields.push('first name')
+            if ((!checkIfNull(name.middleName)) && (!nameRegex.test(name.middleName))) invalidFields.push('middle name')
+            if (!nameRegex.test(name.lastName)) invalidFields.push('last name')
+            if (!emailRegex.test(emailAddress)) invalidFields.push('email address')
+            if (!userTypeList.includes(userType)) invalidFields.push('user type')
+            if (!dateRegex.test(dateCreated)) invalidFields.push('date created')
+
+            if (invalidFields.length > 0){
+                res.status(404).send({
+                    successful: false,
+                    message: `Invalid values detected for the following fields: ${invalidFields.join(', ')}`
+                })
+            }
+            else {
+
+                let user = new User ({
+                    name: name,
+                    emailAddress: emailAddress,
+                    userType: userType,
+                    status: "Active",
+                    dateCreated: dateCreated,
+                    dateUpdated: dateCreated
+                })
+    
+                user.save()
+                .then((result) =>{
+                    res.status(200).send({
+                        successful: true,
+                        message: "Successfully added a new user.",
+                        id: result._id
+                    })
+                })
+                .catch((error) => {
+                    res.status(500).send({
+                        successful: false,
+                        message: error.message
+                    })
+                })
+            }
+
+        }
     }
-
-    if (!emailAddress || emailAddress == "" || emailAddress === null) emptyOrNullVariables.push('emailAddress')
-    if (!userType || userType == "" || userType === null) emptyOrNullVariables.push('userType')
-    if (!dateCreated || dateCreated == "" || dateCreated === null) emptyOrNullVariables.push('dateCreated')
-    if (!dateUpdated || dateUpdated == "" || dateUpdated === null) emptyOrNullVariables.push('dateUpdated')
-
-    if (emptyOrNullVariables.length > 0) {
-        res.status(404).send({
-            successful: false,
-            message: `Missing data in the following fields: ${emptyOrNullVariables.join(', ')}`
-        })       
-    }
-
-    //validate all fields -- email, usertype, status, dateupdated
-    if(userType !== "Dentist" || userType !== "Doctor" || userType !== "Nurse"){
-        res.status(404).send({
-            successful: false,
-            message: "Invalid user type."
-        })
-    }
-
-    if (dateUpdated < dateCreated){
-        res.status(404).send({
-            successful: false,
-            message: "Invalid Date Updated value."
-        })
-    }
-
-    //add try catch for data type mismatch
-    let user = new User ({
-        name: name,
-        emailAddress: emailAddress,
-        userType: userType,
-        status: "Active",
-        dateCreated: dateCreated,
-        dateUpdated: dateUpdated
-    })
-
-    user.save()
-    .then((result) =>{
-        res.status(200).send({
-            successful: true,
-            message: "Successfully added a new user.",
-            id: result._id
-        })
-    })
-    .catch((error) => {
+    catch (err){
         res.status(500).send({
             successful: false,
-            message: error.message
+            message: err.message
         })
-    })
+    }
+    
 }
 
 module.exports = {
