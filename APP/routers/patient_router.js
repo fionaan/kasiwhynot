@@ -10,6 +10,7 @@ const router = express.Router()
 // router.put('/update/:id', studentController.updateStudent)
 
 router.get('/get/:pageNumber?', patientController.getPatientList)
+router.get('/getone', patientController.getPatient)
 router.get('/search', patientController.searchPatient)
 
 module.exports = router

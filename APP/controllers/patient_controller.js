@@ -1,5 +1,4 @@
 const {BaseModel, Student, Employee} = require('../models/patient_model')
-const searchFilterer = require('./extra_functions')
 const utilFunc = require('../../utils')
 
 const getPatientList = async (req, res, next) => { 
@@ -104,6 +103,77 @@ const getPatientList = async (req, res, next) => {
     }
 }
 
+const getPatient = async (req, res, next) => { 
+    const {patientId, tab, category} = req.body //user must input the _id of the patient
+
+    try {
+        let patientModel
+
+        if (category == 'students'){
+            patientModel = Student
+        }
+        else if (category == 'employees'){
+            patientModel = Employee
+        }
+        else {
+            console.log("The category input in the body is not recognized.")
+        }
+
+        let patient = await patientModel.aggregate([
+            {
+                $match: {
+                    _id: "$patientId"
+                }
+            },
+            {
+                $set: {
+                    tab: "$tab"
+                }
+            },
+            {
+                $lookup: { //join base schema
+                    from: 'basepatients',
+                    localField: 'details',
+                    foreignField: '_id',
+                    as: 'patientDetails'
+                }
+            },
+            {
+                $unwind: '$patientDetails' //deconstruct the array produced by lookup
+            },
+            {
+                $project: { //what results to display
+                   basicInfo: 1
+                }
+            }
+        ])
+
+        //check if null
+        if (utilFunc.checkIfNull(patient) == true){
+            console.log(patient)
+            res.status(404).send({
+                successful: false,
+                message: "No patients found"
+            })
+        }
+        else {
+            res.status(200).send({
+                successful: true,
+                message: "Retrieved all patients.",
+                count: patient.length,
+                data: patient
+            })
+        }
+    }
+
+    catch(err) {
+        res.status(500).send({
+            successful: false,
+            message: err.message
+        })   
+    }
+}
+
 const searchPatient = async (req, res, next) => {
     const searchQuery = req.body.keyz
 
@@ -121,5 +191,6 @@ const searchPatient = async (req, res, next) => {
 
 module.exports = {
     getPatientList,
+    getPatient,
     searchPatient
 }
