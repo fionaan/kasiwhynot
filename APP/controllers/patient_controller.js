@@ -1,3 +1,5 @@
+const mongoose = require('mongoose')
+
 const {BaseModel, Student, Employee} = require('../models/patient_model')
 const utilFunc = require('../../utils')
 
@@ -105,15 +107,27 @@ const getPatientList = async (req, res, next) => {
 
 const getPatient = async (req, res, next) => { 
     const {patientId, tab, category} = req.body //user must input the _id of the patient
+    const fieldName = tab  // Replace this with the actual variable or logic to determine the field name
+    let projection = {} //for the project aggregation because project can't use dynamic variables, so we'll use an object
+    projection[fieldName] = `$patientDetails.${fieldName}` //creating properties for projection object which contains the fields of the user's selected tab
 
     try {
         let patientModel
 
         if (category == 'students'){
             patientModel = Student
+            if (fieldName == 'basicInfo') { //if the user selected basicInfo tab, add the Student schema's exclusive fields to the properties
+                projection['studentNo'] = 1
+                projection['course'] = 1
+                projection['year'] = 1
+            }
         }
         else if (category == 'employees'){
             patientModel = Employee
+            if (fieldName == 'basicInfo') { //if the user selected basicInfo tab, add the Employee schema's exclusive fields to the properties
+                projection['employeeNo'] = 1
+                projection['department'] = 1
+            }
         }
         else {
             console.log("The category input in the body is not recognized.")
@@ -122,7 +136,7 @@ const getPatient = async (req, res, next) => {
         let patient = await patientModel.aggregate([
             {
                 $match: {
-                    _id: "$patientId"
+                    _id: new mongoose.Types.ObjectId(patientId) //filters based on _id
                 }
             },
             {
@@ -142,9 +156,7 @@ const getPatient = async (req, res, next) => {
                 $unwind: '$patientDetails' //deconstruct the array produced by lookup
             },
             {
-                $project: { //what results to display
-                   basicInfo: 1
-                }
+                $project: projection //projects the contents(properties) of the object
             }
         ])
 
@@ -153,14 +165,13 @@ const getPatient = async (req, res, next) => {
             console.log(patient)
             res.status(404).send({
                 successful: false,
-                message: "No patients found"
+                message: "Patient not found"
             })
         }
         else {
             res.status(200).send({
                 successful: true,
-                message: "Retrieved all patients.",
-                count: patient.length,
+                message: "Retrieved the patient.",
                 data: patient
             })
         }
