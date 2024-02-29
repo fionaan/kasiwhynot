@@ -13,6 +13,18 @@ const addStudent = (req, res, next) => {
             age: basicInfo.age,
             gender: basicInfo.gender,
             homeAddress: basicInfo.homeAddress,
+            contactNo: basicInfo.contactNo,
+            nationality: basicInfo.nationality,
+            religion: basicInfo.religion,
+            bloodType: basicInfo.bloodType,
+            civilStatus: basicInfo.civilStatus,
+            height: basicInfo.height,
+            weight: basicInfo.weight,
+            bmi: basicInfo.bmi,
+            guardianName: basicInfo.guardianName,
+            guardianContactNo: basicInfo.guardianContactNo,
+            guardianRelationship: basicInfo.guardianRelationship,
+            attachment: basicInfo.attachment
         },
         // Add other properties as needed
     });
@@ -133,11 +145,27 @@ const updateStudent = async (req, res, next) => {
                 message: "Student does not exist",
             });
         } else {
-            student.basicInfo.address = {
-                street_name: req.body.street_name,
-                brgy_name: req.body.brgy_name,
-                city: req.body.city,
-                region: req.body.region,
+            student.basicInfo = {
+                firstName: basicInfo.firstName,
+                middleName: basicInfo.middleName,
+                lastName: basicInfo.lastName,
+                emailAddress: basicInfo.emailAddress,
+                dateOfBirth: basicInfo.dateOfBirth,
+                age: basicInfo.age,
+                gender: basicInfo.gender,
+                homeAddress: basicInfo.homeAddress,
+                contactNo: basicInfo.contactNo,
+                nationality: basicInfo.nationality,
+                religion: basicInfo.religion,
+                bloodType: basicInfo.bloodType,
+                civilStatus: basicInfo.civilStatus,
+                height: basicInfo.height,
+                weight: basicInfo.weight,
+                bmi: basicInfo.bmi,
+                guardianName: basicInfo.guardianName,
+                guardianContactNo: basicInfo.guardianContactNo,
+                guardianRelationship: basicInfo.guardianRelationship,
+                attachment: basicInfo.attachment
             };
 
             student.save()

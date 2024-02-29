@@ -154,15 +154,22 @@ const baseSchema = new Schema({
 // Student Schema
 const studentSchema = new Schema({
     studentNo: {type: String, required: true},
+    studentName: {type: String, required: true},
     course: {type: String, required: true},
     year: {type: String, required: true},
     section: {type: String, required: true},
+    status: {type: String, enum: ['Active', 'Inactive'], required: true},
+    campus: {type: String, enum: ['GP', 'LV', 'GP/LV'], required: true}
 })
 
 //Employee Schema
 const employeeSchema = new Schema({
     employeeNo: {type: String, required: true},
-    department: {type: String, required: true}
+    employeeName: {type: String, required: true},
+    department: {type: String, required: true},
+    role: {type: String, enum: ['Faculty', 'Non-Faculty'], required: true},
+    status: {type: String, enum: ['Active', 'Inactive'], required: true},
+    campus: {type: String, enum: ['GP', 'LV', 'GP/LV'], required: true}
 })
 
 // Discriminator Key
