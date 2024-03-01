@@ -1,24 +1,40 @@
 //LIST OF ALL UTILITY FUNCTIONS
 
+// const { BaseModel } = require('../APP/models/patient_model');
+
+
+// const checkIfRecordExists = (model, studentNo) => {
+//     return model.findOne({ 'studentData.studentNo': studentNo })
+//         .exec()
+//         .then(record => {
+//             return record !== null;
+//         })
+//         .catch(error => {
+//             throw error;
+//         });
+// };
+
 //CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
-const checkIfNull = (data)=>{
-    return (data == null || data == "null" || data == "" || data.trim() == "" || (typeof data === "undefined"))
+const checkIfNull = (data) => {
+    return data == null || data === '' || typeof data === 'undefined';
 }
 
+
 //CHECKS IF THE VALUE OF A MANDATORY FIELD IS NULL OR NOT. RETURNS TRUE IF ALL MANDATORY FIELDS ARE NOT NULL, OTHERWISE RETURNS FALSE.
-const checkMandatoryFields = (arrs)=>{
-    let result = true
-    
-    arrs.forEach(el => {
-        if (checkIfNull(el) == true){
-            result = false
+const checkMandatoryFields = (data) => {
+    let result = true;
+
+    Object.values(data).forEach((el) => {
+        if (checkIfNull(el)) {
+            result = false;
         }
     });
 
-    return result
-}
+    return result;
+};
 
 module.exports = {
+    checkIfRecordExists,
     checkIfNull,
     checkMandatoryFields
 }
