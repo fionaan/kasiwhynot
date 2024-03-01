@@ -6,9 +6,11 @@ const Schema = mongoose.Schema
 const baseSchema = new Schema({
     basicInfo: {
         campus: {type: String, required: true},
-        firstName: { type: String, required: true },
-        middleName: { type: String, required: false },
-        lastName: { type: String, required: true },
+        fullName: {
+            firstName: { type: String, required: true },
+            middleName: { type: String, required: false },
+            lastName: { type: String, required: true },
+        },
         emailAddress: {type: String, required: true, match: /^\S+@\S+\.\S+$/}, //match uses a regular expression to validate that the provided value follows a simple email format. This regular expression checks for the presence of @ and . in the email address.
         dateOfBirth: {type: Date, required: true},
         age: {type: Number, required: true}, //should be automatic based on date of birth and current date next time

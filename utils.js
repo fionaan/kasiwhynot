@@ -25,8 +25,8 @@ const historyTypeList = ['ADD', 'UPDATE', 'ARCHIVE', 'UNARCHIVE']
 const recordClassList = ['Medical', 'Dental']
 
 //CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
-const checkIfNull = (data)=>{
-    return (data == null || data == "null" || data == "" || data.trim() == "" || (typeof data === "undefined"))
+const checkIfNull = (data) => {
+    return data == null || data === '' || typeof data === 'undefined';
 }
 
 //CHECKS IF AN OBJECT ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE OBJECT IS NULL, OTHERWISE RETURNS FALSE.
@@ -41,11 +41,21 @@ const checkMandatoryFields = (arrs)=>{
     arrs.forEach(data => {
         if (checkIfNull(data) == true){
             result = false
+
+//CHECKS IF THE VALUE OF A MANDATORY FIELD IS NULL OR NOT. RETURNS TRUE IF ALL MANDATORY FIELDS ARE NOT NULL, OTHERWISE RETURNS FALSE.
+// what is dis mygz
+const checkMandatoryFieldsMygz = (data) => {
+    let result = true;
+
+    Object.values(data).forEach((el) => {
+        if (checkIfNull(el)) {
+            result = false;
+
         }
     });
 
-    return result
-}
+    return result;
+};
 
 String.prototype.toProperCase = function()
 {
@@ -60,6 +70,7 @@ module.exports = {
     userTypeList,
     historyTypeList,
     recordClassList,
+    checkIfRecordExists,
     checkIfNull,
     checkObjNull,
     checkMandatoryFields,
