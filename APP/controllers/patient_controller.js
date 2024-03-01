@@ -68,7 +68,10 @@ const getPatientList = async (req, res, next) => {
             patientModel = Employee
         }
         else {
-            console.log("The category input in the body is not recognized.")
+            return res.status(400).send({
+                successful: false,
+                message: "The category input in the body is not recognized."
+            });
         }
  
         let patient = await patientModel.aggregate([
@@ -179,7 +182,10 @@ const getPatient = async (req, res, next) => {
             }
         }
         else {
-            console.log("The category input in the body is not recognized.")
+            return res.status(400).send({
+                successful: false,
+                message: "The category input in the body is not recognized."
+            });
         }
 
         let patient = await patientModel.aggregate([
