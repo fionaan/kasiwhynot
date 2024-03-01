@@ -11,7 +11,7 @@ const router = express.Router()
 
 router.get('/get/:pageNumber?', patientController.getPatientList)
 router.get('/getone', patientController.getPatient)
-router.get('/search', patientController.searchPatient)
+router.get('/search/:pageNumber?', patientController.searchPatientList)
 
 module.exports = router
 

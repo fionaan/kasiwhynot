@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const {BaseModel, Student, Employee} = require('../models/patient_model')
+const {Student, Employee} = require('../models/patient_model')
 const utilFunc = require('../../utils')
 
 const getPatientList = async (req, res, next) => { 
@@ -40,17 +40,17 @@ const getPatientList = async (req, res, next) => {
                     employeeNo: 1, //will only display for employee
                     fullName: {
                         $concat: [
-                            '$patientDetails.basicInfo.lastName',
+                            '$patientDetails.basicInfo.fullName.lastName',
                             ', ',
-                            '$patientDetails.basicInfo.firstName',
+                            '$patientDetails.basicInfo.fullName.firstName',
                             {
                                 $cond: { //middle name rules
                                     if: { 
-                                        $ne: ['$patientDetails.basicInfo.middleName', ''] },
+                                        $ne: ['$patientDetails.basicInfo.fullName.middleName', ''] },
                                     then: {
                                         $concat: [
                                             ' ',
-                                            { $substr: ['$patientDetails.basicInfo.middleName', 0, 1] },
+                                            { $substr: ['$patientDetails.basicInfo.fullName.middleName', 0, 1] },
                                             '.'
                                         ]
                                     },
@@ -185,11 +185,123 @@ const getPatient = async (req, res, next) => {
     }
 }
 
-const searchPatient = async (req, res, next) => {
-    const searchQuery = req.body.keyz
+const searchPatientList = async (req, res, next) => { 
+    const {category, sort, search} = req.body //user must input in body to select a category
+    const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
+    const pageSize = 50 //limit of records to be fetched
+    const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
 
     try {
-        
+        let matchCondition = {}
+        let noHyphen = search.replace(/-/g, '')
+
+        if (/^[0-9]{4}-[0-9]{5}$/.test(search) && category == 'students') {
+            matchCondition['studentNo'] = { search };
+        } else if (/^\d+$/.test(search) && category == 'employees') {
+            matchCondition['employeeNo'] = { $regex: /^[0-9]{5}$/ };
+        } else {
+            // Assuming 'search' contains either an ID or a name
+            matchCondition.$or = [
+                {
+                    'patientDetails.basicInfo.fullName.firstName': { $regex: search, $options: 'i' }
+                },
+                {
+                    'patientDetails.basicInfo.fullName.middleName': { $regex: search, $options: 'i' }
+                },
+                {
+                    'patientDetails.basicInfo.fullName.lastName': { $regex: search, $options: 'i' }
+                },
+                // Add additional conditions as needed based on the type of search
+            ];
+        }
+        console.log(matchCondition)
+        let patientModel
+        if (category == 'students'){
+            patientModel = Student
+        }
+        else if (category == 'employees'){
+            patientModel = Employee
+        }
+        else {
+            console.log("The category input in the body is not recognized.")
+        }
+
+        let patient = await patientModel.aggregate([
+            {
+                $lookup: { //join base schema
+                    from: 'basepatients',
+                    localField: 'details',
+                    foreignField: '_id',
+                    as: 'patientDetails'
+                }
+            },
+            {
+                $unwind: '$patientDetails' //deconstruct the array produced by lookup
+            },
+            {
+                $match: matchCondition
+            },
+            {
+                $project: { //what results to display
+                    studentNo: 1, //will only display for student
+                    employeeNo: 1, //will only display for employee
+                    fullName: {
+                        $concat: [
+                            '$patientDetails.basicInfo.fullName.lastName',
+                            ', ',
+                            '$patientDetails.basicInfo.fullName.firstName',
+                            {
+                                $cond: { //middle name rules
+                                    if: { 
+                                        $ne: ['$patientDetails.basicInfo.fullName.middleName', ''] },
+                                    then: {
+                                        $concat: [
+                                            ' ',
+                                            { $substr: ['$patientDetails.basicInfo.fullName.middleName', 0, 1] },
+                                            '.'
+                                        ]
+                                    },
+                                    else: ''
+                                }
+                            }           
+                        ]
+                    },
+                    course: 1, //will only display for student
+                    year: 1, //will only display for student
+                    department: 1, //will only display for employee
+                    campus: '$patientDetails.basicInfo.campus',
+                    // _id: 0 //exlude _id from results
+                }
+            },
+            {
+                $sort: { //sort the full name in the result's based on the req.body
+                    'fullName': sort
+                }
+            },
+            {
+                $skip: skip, //for pagination
+            },
+            {
+                $limit: pageSize, //for pagination
+            },
+        ])
+
+        //check if null
+        if (utilFunc.checkIfNull(patient) == true){
+            console.log(patient)
+            res.status(404).send({
+                successful: false,
+                message: "No patients found"
+            })
+        }
+        else {
+            res.status(200).send({
+                successful: true,
+                message: "Retrieved all patients.",
+                count: patient.length,
+                data: patient
+            })
+        }
     }
 
     catch(err) {
@@ -203,5 +315,5 @@ const searchPatient = async (req, res, next) => {
 module.exports = {
     getPatientList,
     getPatient,
-    searchPatient
+    searchPatientList
 }
