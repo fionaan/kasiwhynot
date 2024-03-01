@@ -64,9 +64,10 @@ app.use((req, res, next)=>{
 
 
 //MIDDLEWARE FOR THE ROUTERS
-app.use('/patients', patientRouter);
-app.use('/users', userRouter);
-app.use('/logs', historyLogRouter);
+app.use('/patients', patientRouter)
+app.use('/users', userRouter)
+app.use('/logs', historyLogRouter)
+app.use(express.json())
 
 //ERROR MIDDLEWARES
 app.use((req, res, next)=>{

@@ -1,199 +1,447 @@
-const Student = require('../models/patient_model').Student;
+const mongoose = require('mongoose')
+const {BaseModel, Student, Employee} = require('../models/patient_model')
+const utilFunc = require('../../utils')
 
-const addStudent = (req, res, next) => {
-    const { basicInfo } = req.body;
+const addRecord = async (req, res) => {
+    const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecords, exclusiveData, category } = req.body;
 
-    const student = new Student({
-        basicInfo: {
-            firstName: basicInfo.firstName,
-            middleName: basicInfo.middleName,
-            lastName: basicInfo.lastName,
-            emailAddress: basicInfo.emailAddress,
-            dateOfBirth: basicInfo.dateOfBirth,
-            age: basicInfo.age,
-            gender: basicInfo.gender,
-            homeAddress: basicInfo.homeAddress,
-            contactNo: basicInfo.contactNo,
-            nationality: basicInfo.nationality,
-            religion: basicInfo.religion,
-            bloodType: basicInfo.bloodType,
-            civilStatus: basicInfo.civilStatus,
-            height: basicInfo.height,
-            weight: basicInfo.weight,
-            bmi: basicInfo.bmi,
-            guardianName: basicInfo.guardianName,
-            guardianContactNo: basicInfo.guardianContactNo,
-            guardianRelationship: basicInfo.guardianRelationship,
-            attachment: basicInfo.attachment
-        },
-        // Add other properties as needed
+    // Create a new BasePatient document
+    const basePatient = new BaseModel({
+      basicInfo,
+      laboratory,
+      vaccination,
+      medicalHistory,
+      dentalRecords,
     });
-
-    student.save()
-        .then((result) => {
-            res.status(200).send({
-                successful: true,
-                message: `Successfully added new student. ${basicInfo.first_name} ${basicInfo.last_name}`,
-                id: result._id,
-            });
-        })
-        .catch((error) => {
-            res.status(500).send({
-                successful: false,
-                message: error.message,
-            });
-        });
-};
-
-const getAllStudents = async (req, res, next) => {
-    try {
-        let students = await Student.find();
-        if (students.length === 0) {
-            res.status(404).send({
-                successful: false,
-                message: "No students found",
-            });
+  
+    // Save the BasePatient document
+    basePatient.save()
+      .then(savedBasePatient => {
+        if (category === 'students') {
+          // If the category is a student, create a new Student document
+          const studentData = { ...exclusiveData, details: savedBasePatient._id };
+          const student = new Student(studentData);
+  
+          // Save the Student document
+          return student.save();
+        } else if (category === 'employees') {
+          // If the category is an employee, create a new Employee document
+          const employeeData = { ...exclusiveData, details: savedBasePatient._id };
+          const employee = new Employee(employeeData);
+  
+          // Save the Employee document
+          return employee.save();
         } else {
-            res.status(200).send({
-                successful: true,
-                message: "Retrieved all students.",
-                count: students.length,
-                data: students,
+          // Handle other categories as needed
+          return Promise.resolve();
+        }
+      })
+      .then(() => {
+        res.json({
+          successful: true,
+          message: 'Patient data added successfully',
+        });
+      })
+      .catch(error => {
+        console.error(error);
+        res.status(500).json({
+          successful: false,
+          message: 'Error adding patient data',
+          error: error.message,
+        });
+      });
+  }
+
+const getPatientList = async (req, res, next) => { 
+    const {category, sort} = req.body //user must input in body to select a category
+    const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
+    const pageSize = 50 //limit of records to be fetched
+    const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
+
+    try {
+        let patientModel
+
+        if (category == 'students'){
+            patientModel = Student
+        }
+        else if (category == 'employees'){
+            patientModel = Employee
+        }
+        else {
+            return res.status(400).send({
+                successful: false,
+                message: "The category input in the body is not recognized."
             });
         }
-    } catch (err) {
+ 
+        let patient = await patientModel.aggregate([
+            {
+                $lookup: { //join base schema
+                    from: 'basepatients',
+                    localField: 'details',
+                    foreignField: '_id',
+                    as: 'patientDetails'
+                }
+            },
+            {
+                $unwind: '$patientDetails' //deconstruct the array produced by lookup
+            },
+            {
+                $project: { //what results to display
+                    studentNo: 1, //will only display for student
+                    employeeNo: 1, //will only display for employee
+                    fullName: {
+                        $concat: [
+                            '$patientDetails.basicInfo.fullName.lastName',
+                            ', ',
+                            '$patientDetails.basicInfo.fullName.firstName',
+                            {
+                                $cond: { //middle name rules
+                                    if: { 
+                                        $ne: ['$patientDetails.basicInfo.fullName.middleName', ''] },
+                                    then: {
+                                        $concat: [
+                                            ' ',
+                                            { $substr: ['$patientDetails.basicInfo.fullName.middleName', 0, 1] },
+                                            '.'
+                                        ]
+                                    },
+                                    else: ''
+                                }
+                            }           
+                        ]
+                    },
+                    course: 1, //will only display for student
+                    year: 1, //will only display for student
+                    department: 1, //will only display for employee
+                    campus: '$patientDetails.basicInfo.campus',
+                    // _id: 0 //exlude _id from results
+                }
+            },
+            {
+                $sort: { //sort the full name in the result's based on the req.body
+                    'fullName': sort
+                }
+            },
+            {
+                $skip: skip, //for pagination
+            },
+            {
+                $limit: pageSize, //for pagination
+            },
+        ])
+
+        //check if null
+        if (utilFunc.checkIfNull(patient) == true){
+            console.log(patient)
+            res.status(404).send({
+                successful: false,
+                message: "No patients found"
+            })
+        }
+        else {
+            res.status(200).send({
+                successful: true,
+                message: "Retrieved all patients.",
+                count: patient.length,
+                data: patient
+            })
+        }
+    }
+
+    catch(err) {
         res.status(500).send({
             successful: false,
-            message: err.message,
-        });
+            message: err.message
+        })   
     }
-};
+}
 
-const filterStudents = async (req, res, next) => {
+const getPatient = async (req, res, next) => { 
+    const {patientId, tab, category} = req.body //user must input the _id of the patient
+    const fieldName = tab  // Replace this with the actual variable or logic to determine the field name
+    let projection = {} //for the project aggregation because project can't use dynamic variables, so we'll use an object
+    projection[fieldName] = `$patientDetails.${fieldName}` //creating properties for projection object which contains the fields of the user's selected tab
+
     try {
-        let students = await Student.find({
-            $and: [
+        let patientModel
+
+        if (category == 'students'){
+            patientModel = Student
+            if (fieldName == 'basicInfo') { //if the user selected basicInfo tab, add the Student schema's exclusive fields to the properties
+                projection['studentNo'] = 1
+                projection['course'] = 1
+                projection['year'] = 1
+            }
+        }
+        else if (category == 'employees'){
+            patientModel = Employee
+            if (fieldName == 'basicInfo') { //if the user selected basicInfo tab, add the Employee schema's exclusive fields to the properties
+                projection['employeeNo'] = 1
+                projection['department'] = 1
+            }
+        }
+        else {
+            return res.status(400).send({
+                successful: false,
+                message: "The category input in the body is not recognized."
+            });
+        }
+
+        let patient = await patientModel.aggregate([
+            {
+                $match: {
+                    _id: new mongoose.Types.ObjectId(patientId) //filters based on _id
+                }
+            },
+            {
+                $set: {
+                    tab: "$tab"
+                }
+            },
+            {
+                $lookup: { //join base schema
+                    from: 'basepatients',
+                    localField: 'details',
+                    foreignField: '_id',
+                    as: 'patientDetails'
+                }
+            },
+            {
+                $unwind: '$patientDetails' //deconstruct the array produced by lookup
+            },
+            {
+                $project: projection //projects the contents(properties) of the object
+            }
+        ])
+
+        //check if null
+        if (utilFunc.checkIfNull(patient) == true){
+            console.log(patient)
+            res.status(404).send({
+                successful: false,
+                message: "Patient not found"
+            })
+        }
+        else {
+            res.status(200).send({
+                successful: true,
+                message: "Retrieved the patient.",
+                data: patient
+            })
+        }
+    }
+
+    catch(err) {
+        res.status(500).send({
+            successful: false,
+            message: err.message
+        })   
+    }
+}
+
+const searchPatientList = async (req, res, next) => { 
+    const {category, sort, search} = req.body //user must input in body to select a category
+    const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
+    const pageSize = 50 //limit of records to be fetched
+    const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
+
+    try {
+        let matchCondition = {} // what the condition for the search would be
+        let noHyphen = search.replace(/-/g, '') //remove the hyphen from the id in case there is
+
+        if (utilFunc.checkIfNull(search) == true || search.trim() == "") { //check if search field is empty
+            return res.status(400).send({
+                successful: false,
+                message: "The search field is empty"
+            });
+        }
+
+        if (/^\d+$/.test(noHyphen) && category == 'students') { //if the search input are numbers only and category is 'students'
+            matchCondition['studentNo'] = {$regex: noHyphen} //system searches for the studentNo only
+        } 
+        else if (/^\d+$/.test(noHyphen) && category == 'employees') { //if the search input are numbers only and category is 'employees'
+            matchCondition['employeeNo'] = {$regex: noHyphen} //system searches for the employeeNo only
+        } 
+        else { //partial search for names
+            const searchWords = search.split(/\s+/).map(word => `(?=.*${word})`).join('')
+        
+            matchCondition.$or = [
                 {
-                    'basicInfo.firstName': {
-                        $regex: req.query.first_name,
-                        $options: 'i',
+                    $expr: {
+                        $regexMatch: {
+                            input: {
+                                $concat: [
+                                    '$patientDetails.basicInfo.fullName.firstName',
+                                    ' ',
+                                    '$patientDetails.basicInfo.fullName.middleName',
+                                    ' ',
+                                    '$patientDetails.basicInfo.fullName.lastName',
+                                ]
+                            },
+                            regex: new RegExp(searchWords, 'i'),
+                        },
                     },
                 },
-                {
-                    $and: [
-                        {
-                            'basicInfo.age': { $gte: req.query.lowerage },
-                        },
-                        {
-                            'basicInfo.age': { $lte: req.query.higherage },
-                        },
-                    ],
-                },
-            ],
-        });
+            ];
+        }
 
-        if (students.length === 0) {
+        let patientModel
+        if (category == 'students'){
+            patientModel = Student
+        }
+        else if (category == 'employees'){
+            patientModel = Employee
+        }
+        else {
+            return res.status(400).send({
+                successful: false,
+                message: "The category input in the body is not recognized."
+            })
+        }
+
+        let patient = await patientModel.aggregate([
+            {
+                $lookup: { //join base schema
+                    from: 'basepatients',
+                    localField: 'details',
+                    foreignField: '_id',
+                    as: 'patientDetails'
+                }
+            },
+            {
+                $unwind: '$patientDetails' //deconstruct the array produced by lookup
+            },
+            {
+                $match: matchCondition
+            },
+            {
+                $project: { //what results to display
+                    studentNo: 1, //will only display for student
+                    employeeNo: 1, //will only display for employee
+                    fullName: {
+                        $concat: [
+                            '$patientDetails.basicInfo.fullName.lastName',
+                            ', ',
+                            '$patientDetails.basicInfo.fullName.firstName',
+                            {
+                                $cond: { //middle name rules
+                                    if: { 
+                                        $ne: ['$patientDetails.basicInfo.fullName.middleName', ''] },
+                                    then: {
+                                        $concat: [
+                                            ' ',
+                                            { $substr: ['$patientDetails.basicInfo.fullName.middleName', 0, 1] },
+                                            '.'
+                                        ]
+                                    },
+                                    else: ''
+                                }
+                            }           
+                        ]
+                    },
+                    course: 1, //will only display for student
+                    year: 1, //will only display for student
+                    department: 1, //will only display for employee
+                    campus: '$patientDetails.basicInfo.campus',
+                    // _id: 0 //exlude _id from results
+                }
+            },
+            {
+                $sort: { //sort the full name in the result's based on the req.body
+                    'fullName': sort
+                }
+            },
+            {
+                $skip: skip, //for pagination
+            },
+            {
+                $limit: pageSize, //for pagination
+            },
+        ])
+
+        //check if null
+        if (utilFunc.checkIfNull(patient) == true){
+            console.log(patient)
             res.status(404).send({
                 successful: false,
-                message: "No students found",
-            });
-        } else {
+                message: "No patients found"
+            })
+        }
+        else {
             res.status(200).send({
                 successful: true,
-                message: "Successfully retrieved the student.",
-                data: students,
-            });
+                message: "Retrieved all patients.",
+                count: patient.length,
+                data: patient
+            })
         }
-    } catch (err) {
+    }
+
+    catch(err) {
         res.status(500).send({
             successful: false,
-            message: err.message,
-        });
+            message: err.message
+        })   
     }
-};
+}
 
-const deleteStudent = async (req, res, next) => {
+const updateRecord = async (req, res) => {
+    const { patientId, updatedData } = req.body;
+  
     try {
-        let result = await Student.deleteOne({ _id: req.params.id });
-
-        if (result.deletedCount === 1) {
-            res.status(200).send({
-                successful: true,
-                message: "Successfully deleted student.",
-            });
-        } else {
-            res.status(400).send({
-                successful: false,
-                message: "Student does not exist",
-            });
-        }
-    } catch (err) {
-        res.status(500).send({
-            successful: false,
-            message: err.message,
+      // Update the BasePatient document
+      const updatedBasePatient = await BaseModel.findByIdAndUpdate(patientId, updatedData.basicInfo, { new: true });
+  
+      if (!updatedBasePatient) {
+        return res.status(404).json({
+          successful: false,
+          message: 'Patient not found',
         });
-    }
-};
-
-const updateStudent = async (req, res, next) => {
-    try {
-        let student = await Student.findOne({ _id: req.params.id });
-
-        if (student === null) {
-            res.status(404).send({
-                successful: false,
-                message: "Student does not exist",
-            });
-        } else {
-            student.basicInfo = {
-                firstName: basicInfo.firstName,
-                middleName: basicInfo.middleName,
-                lastName: basicInfo.lastName,
-                emailAddress: basicInfo.emailAddress,
-                dateOfBirth: basicInfo.dateOfBirth,
-                age: basicInfo.age,
-                gender: basicInfo.gender,
-                homeAddress: basicInfo.homeAddress,
-                contactNo: basicInfo.contactNo,
-                nationality: basicInfo.nationality,
-                religion: basicInfo.religion,
-                bloodType: basicInfo.bloodType,
-                civilStatus: basicInfo.civilStatus,
-                height: basicInfo.height,
-                weight: basicInfo.weight,
-                bmi: basicInfo.bmi,
-                guardianName: basicInfo.guardianName,
-                guardianContactNo: basicInfo.guardianContactNo,
-                guardianRelationship: basicInfo.guardianRelationship,
-                attachment: basicInfo.attachment
-            };
-
-            student.save()
-                .then((result) => {
-                    res.status(200).send({
-                        successful: true,
-                        message: "Successfully updated student.",
-                    });
-                })
-                .catch((err) => {
-                    res.status(500).send({
-                        successful: false,
-                        message: err.message,
-                    });
-                });
-        }
-    } catch (err) {
-        res.status(500).send({
+      }
+  
+      // Update other related documents based on the category
+      if (updatedBasePatient.category === 'students') {
+        // Find and update the Student document
+        const updatedStudent = await Student.findOneAndUpdate({ details: patientId }, updatedData.exclusiveData, { new: true });
+  
+        if (!updatedStudent) {
+          return res.status(404).json({
             successful: false,
-            message: err.message,
-        });
+            message: 'Student not found',
+          });
+        }
+      } else if (updatedBasePatient.category === 'employees') {
+        // Find and update the Employee document
+        const updatedEmployee = await Employee.findOneAndUpdate({ details: patientId }, updatedData.exclusiveData, { new: true });
+  
+        if (!updatedEmployee) {
+          return res.status(404).json({
+            successful: false,
+            message: 'Employee not found',
+          });
+        }
+      }
+  
+      // Send a success response
+      res.json({
+        successful: true,
+        message: 'Patient data updated successfully',
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        successful: false,
+        message: 'Error updating patient data',
+        error: error.message,
+      });
     }
-};
+  };  
 
 module.exports = {
-    addStudent,
-    getAllStudents,
-    filterStudents,
-    deleteStudent,
-    updateStudent,
-};
+    getPatientList,
+    getPatient,
+    searchPatientList,
+    addRecord,
+    updateRecord
+}

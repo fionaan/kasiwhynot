@@ -5,13 +5,17 @@ const Schema = mongoose.Schema
 //Base Schema
 const baseSchema = new Schema({
     basicInfo: {
-        firstName: {type: String, required: true},
-        middleName: {type: String, required: true},
-        lastName: {type: String, required: true},
+        campus: {type: String, required: true},
+        fullName: {
+            firstName: { type: String, required: true },
+            middleName: { type: String, required: false },
+            lastName: { type: String, required: true },
+        },
         emailAddress: {type: String, required: true, match: /^\S+@\S+\.\S+$/}, //match uses a regular expression to validate that the provided value follows a simple email format. This regular expression checks for the presence of @ and . in the email address.
         dateOfBirth: {type: Date, required: true},
         age: {type: Number, required: true}, //should be automatic based on date of birth and current date next time
         gender: {type: String, required: true},
+        campus:{type: String, required: true},
         homeAddress: {type: String, required: true},
         contactNo: {type: Number, required: true},
         nationality: {type: String, required: true},
@@ -29,7 +33,7 @@ const baseSchema = new Schema({
 
     laboratory: {
         chestXray: {
-            findings: {type: String, required: true},
+            findings: {type: String, required: false},
             date: {type: Date, required: true}
         },
         cbc: {
@@ -43,10 +47,10 @@ const baseSchema = new Schema({
             antiHbcIgm: {type: String, required: true},
         },
         drugTest: {
-            methamphethamineResults: {type: String, required: true},
-            methamphethamineRemarks: {type: String, required: true},
-            tetrahydrocannabinolResults: {type: String, required: true},
-            tetrahydrocannabinolRemarks: {type: String, required: true},
+            methamphethamineResults: {type: String, required: false},
+            methamphethamineRemarks: {type: String, required: false},
+            tetrahydrocannabinolResults: {type: String, required: false},
+            tetrahydrocannabinolRemarks: {type: String, required: false},
         },
         urinalysis: {
             color: {type: String, required: true},
@@ -148,40 +152,34 @@ const baseSchema = new Schema({
         },
         attachments: {type: String, required: true}
     },
-    dentalRecords: [{type: mongoose.Schema.Types.ObjectId, ref: 'DentalRecord'}]
-})
+    dentalRecords: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DentalRecord' }]
+ })
 
 // Student Schema
-const studentSchema = new Schema({
+const studentSchema = new mongoose.Schema({
     studentNo: {type: String, required: true},
-    studentName: {type: String, required: true},
     course: {type: String, required: true},
     year: {type: String, required: true},
     section: {type: String, required: true},
-    status: {type: String, enum: ['Active', 'Inactive'], required: true},
-    campus: {type: String, enum: ['GP', 'LV', 'GP/LV'], required: true}
+    details: {
+        type: mongoose.ObjectId,
+        ref: "BasePatients"
+    }
 })
-
 //Employee Schema
-const employeeSchema = new Schema({
+const employeeSchema = new mongoose.Schema({
     employeeNo: {type: String, required: true},
-    employeeName: {type: String, required: true},
     department: {type: String, required: true},
-    role: {type: String, enum: ['Faculty', 'Non-Faculty'], required: true},
-    status: {type: String, enum: ['Active', 'Inactive'], required: true},
-    campus: {type: String, enum: ['GP', 'LV', 'GP/LV'], required: true}
+    details: {
+        type: mongoose.ObjectId,
+        ref: "BasePatients"
+    }
 })
 
-// Discriminator Key
-const options = {discriminatorKey: 'category'};
+const BaseModel = mongoose.model('BasePatients', baseSchema)
 
-// Create the base model. Syntax is model('collection_name', Schema)
-const BaseModel = mongoose.model('Base', baseSchema);
+const Student = mongoose.model('Students',studentSchema)
 
-// Create the Student model by extending the base model
-const Student = BaseModel.discriminator('Student', studentSchema, options);
+const Employee = mongoose.model('Employees', employeeSchema)
 
-// Create the Employee model by extending the base model
-const Employee = BaseModel.discriminator('Employee', employeeSchema, options);
-
-module.exports = {Student, Employee};
+module.exports = {Student, Employee, BaseModel}
