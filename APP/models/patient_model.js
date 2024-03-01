@@ -5,10 +5,13 @@ const Schema = mongoose.Schema
 //Base Schema
 const baseSchema = new Schema({
     basicInfo: {
-        firstName: {type: String, required: true},
-        middleName: {type: String, required: false},
-        lastName: {type: String, required: true},
-        emailAddress: {type: String, required: true, match: /^[^\s@]+@[^\s@]+.[^\s@]+$/}, //match uses a regular expression to validate that the provided value follows a simple email format. This regular expression checks for the presence of @ and . in the email address.
+        campus: {type: String, required: true},
+        fullName: {
+            firstName: { type: String, required: true },
+            middleName: { type: String, required: false },
+            lastName: { type: String, required: true },
+        },
+        emailAddress: {type: String, required: true, match: /^\S+@\S+\.\S+$/}, //match uses a regular expression to validate that the provided value follows a simple email format. This regular expression checks for the presence of @ and . in the email address.
         dateOfBirth: {type: Date, required: true},
         age: {type: Number, required: true}, //should be automatic based on date of birth and current date next time
         gender: {type: String, required: true},
@@ -179,5 +182,4 @@ const Student = mongoose.model('Students',studentSchema)
 
 const Employee = mongoose.model('Employees', employeeSchema)
 
-
-module.exports = {Student, Employee, BaseModel};
+module.exports = {Student, Employee, BaseModel}

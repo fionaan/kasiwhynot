@@ -12,5 +12,9 @@ router.post('/add', patientController.addRecord)
 // router.delete('/delete/:id', studentController.deleteStudent)
 // router.put('/update/:id', studentController.updateStudent)
 
+router.get('/get/:pageNumber?', patientController.getPatientList)
+router.get('/getone', patientController.getPatient)
+router.get('/search/:pageNumber?', patientController.searchPatientList)
+
 module.exports = router
 
