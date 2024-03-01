@@ -1,5 +1,5 @@
 const express = require('express')
-const studentController = require('../controllers/patient_controller')
+const patientController = require('../controllers/patient_controller')
 const router = express.Router()
 
 //for reference lang
@@ -7,7 +7,9 @@ const router = express.Router()
 // router.get('/getAll', studentController.getAllStudents)
 // router.get('/filter', studentController.filterStudents)
 // router.delete('/delete/:id', studentController.deleteStudent)
-// router.put('/update/:id', studentController.updateStudent)
+//router.put('/update/:id', studentController.updateStudent)
+
+router.put('/addDental', patientController.addDentalRecord)
 
 module.exports = router
 

@@ -9,12 +9,13 @@ const userSchema = new Schema({
         lastName: {type: String, required: true}
     },
     emailAddress: {type: String, required: true},
+    password: {type: String, required: true},
     userType: {type: String, enum: ['Dentist', 'Nurse', 'Doctor'], required: true},
     status: {type: String, enum: ['Active', 'Inactive'], required: true, default: "Active"},
     dateCreated: {type: Date, required: true},
     dateUpdated: {type: Date, required: true}
 })
 
-const User = mongoose.model('User', userSchema)
+const User = mongoose.model('Users', userSchema)
 
 module.exports = User

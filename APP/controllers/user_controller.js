@@ -10,7 +10,7 @@ const { nameRegex,
 const addUser = (req, res, next)=>{
     
     try {
-        let {name, emailAddress, userType, dateCreated} = req.body
+        let {name, emailAddress, password, userType, dateCreated} = req.body
 
         //CHECK FOR NULL OR EMPTY FIELDS
         const nullFields = []
@@ -26,6 +26,7 @@ const addUser = (req, res, next)=>{
         }
 
         if (checkIfNull(emailAddress)) nullFields.push('email address')
+        if (checkIfNull(password)) nullFields.push('password')
         if (checkIfNull(userType)) nullFields.push('user type')
         if (checkIfNull(dateCreated)) nullFields.push('date created')
 
@@ -62,6 +63,7 @@ const addUser = (req, res, next)=>{
                 let user = new User ({
                     name: name,
                     emailAddress: emailAddress,
+                    password: password,
                     userType: userType,
                     status: "Active",
                     dateCreated: dateCreated,
