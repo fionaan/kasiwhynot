@@ -192,29 +192,45 @@ const searchPatientList = async (req, res, next) => {
     const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
 
     try {
-        let matchCondition = {}
-        let noHyphen = search.replace(/-/g, '')
+        let matchCondition = {} // what the condition for the search would be
+        let noHyphen = search.replace(/-/g, '') //remove the hyphen from the id in case there is
 
-        if (/^[0-9]{4}-[0-9]{5}$/.test(search) && category == 'students') {
-            matchCondition['studentNo'] = { search };
-        } else if (/^\d+$/.test(search) && category == 'employees') {
-            matchCondition['employeeNo'] = { $regex: /^[0-9]{5}$/ };
-        } else {
-            // Assuming 'search' contains either an ID or a name
+        if (utilFunc.checkIfNull(search) == true || search.trim() == "") { //check if search field is empty
+            return res.status(400).send({
+                successful: false,
+                message: "The search field is empty"
+            });
+        }
+
+        if (/^\d+$/.test(noHyphen) && category == 'students') { //if the search input are numbers only and category is 'students'
+            matchCondition['studentNo'] = {$regex: noHyphen} //system searches for the studentNo only
+        } 
+        else if (/^\d+$/.test(noHyphen) && category == 'employees') { //if the search input are numbers only and category is 'employees'
+            matchCondition['employeeNo'] = {$regex: noHyphen} //system searches for the employeeNo only
+        } 
+        else { //partial search for names
+            const searchWords = search.split(/\s+/).map(word => `(?=.*${word})`).join('')
+        
             matchCondition.$or = [
                 {
-                    'patientDetails.basicInfo.fullName.firstName': { $regex: search, $options: 'i' }
+                    $expr: {
+                        $regexMatch: {
+                            input: {
+                                $concat: [
+                                    '$patientDetails.basicInfo.fullName.firstName',
+                                    ' ',
+                                    '$patientDetails.basicInfo.fullName.middleName',
+                                    ' ',
+                                    '$patientDetails.basicInfo.fullName.lastName',
+                                ]
+                            },
+                            regex: new RegExp(searchWords, 'i'),
+                        },
+                    },
                 },
-                {
-                    'patientDetails.basicInfo.fullName.middleName': { $regex: search, $options: 'i' }
-                },
-                {
-                    'patientDetails.basicInfo.fullName.lastName': { $regex: search, $options: 'i' }
-                },
-                // Add additional conditions as needed based on the type of search
             ];
         }
-        console.log(matchCondition)
+
         let patientModel
         if (category == 'students'){
             patientModel = Student
@@ -223,7 +239,10 @@ const searchPatientList = async (req, res, next) => {
             patientModel = Employee
         }
         else {
-            console.log("The category input in the body is not recognized.")
+            return res.status(400).send({
+                successful: false,
+                message: "The category input in the body is not recognized."
+            })
         }
 
         let patient = await patientModel.aggregate([
