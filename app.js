@@ -18,9 +18,6 @@ const historyLogRouter = require('./APP/routers/historylog_router')
 const app = express();
 
 
-
-
-
 //CALL FUNCTION connectDB FOUND IN con_db FILE WHICH CONNECTS TO DATABASE
 db.connectDB()
 

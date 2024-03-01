@@ -2,6 +2,7 @@ const express = require('express')
 const patientController = require('../controllers/patient_controller')
 const router = express.Router()
 
+router.put('/addDental', patientController.addDentalRecord)
 router.post('/add', patientController.addRecord)
 router.get('/get/:pageNumber?', patientController.getPatientList)
 router.get('/getone', patientController.getPatient)
