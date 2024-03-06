@@ -1,0 +1,26 @@
+Add history log:
+
+{
+    "dateTime": "2004-02-02", 
+    "editedBy": "Dela Cruz, Juan S.", 
+    "historyType": "ADD", 
+    "recordClass": "Medical", 
+    "patientName": "Clarence Barber"
+}
+
+Add user account:
+
+{
+    "fullName": {
+        "firstName": "Juan",
+        "middleName": "D.",
+        "lastName" : "Santiago"
+    },
+    "emailAddress": "batsakinpinapasa@gmail.com",
+    "userType": "Nurse"
+}
+
+Add dental record:
+
+
+

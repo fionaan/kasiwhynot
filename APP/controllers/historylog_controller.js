@@ -9,8 +9,51 @@ const { dateTimeRegex,
 
 const getAllLogs = async(req, res, next)=>{
     try{
-        let logs = await historyLog.find()
-        if(logs === ""){
+        
+        const pageNumber = parseInt(req.params.pageNumber) || 1 // default to 1 if no param is set
+        const pageSize = 50 // limits of records to be fetched per page
+        const skip = (pageNumber - 1) * pageSize
+
+        // CHECK IF pageNumber IS VALID BASED ON NUMBER OF AVAILABLE RECORDS
+        const totalCount = await historyLog.countDocuments()
+
+        if (skip >= totalCount && totalCount !== 0) {
+            return res.status(404).send({
+                successful: false,
+                message: "Invalid page number. No history logs found."
+            })
+        }
+
+        let logs = await historyLog.aggregate([
+            {
+                $project: {  // 1 is to include the field ; 0 to exclude 
+                    dateTime: {  // converts UTC dateTime value to YYYY-mm-dd HH:MM local timezone
+                        $dateToString: {
+                            format: "%Y-%m-%d %H:%M",
+                            date: { $toDate: "$dateTime" },
+                            timezone: "Asia/Manila"
+                        }
+                    },
+                    editedBy: 1,
+                    historyType: 1,
+                    recordClass: 1,
+                    patientName: 1
+                }
+            },
+            {
+                $sort: {  // -1 for newest to oldest based on dateTime field
+                    'dateTime': -1
+                }
+            },
+            {
+                $skip: skip // for pagination
+            },
+            {
+                $limit: pageSize // for pagination
+            },
+        ])
+
+        if(logs.length === 0){
             res.status(404).send({
                 successful: false,
                 message: "No history logs recorded yet."
@@ -35,11 +78,10 @@ const getAllLogs = async(req, res, next)=>{
 const addLog = (req, res, next) => {
     try{
 
-        let {dateTime, editedBy, historyType, recordClass, patientName} = req.body
+        let {editedBy, historyType, recordClass, patientName} = req.body
 
         //CHECK FOR NULL OR EMPTY FIELDS
         const nullFields = []
-        if (checkIfNull(dateTime)) nullFields.push('date & time')
         if (checkIfNull(editedBy)) nullFields.push('edited by')
         if (checkIfNull(historyType)) nullFields.push('history type')
         if (checkIfNull(recordClass)) nullFields.push('record class')
@@ -58,7 +100,6 @@ const addLog = (req, res, next) => {
 
             //CHECK FOR FIELDS W INVALID VALUES
             const invalidFields = []
-            if (!dateTimeRegex.test(dateTime)) invalidFields.push('date & time')
             if (!nameRegex.test(editedBy)) invalidFields.push('edited by')
             if (!historyTypeList.includes(historyType)) invalidFields.push('history type')
             if (!recordClassList.includes(recordClass)) invalidFields.push('record class')
@@ -72,7 +113,7 @@ const addLog = (req, res, next) => {
             }
             else {
                 const log = new historyLog ({
-                    dateTime: dateTime,
+                    dateTime: Date.now(),
                     editedBy: editedBy,
                     historyType: historyType,
                     recordClass: recordClass,

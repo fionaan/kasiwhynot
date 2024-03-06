@@ -47,6 +47,30 @@ const checkMandatoryFields = (arrs)=>{
     return result
 }
 
+//GENERATES RANDOM PASSWORD
+function generatePassword() {
+
+    let password = ''
+    length = 15
+    const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    const lowerCase = "abcdefghijklmnopqrstuvwxyz"
+    const number = "1234567890"
+    const symbol = "~!@#$%^&*()_-+=/|{}[]><"
+    const allChars = upperCase + lowerCase + number + symbol
+    
+    password += upperCase[Math.floor(Math.random() * upperCase.length)]
+    password += lowerCase[Math.floor(Math.random() * lowerCase.length)]
+    password += number[Math.floor(Math.random() * number.length)]
+    password += symbol[Math.floor(Math.random() * symbol.length)]
+
+    while (password.length < length){
+        const randomIndex = Math.floor(Math.random() * allChars.length)
+        password += allChars[randomIndex]
+    }
+
+    return password
+}
+
 String.prototype.toProperCase = function()
 {
     return this.toLowerCase().replace(/^(.)|\s(.)/g, function($1) { return $1.toUpperCase(); })
@@ -63,5 +87,6 @@ module.exports = {
     checkIfNull,
     checkObjNull,
     checkMandatoryFields,
+    generatePassword,
     toProperCase: String.prototype.toProperCase
 }
