@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const {BaseModel, Student, Employee} = require('../models/patient_model')
+const { BaseModel, Student, Employee } = require('../models/patient_model')
 const utilFunc = require('../../utils')
 
 const addRecord = async (req, res) => {
@@ -7,53 +7,53 @@ const addRecord = async (req, res) => {
 
     // Create a new BasePatient document
     const basePatient = new BaseModel({
-      basicInfo,
-      laboratory,
-      vaccination,
-      medicalHistory,
-      dentalRecords,
+        basicInfo,
+        laboratory,
+        vaccination,
+        medicalHistory,
+        dentalRecords,
     });
-  
+
     // Save the BasePatient document
     basePatient.save()
-      .then(savedBasePatient => {
-        if (category === 'students') {
-          // If the category is a student, create a new Student document
-          const studentData = { ...exclusiveData, details: savedBasePatient._id };
-          const student = new Student(studentData);
-  
-          // Save the Student document
-          return student.save();
-        } else if (category === 'employees') {
-          // If the category is an employee, create a new Employee document
-          const employeeData = { ...exclusiveData, details: savedBasePatient._id };
-          const employee = new Employee(employeeData);
-  
-          // Save the Employee document
-          return employee.save();
-        } else {
-          // Handle other categories as needed
-          return Promise.resolve();
-        }
-      })
-      .then(() => {
-        res.json({
-          successful: true,
-          message: 'Patient data added successfully',
-        });
-      })
-      .catch(error => {
-        console.error(error);
-        res.status(500).json({
-          successful: false,
-          message: 'Error adding patient data',
-          error: error.message,
-        });
-      });
-  }
+        .then(savedBasePatient => {
+            if (category === 'students') {
+                // If the category is a student, create a new Student document
+                const studentData = { ...exclusiveData, details: savedBasePatient._id };
+                const student = new Student(studentData);
 
-const getPatientList = async (req, res, next) => { 
-    const {category, sort} = req.body //user must input in body to select a category
+                // Save the Student document
+                return student.save();
+            } else if (category === 'employees') {
+                // If the category is an employee, create a new Employee document
+                const employeeData = { ...exclusiveData, details: savedBasePatient._id };
+                const employee = new Employee(employeeData);
+
+                // Save the Employee document
+                return employee.save();
+            } else {
+                // Handle other categories as needed
+                return Promise.resolve();
+            }
+        })
+        .then(() => {
+            res.json({
+                successful: true,
+                message: 'Patient data added successfully',
+            });
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(500).json({
+                successful: false,
+                message: 'Error adding patient data',
+                error: error.message,
+            });
+        });
+}
+
+const getPatientList = async (req, res, next) => {
+    const { category, sort } = req.body //user must input in body to select a category
     const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
     const pageSize = 50 //limit of records to be fetched
     const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
@@ -61,10 +61,10 @@ const getPatientList = async (req, res, next) => {
     try {
         let patientModel
 
-        if (category == 'students'){
+        if (category == 'students') {
             patientModel = Student
         }
-        else if (category == 'employees'){
+        else if (category == 'employees') {
             patientModel = Employee
         }
         else {
@@ -73,7 +73,7 @@ const getPatientList = async (req, res, next) => {
                 message: "The category input in the body is not recognized."
             });
         }
- 
+
         let patient = await patientModel.aggregate([
             {
                 $lookup: { //join base schema
@@ -97,8 +97,9 @@ const getPatientList = async (req, res, next) => {
                             '$patientDetails.basicInfo.fullName.firstName',
                             {
                                 $cond: { //middle name rules
-                                    if: { 
-                                        $ne: ['$patientDetails.basicInfo.fullName.middleName', ''] },
+                                    if: {
+                                        $ne: ['$patientDetails.basicInfo.fullName.middleName', '']
+                                    },
                                     then: {
                                         $concat: [
                                             ' ',
@@ -108,7 +109,7 @@ const getPatientList = async (req, res, next) => {
                                     },
                                     else: ''
                                 }
-                            }           
+                            }
                         ]
                     },
                     course: 1, //will only display for student
@@ -132,7 +133,7 @@ const getPatientList = async (req, res, next) => {
         ])
 
         //check if null
-        if (utilFunc.checkIfNull(patient) == true){
+        if (utilFunc.checkIfNull(patient) == true) {
             console.log(patient)
             res.status(404).send({
                 successful: false,
@@ -149,16 +150,16 @@ const getPatientList = async (req, res, next) => {
         }
     }
 
-    catch(err) {
+    catch (err) {
         res.status(500).send({
             successful: false,
             message: err.message
-        })   
+        })
     }
 }
 
-const getPatient = async (req, res, next) => { 
-    const {patientId, tab, category} = req.body //user must input the _id of the patient
+const getPatient = async (req, res, next) => {
+    const { patientId, tab, category } = req.body //user must input the _id of the patient
     const fieldName = tab  // Replace this with the actual variable or logic to determine the field name
     let projection = {} //for the project aggregation because project can't use dynamic variables, so we'll use an object
     projection[fieldName] = `$patientDetails.${fieldName}` //creating properties for projection object which contains the fields of the user's selected tab
@@ -166,7 +167,7 @@ const getPatient = async (req, res, next) => {
     try {
         let patientModel
 
-        if (category == 'students'){
+        if (category == 'students') {
             patientModel = Student
             if (fieldName == 'basicInfo') { //if the user selected basicInfo tab, add the Student schema's exclusive fields to the properties
                 projection['studentNo'] = 1
@@ -174,7 +175,7 @@ const getPatient = async (req, res, next) => {
                 projection['year'] = 1
             }
         }
-        else if (category == 'employees'){
+        else if (category == 'employees') {
             patientModel = Employee
             if (fieldName == 'basicInfo') { //if the user selected basicInfo tab, add the Employee schema's exclusive fields to the properties
                 projection['employeeNo'] = 1
@@ -216,7 +217,7 @@ const getPatient = async (req, res, next) => {
         ])
 
         //check if null
-        if (utilFunc.checkIfNull(patient) == true){
+        if (utilFunc.checkIfNull(patient) == true) {
             console.log(patient)
             res.status(404).send({
                 successful: false,
@@ -232,16 +233,16 @@ const getPatient = async (req, res, next) => {
         }
     }
 
-    catch(err) {
+    catch (err) {
         res.status(500).send({
             successful: false,
             message: err.message
-        })   
+        })
     }
 }
 
-const searchPatientList = async (req, res, next) => { 
-    const {category, sort, search} = req.body //user must input in body to select a category
+const searchPatientList = async (req, res, next) => {
+    const { category, sort, search } = req.body //user must input in body to select a category
     const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
     const pageSize = 50 //limit of records to be fetched
     const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
@@ -258,14 +259,14 @@ const searchPatientList = async (req, res, next) => {
         }
 
         if (/^\d+$/.test(noHyphen) && category == 'students') { //if the search input are numbers only and category is 'students'
-            matchCondition['studentNo'] = {$regex: noHyphen} //system searches for the studentNo only
-        } 
+            matchCondition['studentNo'] = { $regex: noHyphen } //system searches for the studentNo only
+        }
         else if (/^\d+$/.test(noHyphen) && category == 'employees') { //if the search input are numbers only and category is 'employees'
-            matchCondition['employeeNo'] = {$regex: noHyphen} //system searches for the employeeNo only
-        } 
+            matchCondition['employeeNo'] = { $regex: noHyphen } //system searches for the employeeNo only
+        }
         else { //partial search for names
             const searchWords = search.split(/\s+/).map(word => `(?=.*${word})`).join('')
-        
+
             matchCondition.$or = [
                 {
                     $expr: {
@@ -287,10 +288,10 @@ const searchPatientList = async (req, res, next) => {
         }
 
         let patientModel
-        if (category == 'students'){
+        if (category == 'students') {
             patientModel = Student
         }
-        else if (category == 'employees'){
+        else if (category == 'employees') {
             patientModel = Employee
         }
         else {
@@ -326,8 +327,9 @@ const searchPatientList = async (req, res, next) => {
                             '$patientDetails.basicInfo.fullName.firstName',
                             {
                                 $cond: { //middle name rules
-                                    if: { 
-                                        $ne: ['$patientDetails.basicInfo.fullName.middleName', ''] },
+                                    if: {
+                                        $ne: ['$patientDetails.basicInfo.fullName.middleName', '']
+                                    },
                                     then: {
                                         $concat: [
                                             ' ',
@@ -337,7 +339,7 @@ const searchPatientList = async (req, res, next) => {
                                     },
                                     else: ''
                                 }
-                            }           
+                            }
                         ]
                     },
                     course: 1, //will only display for student
@@ -361,7 +363,7 @@ const searchPatientList = async (req, res, next) => {
         ])
 
         //check if null
-        if (utilFunc.checkIfNull(patient) == true){
+        if (utilFunc.checkIfNull(patient) == true) {
             console.log(patient)
             res.status(404).send({
                 successful: false,
@@ -378,70 +380,152 @@ const searchPatientList = async (req, res, next) => {
         }
     }
 
-    catch(err) {
+    catch (err) {
         res.status(500).send({
             successful: false,
             message: err.message
-        })   
+        })
     }
 }
 
 const updateRecord = async (req, res) => {
     const { patientId, updatedData } = req.body;
-  
+
     try {
-      // Update the BasePatient document
-      const updatedBasePatient = await BaseModel.findByIdAndUpdate(patientId, updatedData.basicInfo, { new: true });
-  
-      if (!updatedBasePatient) {
-        return res.status(404).json({
-          successful: false,
-          message: 'Patient not found',
+        // Update the BasePatient document
+        const updatedBasePatient = await BaseModel.findByIdAndUpdate(patientId, updatedData.basicInfo, { new: true });
+
+        if (!updatedBasePatient) {
+            return res.status(404).json({
+                successful: false,
+                message: 'Patient not found',
+            });
+        }
+
+        // Update other related documents based on the category
+        if (updatedBasePatient.category === 'students') {
+            // Find and update the Student document
+            const updatedStudent = await Student.findOneAndUpdate({ details: patientId }, updatedData.exclusiveData, { new: true });
+
+            if (!updatedStudent) {
+                return res.status(404).json({
+                    successful: false,
+                    message: 'Student not found',
+                });
+            }
+        } else if (updatedBasePatient.category === 'employees') {
+            // Find and update the Employee document
+            const updatedEmployee = await Employee.findOneAndUpdate({ details: patientId }, updatedData.exclusiveData, { new: true });
+
+            if (!updatedEmployee) {
+                return res.status(404).json({
+                    successful: false,
+                    message: 'Employee not found',
+                });
+            }
+        }
+
+        // Send a success response
+        res.json({
+            successful: true,
+            message: 'Patient data updated successfully',
         });
-      }
-  
-      // Update other related documents based on the category
-      if (updatedBasePatient.category === 'students') {
-        // Find and update the Student document
-        const updatedStudent = await Student.findOneAndUpdate({ details: patientId }, updatedData.exclusiveData, { new: true });
-  
-        if (!updatedStudent) {
-          return res.status(404).json({
-            successful: false,
-            message: 'Student not found',
-          });
-        }
-      } else if (updatedBasePatient.category === 'employees') {
-        // Find and update the Employee document
-        const updatedEmployee = await Employee.findOneAndUpdate({ details: patientId }, updatedData.exclusiveData, { new: true });
-  
-        if (!updatedEmployee) {
-          return res.status(404).json({
-            successful: false,
-            message: 'Employee not found',
-          });
-        }
-      }
-  
-      // Send a success response
-      res.json({
-        successful: true,
-        message: 'Patient data updated successfully',
-      });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        successful: false,
-        message: 'Error updating patient data',
-        error: error.message,
-      });
+        console.error(error);
+        res.status(500).json({
+            successful: false,
+            message: 'Error updating patient data',
+            error: error.message,
+        });
     }
-  };  
+};
+
+const archivePatient = async (req, res) => {
+    const patientId = req.params.id;
+
+    try {
+        // Check if the patient is already archived
+        const patient = await BaseModel.findById(patientId);
+
+        if (!patient) {
+            return res.status(404).json({
+                successful: false,
+                message: 'Patient not found',
+            });
+        }
+
+        if (patient.archived) {
+            return res.status(400).json({
+                successful: false,
+                message: 'Patient is already archived',
+            });
+        }
+
+        // Archive the patient
+        patient.archived = true;
+        patient.archivedDate = new Date();
+        await patient.save();
+
+        res.json({
+            successful: true,
+            message: 'Patient archived successfully',
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            successful: false,
+            message: 'Error archiving patient',
+            error: error.message,
+        });
+    }
+};
+
+const unarchivePatient = async (req, res) => {
+    const patientId = req.params.id;
+
+    try {
+        // Check if the patient is archived
+        const patient = await BaseModel.findById(patientId);
+
+        if (!patient) {
+            return res.status(404).json({
+                successful: false,
+                message: 'Patient not found',
+            });
+        }
+
+        if (!patient.archived) {
+            return res.status(400).json({
+                successful: false,
+                message: 'Patient is not archived',
+            });
+        }
+
+        // Unarchive the patient
+        patient.archived = false;
+        patient.archivedDate = null;
+        await patient.save();
+
+        res.json({
+            successful: true,
+            message: 'Patient unarchived successfully',
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            successful: false,
+            message: 'Error unarchiving patient',
+            error: error.message,
+        });
+    }
+};
 
 module.exports = {
     getPatientList,
     getPatient,
     searchPatientList,
     addRecord,
-    updateRecord
+    updateRecord,
+    archivePatient,
+    unarchivePatient
 }

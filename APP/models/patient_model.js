@@ -152,7 +152,9 @@ const baseSchema = new Schema({
         },
         attachments: {type: String, required: true}
     },
-    dentalRecords: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DentalRecord' }]
+    dentalRecords: [{ type: mongoose.Schema.Types.ObjectId, ref: 'DentalRecord' }],
+    archived: { type: Boolean, default: false },
+    archivedDate: { type: Date, default: null }
  })
 
 // Student Schema
