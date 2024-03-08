@@ -16,7 +16,7 @@
 
 //CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
 const checkIfNull = (data) => {
-    return data == null || data === '' || typeof data === 'undefined';
+    return data == null || data === '' || typeof data === 'undefined' || data == [];
 }
 
 
@@ -34,7 +34,6 @@ const checkMandatoryFields = (data) => {
 };
 
 module.exports = {
-    checkIfRecordExists,
     checkIfNull,
     checkMandatoryFields
 }
