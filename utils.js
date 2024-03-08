@@ -1,3 +1,5 @@
+const mongoose = require('mongoose')
+
 //LIST OF ALL UTILITY FUNCTIONS
 
 //CHECKS IF DATA CONTAINS COMPLETE DATE & TIME VALUE
@@ -24,6 +26,23 @@ const historyTypeList = ['ADD', 'UPDATE', 'ARCHIVE', 'UNARCHIVE']
 //LIST REFERENCE FOR RECORD CLASS
 const recordClassList = ['Medical', 'Dental']
 
+//CHECKS IF THE GIVEN VALUE IS A VALID MONGOOSE OBJ ID
+const isObjIdValid = (id) => {   
+
+    const objId = mongoose.Types.ObjectId
+    if (objId.isValid(id)) {     
+        if (String(new objId(id)) === id) {        
+            return true      
+        } 
+        else {        
+            return false      
+        }    
+    } 
+    else {      
+        return false    
+    }  
+}
+
 //CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
 const checkIfNull = (data) => {
     return data == null || data === '' || typeof data === 'undefined';
@@ -31,8 +50,12 @@ const checkIfNull = (data) => {
 
 //CHECKS IF AN OBJECT ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE OBJECT IS NULL, OTHERWISE RETURNS FALSE.
 const checkObjNull = (obj)=>{
-    return (obj == null || obj == "null" || obj == "" || (typeof obj === "undefined"))
+    return (obj === null || obj == "null" || obj === "" || (typeof obj === "undefined"))
 }
+
+const checkArrNull = (arr)=>{
+    return ((typeof arr === "undefined") || arr.length === 0 || arr.includes("") && arr.length === 1)
+} 
 
 //CHECKS IF THE VALUE OF A MANDATORY FIELD IS NULL OR NOT. RETURNS TRUE IF ALL MANDATORY FIELDS ARE NOT NULL, OTHERWISE RETURNS FALSE.
 const checkMandatoryFields = (arrs)=>{
@@ -50,6 +73,30 @@ String.prototype.toProperCase = function()
     return this.toLowerCase().replace(/^(.)|\s(.)/g, function($1) { return $1.toUpperCase(); })
 }
 
+//GENERATES RANDOM PASSWORD
+function generatePassword() {
+
+    let password = ''
+    length = 15
+    const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    const lowerCase = "abcdefghijklmnopqrstuvwxyz"
+    const number = "1234567890"
+    const symbol = "~!@#$%^&*()_-+=/|{}[]><"
+    const allChars = upperCase + lowerCase + number + symbol
+    
+    password += upperCase[Math.floor(Math.random() * upperCase.length)]
+    password += lowerCase[Math.floor(Math.random() * lowerCase.length)]
+    password += number[Math.floor(Math.random() * number.length)]
+    password += symbol[Math.floor(Math.random() * symbol.length)]
+
+    while (password.length < length){
+        const randomIndex = Math.floor(Math.random() * allChars.length)
+        password += allChars[randomIndex]
+    }
+
+    return password
+}
+
 String.prototype.toProperCase = function()
 {
     return this.toLowerCase().replace(/^(.)|\s(.)/g, function($1) { return $1.toUpperCase(); })
@@ -63,8 +110,11 @@ module.exports = {
     userTypeList,
     historyTypeList,
     recordClassList,
+    isObjIdValid,
     checkIfNull,
     checkObjNull,
+    checkArrNull,
     checkMandatoryFields,
+    generatePassword,
     toProperCase: String.prototype.toProperCase
 }
