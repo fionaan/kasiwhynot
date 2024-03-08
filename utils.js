@@ -1,3 +1,5 @@
+const mongoose = require('mongoose')
+
 //LIST OF ALL UTILITY FUNCTIONS
 
 //CHECKS IF DATA CONTAINS COMPLETE DATE & TIME VALUE
@@ -23,6 +25,23 @@ const historyTypeList = ['ADD', 'UPDATE', 'ARCHIVE', 'UNARCHIVE']
 
 //LIST REFERENCE FOR RECORD CLASS
 const recordClassList = ['Medical', 'Dental']
+
+//CHECKS IF THE GIVEN VALUE IS A VALID MONGOOSE OBJ ID
+const isObjIdValid = (id) => {   
+
+    const objId = mongoose.Types.ObjectId
+    if (objId.isValid(id)) {     
+        if (String(new objId(id)) === id) {        
+            return true      
+        } 
+        else {        
+            return false      
+        }    
+    } 
+    else {      
+        return false    
+    }  
+}
 
 //CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
 const checkIfNull = (data)=>{
@@ -88,6 +107,7 @@ module.exports = {
     userTypeList,
     historyTypeList,
     recordClassList,
+    isObjIdValid,
     checkIfNull,
     checkObjNull,
     checkArrNull,

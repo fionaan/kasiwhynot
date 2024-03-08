@@ -1,9 +1,13 @@
 const historyLog = require('../models/historylog_model')
+const { BaseModel } = require('../models/patient_model')
+const user = require('../models/user_model')
 const { dateTimeRegex,
     nameRegex,
     historyTypeList,
     recordClassList,
+    isObjIdValid,
     checkIfNull,
+    checkObjNull,
     toProperCase } = require('../../utils')
 
 
@@ -26,6 +30,28 @@ const getAllLogs = async(req, res, next)=>{
 
         let logs = await historyLog.aggregate([
             {
+                $lookup: {  // join history logs w/ users
+                    from: 'users',
+                    localField: 'editedBy',
+                    foreignField: '_id',
+                    as: 'users'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'basepatients',
+                    localField: 'patientName',
+                    foreignField: '_id',
+                    as: 'patients'
+                }
+            },
+            {
+                $unwind: '$users'
+            },
+            {
+                $unwind: '$patients'
+            },
+            {
                 $project: {  // 1 is to include the field ; 0 to exclude 
                     dateTime: {  // converts UTC dateTime value to YYYY-mm-dd HH:MM local timezone
                         $dateToString: {
@@ -34,10 +60,80 @@ const getAllLogs = async(req, res, next)=>{
                             timezone: "Asia/Manila"
                         }
                     },
-                    editedBy: 1,
+                    editedBy: {
+                        $concat: [
+                            '$users.fullName.lastName',
+                            ', ',
+                            '$users.fullName.firstName',
+                            {
+                                $cond: { // middle name rules
+                                    if: {
+                                        $ne: [ {$type: '$users.fullName.middleName'}, 'missing']
+                                    },
+                                    then: {
+                                        $cond: {
+                                            if: {
+                                                $and: [
+                                                    { $ne: ['$users.fullName.middleName', null] },
+                                                    { $ne: ['$users.fullName.middleName', ''] },
+                                                    { $ne: ['$users.fullName.middleName', 'null'] },
+                                                    { $ne: [{ $trim: { input: '$users.fullName.middleName' }}, ''] },
+                                                    { $ne: [{ $trim: { input: '$users.fullName.middleName' }}, 'null'] }
+                                                ]
+                                            }, 
+                                            then: {
+                                                $concat: [
+                                                    ' ',
+                                                    { $substr: ['$users.fullName.middleName', 0, 1]},
+                                                    '.'
+                                                ]
+                                            },
+                                            else: ''
+                                        }
+                                    },
+                                    else: ''
+                                }
+                            }
+                        ]
+                    },
                     historyType: 1,
                     recordClass: 1,
-                    patientName: 1
+                    patientName: {
+                        $concat: [
+                            '$patients.basicInfo.fullName.lastName',
+                            ', ',
+                            '$patients.basicInfo.fullName.firstName',
+                            {
+                                $cond: {    // middle name rules
+                                    if: {
+                                        $ne: [{type: '$patients.basicInfo.fullName.middleName'}, 'missing']
+                                    },
+                                    then: {
+                                        $cond: {
+                                            if: {
+                                                $and: [
+                                                    { $ne: ['$patients.basicInfo.fullName.middleName', null] },
+                                                    { $ne: ['$patients.basicInfo.fullName.middleName', ''] },
+                                                    { $ne: ['$patients.basicInfo.fullName.middleName', 'null'] },
+                                                    { $ne: [{ $trim: { input: '$patients.basicInfo.fullName.middleName' }}, ''] },
+                                                    { $ne: [{ $trim: { input: '$patients.basicInfo.fullName.middleName' }}, 'null'] }
+                                                ]
+                                            },
+                                            then: {
+                                                $concat: [
+                                                    ' ',
+                                                    { $substr: ['$patients.basicInfo.fullName.middleName', 0, 1]},
+                                                    '.'
+                                                ]
+                                            },
+                                            else: ''
+                                        }
+                                    },
+                                    else: ''
+                                }
+                            }
+                        ]
+                    }
                 }
             },
             {
@@ -75,17 +171,60 @@ const getAllLogs = async(req, res, next)=>{
     }
 }
 
-const addLog = (req, res, next) => {
+const addLog = async (req, res, next) => {
     try{
 
         let {editedBy, historyType, recordClass, patientName} = req.body
 
         //CHECK FOR NULL OR EMPTY FIELDS
         const nullFields = []
-        if (checkIfNull(editedBy)) nullFields.push('edited by')
+        if (checkObjNull(editedBy)) nullFields.push('edited by')
         if (checkIfNull(historyType)) nullFields.push('history type')
         if (checkIfNull(recordClass)) nullFields.push('record class')
-        if (checkIfNull(patientName)) nullFields.push('patient name')
+        if (checkObjNull(patientName)) nullFields.push('patient name')
+
+        if (!isObjIdValid(editedBy)) {
+            nullFields.push('edited by')
+        }
+        else {
+            let editor = await user.findOne({_id: editedBy})
+
+            if (editor === null) {
+                nullFields.push('`edited by` user not existing')
+            }
+            else {
+                //CHECK IF USER OBJ HAS COMPLETE NAME
+                if (checkObjNull(editor.fullName)) {
+                    nullFields.push('edited by - full name')
+                }
+                else {
+                    if (checkIfNull(editor.fullName.firstName)) nullFields.push('edited by - first name')
+                    if (!(typeof editor.fullName.middleName === "undefined") && checkIfNull(editor.fullName.middleName)) nullFields.push('edited by - middle name')
+                    if (checkIfNull(editor.fullName.lastName)) nullFields.push('edited by - last name')
+                }
+            }
+        }
+
+        if (!isObjIdValid(patientName)) {
+            nullFields.push('patient name')
+        }
+        else {
+            let patient = await BaseModel.findOne({_id: patientName})
+
+            if (patient === null) {
+                nullFields.push('patientName/patient not existing')
+            }
+            else {
+                if (checkObjNull(patient.basicInfo.fullName)) {
+                    nullFields.push('patientName - full name')
+                } 
+                else {
+                    if (checkIfNull(patient.basicInfo.fullName.firstName)) nullFields.push('patientName - first name')
+                    if (!(typeof patient.basicInfo.fullName.middleName === "undefined") && checkIfNull(patient.basicInfo.fullName.middleName)) nullFields.push('patientName - middle name')
+                    if (checkIfNull(patient.basicInfo.fullName.lastName)) nullFields.push('patientName - last name')
+                }
+            }
+        }
 
         if(nullFields.length > 0){
             res.status(404).send({
@@ -100,10 +239,9 @@ const addLog = (req, res, next) => {
 
             //CHECK FOR FIELDS W INVALID VALUES
             const invalidFields = []
-            if (!nameRegex.test(editedBy)) invalidFields.push('edited by')
+
             if (!historyTypeList.includes(historyType)) invalidFields.push('history type')
             if (!recordClassList.includes(recordClass)) invalidFields.push('record class')
-            if (!nameRegex.test(patientName)) invalidFields.push('patient name')
             
             if (invalidFields.length > 0){
                 res.status(404).send({

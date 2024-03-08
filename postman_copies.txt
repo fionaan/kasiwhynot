@@ -1,11 +1,10 @@
 Add history log:
 
 {
-    "dateTime": "2004-02-02", 
-    "editedBy": "Dela Cruz, Juan S.", 
+    "editedBy": "65eac8db08bb861743108cf1", 
     "historyType": "ADD", 
     "recordClass": "Medical", 
-    "patientName": "Clarence Barber"
+    "patientName": "65def7ad4e3529bc2c5a619c"
 }
 
 Add user account:
@@ -22,5 +21,137 @@ Add user account:
 
 Add dental record:
 
+dentalRecord: {
+        isFilledOut: {type: Boolean, required: true, default: false},
+        q1: {type: [String], required: true, default: [""]},
+        q2: {type: Date, required: true, default: Date.now},
+        q3: {
+            hasDentures: {type: Boolean, required: true, default: false},
+            dentureType: {type: String, required: function() {return this.hasDentures}, default: ""},
+        },
+        q4: {type: String, required: true, default: ""},
+        q5: {
+            hasDentalProcedure: {type: Boolean, required: true, default: false},
+            pastDentalSurgery: [{
+                name: {type: String, required: function() {return this.hasDentalProcedure}, default: ""},
+                date: {type: Date, required: function() {return this.hasDentalProcedure}, default: Date.now}
+            }]
+        },
+        q6: {
+            55: {type: [String], required: false, default: [""]},	
+            54: {type: [String], required: false, default: [""]},	
+            53: {type: [String], required: false, default: [""]},	
+            52: {type: [String], required: false, default: [""]},	
+            51: {type: [String], required: false, default: [""]},	
+            61: {type: [String], required: false, default: [""]},	
+            62: {type: [String], required: false, default: [""]},	
+            63: {type: [String], required: false, default: [""]},	
+            64: {type: [String], required: false, default: [""]},	
+            65: {type: [String], required: false, default: [""]},	
+            18: {type: [String], required: false, default: [""]},	
+            17: {type: [String], required: false, default: [""]},	
+            16: {type: [String], required: false, default: [""]},	
+            15: {type: [String], required: false, default: [""]},	
+            14: {type: [String], required: false, default: [""]},	
+            13: {type: [String], required: false, default: [""]},	
+            12: {type: [String], required: false, default: [""]},	
+            11: {type: [String], required: false, default: [""]},	
+            21: {type: [String], required: false, default: [""]},	
+            22: {type: [String], required: false, default: [""]},	
+            23: {type: [String], required: false, default: [""]},	
+            24: {type: [String], required: false, default: [""]},	
+            25: {type: [String], required: false, default: [""]},	
+            26: {type: [String], required: false, default: [""]},	
+            27: {type: [String], required: false, default: [""]},	
+            28: {type: [String], required: false, default: [""]},	
+            48: {type: [String], required: false, default: [""]},	
+            47: {type: [String], required: false, default: [""]},	
+            46: {type: [String], required: false, default: [""]},	
+            45: {type: [String], required: false, default: [""]},	
+            44: {type: [String], required: false, default: [""]},	
+            43: {type: [String], required: false, default: [""]},	
+            42: {type: [String], required: false, default: [""]},	
+            41: {type: [String], required: false, default: [""]},	
+            31: {type: [String], required: false, default: [""]},	
+            32: {type: [String], required: false, default: [""]},	
+            33: {type: [String], required: false, default: [""]},	
+            34: {type: [String], required: false, default: [""]},	
+            35: {type: [String], required: false, default: [""]},	
+            36: {type: [String], required: false, default: [""]},	
+            37: {type: [String], required: false, default: [""]},	
+            38: {type: [String], required: false, default: [""]},	
+            85: {type: [String], required: false, default: [""]},	
+            84: {type: [String], required: false, default: [""]},	
+            83: {type: [String], required: false, default: [""]},	
+            82: {type: [String], required: false, default: [""]},	
+            81: {type: [String], required: false, default: [""]},	
+            71: {type: [String], required: false, default: [""]},	
+            72: {type: [String], required: false, default: [""]},	
+            73: {type: [String], required: false, default: [""]},	
+            74: {type: [String], required: false, default: [""]},	
+            75: {type: [String], required: false, default: [""]}
+            
+        },
+        q7: {
+            presenceOfDebris: {type: Boolean, required: true, default: false},
+            presenceOfToothStain: {type: Boolean, required: true, default: false},
+            presenceOfGingivitis: {type: Boolean, required: true, default: false},
+            presenceOfPeriodontalPocket: {type: Boolean, required: true, default: false},
+            presenceOfOralBiofilm: {type: Boolean, required: true, default: false},
+            underOrthodonticTreatment: {
+                hasTreatment: {type: Boolean, required: true, default: false},
+                date: {type: Date, required: function() {return this.hasTreatment}, default: Date.now} 
+            }
+        },
+        q8: {
+            numTeethPresent: {
+                temporary: {type: Number, required: true, default: 0}, 
+                permanent: {type: Number, required: true, default: 0}
+            }, 
+            numCariesFreeTeeth: {
+                temporary: {type: Number, required: true, default: 0}, 
+                permanent: {type: Number, required: true, default: 0}
+            }, 
+            numTeethforFilling: {
+                temporary: {type: Number, required: true, default: 0}, 
+                permanent: {type: Number, required: true, default: 0}
+            }, 
+            numTeethforExtraction: {
+                temporary: {type: Number, required: true, default: 0}, 
+                permanent: {type: Number, required: true, default: 0}
+            }, 
+            totalNumDecayedTeeth: {
+                temporary: {type: Number, required: true, default: 0}, 
+                permanent: {type: Number, required: true, default: 0}
+            }, 
+            numFilledTeeth: {
+                temporary: {type: Number, required: true, default: 0}, 
+                permanent: {type: Number, required: true, default: 0}
+            }, 
+            numMissingTeeth: {
+                temporary: {type: Number, required: true, default: 0}, 
+                permanent: {type: Number, required: true, default: 0}
+            }, 
+            numUneruptedTeeth: {
+                temporary: {type: Number, required: true, default: 0}, 
+                permanent: {type: Number, required: true, default: 0}
+            }
+        },
+        q9: {
+            hasDentofacialAb: {type: Boolean, required: true, default: false},
+            name: {type: [String], required: function() {return this.hasDentofacialAb}, default: ""}
+        },
+        q10: {
+            needUpperDenture: {type: Number, required: true, default: 0},
+            needLowerDenture: {type: Number, required: true, default: 0}
+        },
+        notes: {type: String, required: false, default: ""},
+        attachments: [
+            {
+                filename: {type: String, required: false, default: ""},
+                urlLink: {type: String, required: false, default: ""}
+            }
+        ]
+    }
 
 
