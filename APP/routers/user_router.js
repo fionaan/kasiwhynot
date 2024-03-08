@@ -1,7 +1,6 @@
 const express = require('express')
 const userController = require('../controllers/user_controller')
 const router = express.Router()
-const userController = require('../controllers/user_controller')
 
 //for reference lang
 // router.post('/add', studentController.addStudent)

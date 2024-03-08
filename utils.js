@@ -41,21 +41,14 @@ const checkMandatoryFields = (arrs)=>{
     arrs.forEach(data => {
         if (checkIfNull(data) == true){
             result = false
-
-//CHECKS IF THE VALUE OF A MANDATORY FIELD IS NULL OR NOT. RETURNS TRUE IF ALL MANDATORY FIELDS ARE NOT NULL, OTHERWISE RETURNS FALSE.
-// what is dis mygz
-const checkMandatoryFieldsMygz = (data) => {
-    let result = true;
-
-    Object.values(data).forEach((el) => {
-        if (checkIfNull(el)) {
-            result = false;
-
         }
-    });
+    })
+}
 
-    return result;
-};
+String.prototype.toProperCase = function()
+{
+    return this.toLowerCase().replace(/^(.)|\s(.)/g, function($1) { return $1.toUpperCase(); })
+}
 
 String.prototype.toProperCase = function()
 {
@@ -70,7 +63,6 @@ module.exports = {
     userTypeList,
     historyTypeList,
     recordClassList,
-    checkIfRecordExists,
     checkIfNull,
     checkObjNull,
     checkMandatoryFields,
