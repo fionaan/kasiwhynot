@@ -4,7 +4,7 @@ const {BaseModel, Student, Employee} = require('../models/patient_model')
 const utilFunc = require('../../utils')
 
 const addRecord = async (req, res) => {
-    const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecords, exclusiveData, category } = req.body;fdfdfd
+    const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category } = req.body;
 
     // Create a new BasePatient document
     const basePatient = new BaseModel({
@@ -659,7 +659,7 @@ const updateRecord = async (req, res) => {
                 });
             }
         }
-
+        console.log(updatedData)
         // Send a success response
         res.json({
             successful: true,
