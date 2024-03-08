@@ -270,7 +270,7 @@ const baseSchema = new Schema({
         },
         q9: {
             hasDentofacialAb: {type: Boolean, required: true, default: false},
-            name: {type: [String], required: function() {return this.hasDentofacialAb}, default: ""}
+            name: {type: [String], required: function() {return this.hasDentofacialAb}, default: [""]}
         },
         q10: {
             needUpperDenture: {type: Number, required: true, default: 0},

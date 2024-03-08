@@ -10,6 +10,7 @@ const router = express.Router()
 //router.put('/update/:id', studentController.updateStudent)
 
 router.put('/addDental', patientController.addDentalRecord)
+router.post('/add', patientController.addRecord)
 
 module.exports = router
 

@@ -50,7 +50,7 @@ const checkIfNull = (data)=>{
 
 //CHECKS IF AN OBJECT ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE OBJECT IS NULL, OTHERWISE RETURNS FALSE.
 const checkObjNull = (obj)=>{
-    return (obj == null || obj == "null" || obj == "" || (typeof obj === "undefined"))
+    return (obj === null || obj == "null" || obj === "" || (typeof obj === "undefined"))
 }
 
 const checkArrNull = (arr)=>{
