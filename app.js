@@ -18,9 +18,6 @@ const historyLogRouter = require('./APP/routers/historylog_router')
 const app = express();
 
 
-
-
-
 //CALL FUNCTION connectDB FOUND IN con_db FILE WHICH CONNECTS TO DATABASE
 db.connectDB()
 
@@ -64,9 +61,10 @@ app.use((req, res, next)=>{
 
 
 //MIDDLEWARE FOR THE ROUTERS
-app.use('/patients', patientRouter);
-app.use('/users', userRouter);
-app.use('/logs', historyLogRouter);
+app.use('/patients', patientRouter)
+app.use('/users', userRouter)
+app.use('/logs', historyLogRouter)
+app.use(express.json())
 
 //ERROR MIDDLEWARES
 app.use((req, res, next)=>{

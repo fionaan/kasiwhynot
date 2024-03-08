@@ -1,5 +1,5 @@
 const express = require('express')
-const studentController = require('../controllers/user_controller')
+const userController = require('../controllers/user_controller')
 const router = express.Router()
 const userController = require('../controllers/user_controller')
 
@@ -9,5 +9,7 @@ router.get('/viewProfile', userController.viewProfileSetting)
 // router.get('/filter', studentController.filterStudents)
 // router.delete('/delete/:id', studentController.deleteStudent)
 // router.put('/update/:id', studentController.updateStudent)
+
+router.post('/create', userController.addUser)
 
 module.exports = router
