@@ -34,6 +34,10 @@ const checkObjNull = (obj)=>{
     return (obj == null || obj == "null" || obj == "" || (typeof obj === "undefined"))
 }
 
+const checkArrNull = (arr)=>{
+    return ((typeof arr === "undefined") || arr.length === 0 || arr.includes("") && arr.length === 1)
+} 
+
 //CHECKS IF THE VALUE OF A MANDATORY FIELD IS NULL OR NOT. RETURNS TRUE IF ALL MANDATORY FIELDS ARE NOT NULL, OTHERWISE RETURNS FALSE.
 const checkMandatoryFields = (arrs)=>{
     let result = true
@@ -86,6 +90,7 @@ module.exports = {
     recordClassList,
     checkIfNull,
     checkObjNull,
+    checkArrNull,
     checkMandatoryFields,
     generatePassword,
     toProperCase: String.prototype.toProperCase

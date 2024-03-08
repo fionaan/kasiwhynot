@@ -151,13 +151,14 @@ const baseSchema = new Schema({
         attachments: {type: String, required: true}
     },
     dentalRecord: {
+        isFilledOut: {type: Boolean, required: true, default: false},
         q1: {type: [String], required: true, default: [""]},
         q2: {type: Date, required: true, default: Date.now},
-        q3: {type: String, required: true, default: ""},
-        q4: {
+        q3: {
             hasDentures: {type: Boolean, required: true, default: false},
             dentureType: {type: String, required: function() {return this.hasDentures}, default: ""},
         },
+        q4: {type: String, required: true, default: ""},
         q5: {
             hasDentalProcedure: {type: Boolean, required: true, default: false},
             pastDentalSurgery: [{
