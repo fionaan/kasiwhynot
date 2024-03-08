@@ -283,7 +283,9 @@ const baseSchema = new Schema({
                 urlLink: {type: String, required: false, default: ""}
             }
         ]
-    }
+    },
+    archived: { type: Boolean, default: false },
+    archivedDate: { type: Date, default: null }
  })
 
 // Student Schema
