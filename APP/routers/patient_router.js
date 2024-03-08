@@ -10,5 +10,7 @@ router.get('/search/:pageNumber?', patientController.searchPatientList)
 router.put('/update/:id', patientController.updateRecord)
 router.put('/archive/:id', patientController.archivePatient);
 router.put('/unarchive/:id', patientController.unarchivePatient);
+router.get('/filterList', patientController.getFilterList)
+router.get('/getFilter/:pageNumber?', patientController.getFilteredResultList)
 
 module.exports = router;

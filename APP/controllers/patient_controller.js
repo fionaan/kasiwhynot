@@ -160,7 +160,7 @@ const getPatientList = async (req, res, next) => {
 
 const getPatient = async (req, res, next) => { 
     const {patientId, tab, category} = req.body //user must input the _id of the patient
-    const fieldName = tab  // Replace this with the actual variable or logic to determine the field name
+    const fieldName = tab
     let projection = {} //for the project aggregation because project can't use dynamic variables, so we'll use an object
     projection[fieldName] = `$patientDetails.${fieldName}` //creating properties for projection object which contains the fields of the user's selected tab
 
@@ -755,6 +755,175 @@ const unarchivePatient = async (req, res) => {
     }
 };
 
+const getFilterList = async (req, res, next) => {
+    const {category} = req.body
+
+    try {
+        let courseOrDepartment
+        let yearOrRole
+        let campus
+
+        if (category == 'students') {
+            courseOrDepartment = await Student.distinct('course')
+            yearOrRole = await Student.distinct('year')
+            campus = await BaseModel.distinct('basicInfo.campus')
+        }
+        else if (category == 'employees') {
+            courseOrDepartment = await Employee.distinct('department')
+            yearOrRole = await Employee.distinct('role')
+            campus = await BaseModel.distinct('campus')
+        }
+        else {
+            return res.status(400).send({
+                successful: false,
+                message: "The category input in the body is not recognized."
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: {
+                courseOrDepartment,
+                yearOrRole,
+                campus,
+            },
+        });
+    }
+
+    catch(err) {
+        res.status(500).send({
+            successful: false,
+            message: err.message
+        })   
+    }
+}
+
+const getFilteredResultList = async (req, res, next) => {
+    const {filters, category, sort} = req.body
+    const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
+    const pageSize = 50 //limit of records to be fetched
+    const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
+
+    try {
+        let patientModel
+        let matchCondition = {}
+
+        if (category == 'students'){
+            patientModel = Student
+
+            if (filters.course) {
+                matchCondition['course'] = {$in: filters.course}
+            }
+            if (filters.year) {
+                matchCondition['year'] = {$in: filters.year}
+            }
+        }
+        else if (category == 'employees'){
+            patientModel = Employee
+
+            if (filters.department) {
+                matchCondition['department'] = {$in: filters.department}
+            }
+            if (filters.role) {
+                matchCondition['role'] = {$in: filters.role}
+            }
+        }
+        else {
+            return res.status(400).send({
+                successful: false,
+                message: "The category input in the body is not recognized."
+            })
+        }
+
+        if (filters.campus) {
+            matchCondition['patientDetails.basicInfo.campus'] = {$in: filters.campus}
+        }
+
+        let patient = await patientModel.aggregate([
+            {
+                $lookup: {
+                    from: 'basepatients',
+                    localField: 'details',
+                    foreignField: '_id',
+                    as: 'patientDetails'
+                }
+            },
+            {
+                $unwind: '$patientDetails'
+            },
+            {
+                $match: matchCondition
+            },
+            {
+                $project: {
+                    studentNo: 1, //will only display for student
+                    employeeNo: 1, //will only display for employee
+                    fullName: {
+                        $concat: [
+                            '$patientDetails.basicInfo.fullName.lastName',
+                            ', ',
+                            '$patientDetails.basicInfo.fullName.firstName',
+                            {
+                                $cond: { //middle name rules
+                                    if: { 
+                                        $ne: ['$patientDetails.basicInfo.fullName.middleName', ''] },
+                                    then: {
+                                        $concat: [
+                                            ' ',
+                                            { $substr: ['$patientDetails.basicInfo.fullName.middleName', 0, 1] },
+                                            '.'
+                                        ]
+                                    },
+                                    else: ''
+                                }
+                            }           
+                        ]
+                    },
+                    course: 1, //will only display for student
+                    year: 1, //will only display for student
+                    department: 1, //will only display for employee
+                    campus: '$patientDetails.basicInfo.campus',
+                    // _id: 0 //exlude _id from results
+                }
+            },
+            {
+                $sort: {
+                    'fullName': sort
+                }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: pageSize
+            },
+        ])
+        
+        if (utilFunc.checkIfNull(patient) == true){
+            console.log(patient)
+            res.status(404).send({
+                successful: false,
+                message: "No patients found"
+            })
+        }
+        else {
+            res.status(200).send({
+                successful: true,
+                message: "Retrieved all patients.",
+                count: patient.length,
+                data: patient
+            })
+        }
+    }
+
+    catch(err) {
+        res.status(500).send({
+            successful: false,
+            message: err.message
+        })   
+    }
+}
+
 module.exports = {
     getPatientList,
     getPatient,
@@ -763,5 +932,7 @@ module.exports = {
     addDentalRecord,
     updateRecord,
     archivePatient,
-    unarchivePatient
+    unarchivePatient,
+    getFilterList,
+    getFilteredResultList
 }
