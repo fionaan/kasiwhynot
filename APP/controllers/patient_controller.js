@@ -1,10 +1,11 @@
 const {checkIfNull, checkIfNull2, checkObjNull, checkArrNull, q4Values, q6Values} = require('../../utils')
-const mongoose = require('mongoose')
 const {BaseModel, Student, Employee} = require('../models/patient_model')
+const { addLog } = require('./historylog_controller') 
+const mongoose = require('mongoose')
 const utilFunc = require('../../utils')
 
 const addRecord = async (req, res) => {
-    const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category } = req.body;
+    const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category, editedBy } = req.body;
 
     // Create a new BasePatient document
     const basePatient = new BaseModel({
@@ -38,10 +39,26 @@ const addRecord = async (req, res) => {
         }
       })
       .then(() => {
-        res.json({
-          successful: true,
-          message: 'Patient data added successfully',
-        });
+        console.log(basePatient._id)
+        let s_log, m_log
+
+        addLog(editedBy, "ADD", "Medical", basePatient._id, await ((status_log, successful, message)=>{
+           s_log = successful,
+           m_log = message
+        }))
+
+        res.status(200).send({
+            successful_patient: true,
+            message_patient: 'Patient data added successfully',
+            history_log_status: {
+                success: s_log,
+                meess: m_log            
+            }
+        })
+        // res.json({
+        //   successful: true,
+        //   message: 'Patient data added successfully',
+        // });
       })
       .catch(error => {
         console.error(error);

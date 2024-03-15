@@ -169,10 +169,8 @@ const getAllLogs = async(req, res, next)=>{
     }
 }
 
-const addLog = async (req, res, next) => {
+const addLog = async (editedBy, historyType, recordClass, patientName, callback) => {
     try{
-
-        let {editedBy, historyType, recordClass, patientName} = req.body
 
         //CHECK FOR NULL OR EMPTY FIELDS
         const nullFields = []
@@ -227,10 +225,11 @@ const addLog = async (req, res, next) => {
         }
 
         if(nullFields.length > 0){
-            res.status(404).send({
-                successful: false,
-                message: `Missing data in the following fields: ${nullFields.join(', ')}`
-            })
+            callback(404, false, `Missing data in the following fields: ${nullFields.join(', ')}`)
+            // res.status(404).send({
+            //     successful: false,
+            //     message: `Missing data in the following fields: ${nullFields.join(', ')}`
+            // })
         } 
         else {
 
@@ -244,10 +243,11 @@ const addLog = async (req, res, next) => {
             if (!recordClassList.includes(recordClass)) invalidFields.push('record class')
             
             if (invalidFields.length > 0){
-                res.status(404).send({
-                    successful: false,
-                    message: `Invalid values detected for the following fields: ${invalidFields.join(', ')}`
-                })
+                callback(404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}`)
+                // res.status(404).send({
+                //     successful: false,
+                //     message: `Invalid values detected for the following fields: ${invalidFields.join(', ')}`
+                // })
             }
             else {
                 const log = new historyLog ({
@@ -260,26 +260,29 @@ const addLog = async (req, res, next) => {
     
                 log.save()
                 .then((result)=>{
-                    res.status(200).send({
-                        successful: true,
-                        message: "Successfully added a new history log.",
-                        added_log: result
-                    })
+                    callback(200, true, result)
+                    // res.status(200).send({
+                    //     successful: true,
+                    //     message: "Successfully added a new history log.",
+                    //     added_log: result
+                    // })
                 })
                 .catch((error) => {
-                    res.status(500).send({
-                        successful: false,
-                        message: error.message
-                    })
+                    callback(500, false, error.message)
+                    // res.status(500).send({
+                    //     successful: false,
+                    //     message: error.message
+                    // })
                 })
             }
         }
     }
     catch(err){
-        res.status(500).send({
-            successful: false,
-            message: err.message
-        })
+        callback(500, false, err.message)
+        // res.status(500).send({
+        //     successful: false,
+        //     message: err.message
+        // })
     }
 
 }
