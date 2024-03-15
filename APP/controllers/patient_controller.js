@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const utilFunc = require('../../utils')
 
 const addRecord = async (req, res) => {
+    let pass_patient = {}
     const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category, editedBy } = req.body;
 
     // Create a new BasePatient document
@@ -15,10 +16,11 @@ const addRecord = async (req, res) => {
       medicalHistory,
       dentalRecord,
     });
-  
+
     // Save the BasePatient document
     basePatient.save()
       .then(savedBasePatient => {
+        pass_patient = savedBasePatient
         if (category === 'students') {
           // If the category is a student, create a new Student document
           const studentData = { ...exclusiveData, details: savedBasePatient._id };
@@ -39,26 +41,31 @@ const addRecord = async (req, res) => {
         }
       })
       .then(() => {
-        console.log(basePatient._id)
-        let s_log, m_log
+        //ADD LOG FOR CREATION OF PATIENT RECORD 
+        const addLogPromise = (editedBy, type, category, id) => {
+            return new Promise((resolve, reject) => {
+                addLog(editedBy, type, category, id, (status_log, successful, message) => {
+                    resolve({ status_log, successful, message })
+                })
+            })
+        }
 
-        addLog(editedBy, "ADD", "Medical", basePatient._id, await ((status_log, successful, message)=>{
-           s_log = successful,
-           m_log = message
-        }))
-
-        res.status(200).send({
-            successful_patient: true,
-            message_patient: 'Patient data added successfully',
-            history_log_status: {
-                success: s_log,
-                meess: m_log            
-            }
+        addLogPromise(editedBy, "ADD", "Medical", pass_patient._id.toString())
+        .then(({ status_log, successful, message }) => {
+            res.status(200).send({
+                successful_patient: true,
+                message_patient: 'Patient data added successfully',
+                added_record: pass_patient,
+                successful_log: successful,
+                message_log: message
+            })
+        }).catch((error) => {
+            res.status(200).send({
+                successful_patient: true,
+                message_patient: 'Patient data added successfully',
+                error_log: error.message
+            })
         })
-        // res.json({
-        //   successful: true,
-        //   message: 'Patient data added successfully',
-        // });
       })
       .catch(error => {
         console.error(error);
@@ -66,8 +73,8 @@ const addRecord = async (req, res) => {
           successful: false,
           message: 'Error adding patient data',
           error: error.message,
-        });
-      });
+        })
+      })
   }
 
 const getPatientList = async (req, res, next) => { 

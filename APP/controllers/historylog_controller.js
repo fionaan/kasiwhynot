@@ -244,6 +244,7 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
             
             if (invalidFields.length > 0){
                 callback(404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}`)
+                //return {404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}`}
                 // res.status(404).send({
                 //     successful: false,
                 //     message: `Invalid values detected for the following fields: ${invalidFields.join(', ')}`
