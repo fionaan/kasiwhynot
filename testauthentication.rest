@@ -1,0 +1,27 @@
+GET http://localhost:7000/auth/login
+Content-Type: application/json
+
+{
+    "email": "panona@gmail.com",
+    "password": "pls"
+}
+
+###
+
+PUT http://localhost:7000/auth/change-password
+Content-Type: application/json
+
+{
+    "email": "panona@gmail.com",
+    "newPassword": "pls",
+    "confirmNewPassword": "pls"
+}
+
+###
+
+PUT http://localhost:7000/auth/forget-password
+Content-Type: application/json
+
+{
+    "email": "panona@gmail.com"
+}

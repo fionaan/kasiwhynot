@@ -11,7 +11,8 @@ const userSchema = new Schema({
     emailAddress: {type: String, required: true},
     password: {type: String, required: true},
     userType: {type: String, enum: ['Dentist', 'Nurse', 'Doctor'], required: true},
-    status: {type: String, enum: ['Active', 'Inactive'], required: true, default: "Active"}
+    status: {type: String, enum: ['Active', 'Inactive'], required: true, default: "Active"},
+    passChangeable: {type: Boolean, required: true, default: true},
 }, { timestamps : true})
 
 const User = mongoose.model('Users', userSchema)
