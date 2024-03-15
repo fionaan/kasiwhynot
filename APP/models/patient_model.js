@@ -231,7 +231,8 @@ const baseSchema = new Schema({
             presenceOfOralBiofilm: {type: Boolean, required: true, default: false},
             underOrthodonticTreatment: {
                 hasTreatment: {type: Boolean, required: true, default: false},
-                date: {type: Date, required: function() {return this.hasTreatment}, default: Date.now} 
+                yearStarted: {type: Number, required: function() {return this.hasTreatment}, default: Date.now},
+                lastAdjustment: {type: Date, required: function() {return this.hasTreatment}, default: Date.now}
             }
         },
         q8: {

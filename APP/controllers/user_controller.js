@@ -2,10 +2,9 @@ const User = require('../models/user_model')
 const { nameRegex,
         emailRegex,
         userTypeList,
-        dateRegex,
         toProperCase,
         checkObjNull,
-        checkIfNull,
+        checkIfNull2,
         generatePassword } = require('../../utils')
 
 const viewProfileSetting = async (req, res, next) => {
@@ -66,15 +65,15 @@ const addUser = (req, res, next)=>{
             nullFields.push('full name')
         }else{
             
-            if (checkIfNull(fullName.firstName)) nullFields.push('first name')
-            if (!(typeof fullName.middleName === "undefined") && (checkIfNull(fullName.middleName))) nullFields.push('middle name')
+            if (checkIfNull2(fullName.firstName)) nullFields.push('first name')
+            if (!(typeof fullName.middleName === "undefined") && (checkIfNull2(fullName.middleName))) nullFields.push('middle name')
 
-            if (checkIfNull(fullName.lastName)) nullFields.push('last name')
+            if (checkIfNull2(fullName.lastName)) nullFields.push('last name')
         }
 
-        if (checkIfNull(emailAddress)) nullFields.push('email address')
-        if (checkIfNull(password)) nullFields.push('password')
-        if (checkIfNull(userType)) nullFields.push('user type')
+        if (checkIfNull2(emailAddress)) nullFields.push('email address')
+        if (checkIfNull2(password)) nullFields.push('password')
+        if (checkIfNull2(userType)) nullFields.push('user type')
 
         if (nullFields.length > 0) {
             res.status(404).send({
@@ -87,12 +86,12 @@ const addUser = (req, res, next)=>{
             userType = userType.trim().toProperCase()
             fullName.firstName = fullName.firstName.trim()
             fullName.lastName = fullName.lastName.trim()
-            if (!checkIfNull(fullName.middleName)) fullName.middleName = fullName.middleName.trim()
+            if (!checkIfNull2(fullName.middleName)) fullName.middleName = fullName.middleName.trim()
 
             //CHECK FOR FIELDS W INVALID VALUES
             const invalidFields = []
             if (!nameRegex.test(fullName.firstName)) invalidFields.push('first name')
-            if ((!checkIfNull(fullName.middleName)) && (!nameRegex.test(fullName.middleName))) invalidFields.push('middle name')
+            if ((!checkIfNull2(fullName.middleName)) && (!nameRegex.test(fullName.middleName))) invalidFields.push('middle name')
             if (!nameRegex.test(fullName.lastName)) invalidFields.push('last name')
             if (!emailRegex.test(emailAddress)) invalidFields.push('email address')
             if (!userTypeList.includes(userType)) invalidFields.push('user type')
@@ -118,7 +117,7 @@ const addUser = (req, res, next)=>{
                     res.status(200).send({
                         successful: true,
                         message: "Successfully added a new user.",
-                        id: result._id
+                        added_user: result
                     })
                 })
                 .catch((error) => {

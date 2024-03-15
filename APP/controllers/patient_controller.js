@@ -1,4 +1,4 @@
-const {checkIfNull, checkObjNull, checkArrNull} = require('../../utils')
+const {checkIfNull, checkIfNull2, checkObjNull, checkArrNull, q4Values, q6Values} = require('../../utils')
 const mongoose = require('mongoose')
 const {BaseModel, Student, Employee} = require('../models/patient_model')
 const utilFunc = require('../../utils')
@@ -435,7 +435,7 @@ const addDentalRecord = async(req, res, next) => {
                     // CHECK FOR NULL DENTAL FIELDS  
                     nullFields = []
                     if (checkArrNull(dentalRecord.q1)) nullFields.push('q1')
-                    if (checkIfNull(dentalRecord.q2)) nullFields.push('q2')
+                    if (checkIfNull2(dentalRecord.q2)) nullFields.push('q2')
                     
                     if (checkObjNull(dentalRecord.q3)){
                         nullFields.push('q3')
@@ -445,11 +445,11 @@ const addDentalRecord = async(req, res, next) => {
                             nullFields.push('q3: Has Dentures')
                         } 
                         else {
-                            if (dentalRecord.q3.hasDentures === true && checkIfNull(dentalRecord.q3.dentureType)) nullFields.push('q3: Denture Type')
+                            if (dentalRecord.q3.hasDentures === true && checkIfNull2(dentalRecord.q3.dentureType)) nullFields.push('q3: Denture Type')
                         }
                     } 
                     
-                    if (checkIfNull(dentalRecord.q4)) nullFields.push('q4')
+                    if (checkIfNull2(dentalRecord.q4)) nullFields.push('q4')
                     
                     if (checkObjNull(dentalRecord.q5)){
                         nullFields.push('q5')
@@ -465,7 +465,7 @@ const addDentalRecord = async(req, res, next) => {
 
                                 if (Array.isArray(surgeries)){
                                     surgeries.forEach((surgery, index) => {
-                                        if (checkIfNull(surgery.name)) missingKeys.push(`q5: Past Dental Surgery: name - Index no. ${index}`)
+                                        if (checkIfNull2(surgery.name)) missingKeys.push(`q5: Past Dental Surgery: name - Index no. ${index}`)
                                         if (checkObjNull(surgery.date)) missingKeys.push(`q5: Past Dental Surgery: date - Index no. ${index}`)
                                     })
                                 }
@@ -506,7 +506,10 @@ const addDentalRecord = async(req, res, next) => {
                                 nullFields.push('q7: Under Orthodontic Treatment: Has Treatment') 
                             } 
                             else {
-                                if ((dentalRecord.q7.underOrthodonticTreatment.hasTreatment === true) && checkObjNull(dentalRecord.q7.underOrthodonticTreatment.date)) nullFields.push('q7: Under Orthodontic Treatment: date')
+                                if (dentalRecord.q7.underOrthodonticTreatment.hasTreatment === true){
+                                    if (checkObjNull(dentalRecord.q7.underOrthodonticTreatment.yearStarted)) nullFields.push('q7: Under Orthodontic Treatment: yearStarted')
+                                    if (checkObjNull(dentalRecord.q7.underOrthodonticTreatment.lastAdjustment)) nullFields.push('q7: Under Orthodontic Treatment: lastAdjustment')
+                                }
                             }
                         }
                     }
@@ -573,7 +576,6 @@ const addDentalRecord = async(req, res, next) => {
                             else {
                                 nullFields.push(`attachments array reassignment failed`)
                             } 
-                            
                         }
                     }
                     
@@ -587,7 +589,39 @@ const addDentalRecord = async(req, res, next) => {
                     else {
                         
                         // CHECK FOR INVALID VALUES
+                        invalidFields = []
+                        if (dentalRecord.q2 > Date.now()) invalidFields.push('q2 date is later than current date')
+                        if (!q4Values.includes(dentalRecord.q4)) invalidFields.push('q4 invalid value')
+                        if (dentalRecord.q5.hasDentalProcedure === true) {
+                            surgeries.forEach((surgery, index) => {
+                                if (surgery.date > Date.now()) invalidFields.push(`q5: Past Dental Surgery no. ${index}: provided date is later than current date`)
+                            })
+                        }
+                        for (let key in dentalRecord.q6) {
+                            if (Array.isArray(dentalRecord.q6[key])) {
+                                dentalRecord.q6[key].forEach((element) => {
+                                    if (!q6Values.includes(element)) invalidFields.push(`q6: #${key}: ${element} is invalid value`)
+                                })
+                            } 
+                            else {
+                                invalidFields.push(`q6 #${key} is not an array`)
+                            }
+                        }
+                        if (dentalRecord.q7.underOrthodonticTreatment.hasTreatment === true) {
+                            if (dentalRecord.q7.underOrthodonticTreatment.yearStarted > new Date().getFullYear()) invalidFields.push('q7: Under Orthodontic Treatment: yearStarted is later than current year')
+                            if (dentalRecord.q7.underOrthodonticTreatment.lastAdjustment > Date.now()) invalidFields.push('q7: Under Orthodontic Treatment: lastAdjustment is later than current date')
+                        }
+                        for (let keys in dentalRecord.q8) {
+                            if (dentalRecord.q8[key].temporary < 0 || dentalRecord.q8[key].temporary > 50) invalidFields.push(`q8: ${key}: invalid number for temporary`)
+                            if (dentalRecord.q8[key].permanent < 0 || dentalRecord.q8[key].permanent > 50) invalidFields.push(`q8: ${key}: invalid number for permanent`)
+                        }
+                        if (dentalRecord.q9.hasDentofacialAb === true) {
+                            //check if array nga
+                        }
+                        if (dentalRecord.q10.needUpperDenture < 0 || dentalRecord.q10.needUpperDenture > 3) invalidFields.push('q10: Need Upper Denture invalid number')
+                        if (dentalRecord.q10.needLowerDenture < 0 || dentalRecord.q10.needLowerDenture > 3) invalidFields.push('q10: Need Lower Denture invalid number')
 
+                        //check if attachments is an array
 
                         dentalRecord.isFilledOut = true
                         base.dentalRecord = dentalRecord
@@ -596,7 +630,7 @@ const addDentalRecord = async(req, res, next) => {
                         .then((result) => {
                             res.status(200).send({
                                 successful: true,
-                                message: `Successfully added Dental Record to ${result.basicInfo.firstName + " "+ result.basicInfo.lastName}`,
+                                message: `Successfully added Dental Record to ${result.basicInfo.fullName.firstName + " "+ result.basicInfo.fullName.lastName}`,
                                 data: result
                             })
                         })

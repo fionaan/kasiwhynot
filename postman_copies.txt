@@ -19,12 +19,13 @@ Add user account:
     "userType": "Nurse"
 }
 
-Add Dental Record w/ Category w/ Patient Id:
+Add Dental Record w/ Category & Patient Id (body):
 
 {
     "patientId": "65e151900885dea293357d6c",
     "category": "students",
     "dentalRecord": {
+        "isFilledOut": true,
         "q1": ["For Internship"],
         "q2": "2024-03-09T12:00:00Z",
         "q3": {
@@ -102,7 +103,8 @@ Add Dental Record w/ Category w/ Patient Id:
             "presenceOfOralBiofilm": false,
             "underOrthodonticTreatment": {
                 "hasTreatment": true,
-                "date": "2021-01-08T01:20:00Z" 
+                "yearStarted": 2021,
+                "lastAdjustment": "2024-01-08T01:20:00Z" 
             }
         },
         "q8": {
@@ -162,6 +164,7 @@ Add Dental Record w/ Category w/ Patient Id:
 Add dental record only (POPULATED):
 
 "dentalRecord": {
+        "isFilledOut": true,
         "q1": ["For Internship"],
         "q2": "2024-03-09T12:00:00Z",
         "q3": {
@@ -239,7 +242,8 @@ Add dental record only (POPULATED):
             "presenceOfOralBiofilm": false,
             "underOrthodonticTreatment": {
                 "hasTreatment": true,
-                "date": "2021-01-08T01:20:00Z" 
+                "yearStarted": 2021,
+                "lastAdjustment": "2024-01-08T01:20:00Z" 
             }
         },
         "q8": {
@@ -294,10 +298,11 @@ Add dental record only (POPULATED):
     }
 
 
-Add dental record only (NOT POPULATED/Blank/False):
-q2 and q4 need dummy data
+Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False):
+*q2 and q4 need dummy data
 
 "dentalRecord": {
+        "isFilledOut": false,
         "q1": [""],
         "q2": "1999-03-09T12:00:00Z",
         "q3": {
@@ -375,7 +380,8 @@ q2 and q4 need dummy data
             "presenceOfOralBiofilm": false,
             "underOrthodonticTreatment": {
                 "hasTreatment": false,
-                "date": "" 
+                "yearStarted": 0,
+                "lastAdjustment": ""
             }
         },
         "q8": {
@@ -429,6 +435,8 @@ q2 and q4 need dummy data
         ]
     }
 
+
+COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
 {
   "basicInfo": {
     "fullName": {
@@ -577,6 +585,7 @@ q2 and q4 need dummy data
     "attachments": "medical-history-attachments-url"
   },
 "dentalRecord": {
+        "isFilledOut": false,
         "q1": [""],
         "q2": "1999-03-09T12:00:00Z",
         "q3": {
@@ -654,7 +663,8 @@ q2 and q4 need dummy data
             "presenceOfOralBiofilm": false,
             "underOrthodonticTreatment": {
                 "hasTreatment": false,
-                "date": "" 
+                "yearStarted": 0,
+                "lastAdjustment": "" 
             }
         },
         "q8": {
