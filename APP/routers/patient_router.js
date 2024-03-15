@@ -1,10 +1,11 @@
 const express = require('express')
 const patientController = require('../controllers/patient_controller')
 const router = express.Router()
+const {authenticateToken} = require('../controllers/auth_controller')
 
 router.put('/addDental', patientController.addDentalRecord)
 router.post('/add', patientController.addRecord)
-router.get('/get/:pageNumber?', patientController.getPatientList)
+router.get('/get/:pageNumber?', authenticateToken, patientController.getPatientList)
 router.get('/getone', patientController.getPatient)
 router.get('/search/:pageNumber?', patientController.searchPatientList)
 router.put('/update/:id', patientController.updateRecord)
