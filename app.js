@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const db = require('./APP/models/con_db')
 
 
-//IMPORT ALL ROUTERS NEEDED
+//IMPORT ALL ROUTERS NEEDEDz
 //sample: const userRouter = require('./APP/routers/user_router');
 const patientRouter = require('./APP/routers/patient_router');
 const userRouter = require('./APP/routers/user_router');
