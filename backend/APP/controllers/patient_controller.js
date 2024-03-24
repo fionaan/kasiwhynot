@@ -2,6 +2,70 @@ const {checkIfNull, checkObjNull, checkArrNull} = require('../../utils')
 const mongoose = require('mongoose')
 const {BaseModel, Student, Employee} = require('../models/patient_model')
 const utilFunc = require('../../utils')
+const convertExcelToJson = require('convert-excel-to-json')
+const fs = require('fs-extra')
+const xlsx = require('xlsx')
+
+
+const addBulk = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        const filePath = 'uploads/' + req.file.filename;
+
+        const excelData = convertExcelToJson({
+            sourceFile: filePath,
+            header: {
+                rows: 1
+            },
+            columnToKey: {
+                "*": "{{columnHeader}}"
+            }
+        });
+
+        console.log('Excel Data:', excelData); // Debug log to check Excel data
+
+        if (!excelData || typeof excelData !== 'object') {
+            throw new Error('Invalid data format returned from convertExcelToJson');
+        }
+
+        // Combine all data from different sheets into a single array
+        let combinedData = [];
+        Object.values(excelData).forEach(sheetData => {
+            combinedData = [...combinedData, ...sheetData];
+        });
+
+        console.log('Combined Data:', combinedData); // Debug log to check combined data
+
+        // Process and save combinedData
+        // for (const data of combinedData) {
+        //     console.log('Processing Data:', data); // Debug log to check each data entry
+        //     const baseModelInstance = new BaseModel(data);
+        //     await baseModelInstance.validate(); // Validate the data
+        //     await baseModelInstance.save(); // Save the data // Assuming data matches the Patient schema
+        // }
+
+        // Delete the temporary file after processing
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error('Error deleting file:', err);
+            }
+        });
+
+        res.status(200).json({ success: true, message: 'Data imported successfully' });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'An error occurred' });
+    }
+};
+
+
+
+
+
+
 
 const addRecord = async (req, res) => {
     const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category } = req.body;
@@ -934,5 +998,6 @@ module.exports = {
     archivePatient,
     unarchivePatient,
     getFilterList,
-    getFilteredResultList
+    getFilteredResultList,
+    addBulk
 }

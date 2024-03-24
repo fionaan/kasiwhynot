@@ -15,7 +15,6 @@ const baseSchema = new Schema({
         dateOfBirth: {type: Date, required: true},
         age: {type: Number, required: true}, //should be automatic based on date of birth and current date next time
         gender: {type: String, required: true},
-        campus:{type: String, required: true},
         homeAddress: {type: String, required: true},
         contactNo: {type: Number, required: true},
         nationality: {type: String, required: true},
