@@ -23,43 +23,45 @@ const addBulk = async (req, res) => {
             columnToKey: {
                 "*": "{{columnHeader}}"
             }
-        });
+        })
 
         console.log('Excel Data:', excelData); // Debug log to check Excel data
 
         if (!excelData || typeof excelData !== 'object') {
-            throw new Error('Invalid data format returned from convertExcelToJson');
+            throw new Error('Invalid data format returned from convertExcelToJson')
         }
 
         // Combine all data from different sheets into a single array
         let combinedData = [];
         Object.values(excelData).forEach(sheetData => {
-            combinedData = [...combinedData, ...sheetData];
-        });
+            combinedData = [...combinedData, ...sheetData]
+        })
 
-        console.log('Combined Data:', combinedData); // Debug log to check combined data
+        console.log('Combined Data:', combinedData) // Debug log to check combined data
 
         // Process and save combinedData
         // for (const data of combinedData) {
-        //     console.log('Processing Data:', data); // Debug log to check each data entry
+        //     console.log('Processing Data:', data) // Debug log to check each data entry
         //     const baseModelInstance = new BaseModel(data);
-        //     await baseModelInstance.validate(); // Validate the data
-        //     await baseModelInstance.save(); // Save the data // Assuming data matches the Patient schema
+        //     await baseModelInstance.validate() // Validate the data
+        //     await baseModelInstance.save() // Save the data // Assuming data matches the Patient schema
         // }
-
+//Na  rread yung excel File pero di nag ssave sa database
+//Di ko sure if tama ba na pinaghiwalay ko mga sheets
+        
         // Delete the temporary file after processing
         fs.unlink(filePath, (err) => {
             if (err) {
                 console.error('Error deleting file:', err);
             }
-        });
+        })
 
-        res.status(200).json({ success: true, message: 'Data imported successfully' });
+        res.status(200).json({ success: true, message: 'Data imported successfully' })
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'An error occurred' });
+        console.error('Error:', error)
+        res.status(500).json({ error: 'An error occurred' })
     }
-};
+}
 
 
 
