@@ -7,6 +7,63 @@ const fs = require('fs-extra')
 const xlsx = require('xlsx')
 
 
+// const addBulk = async (req, res) => {
+//     try {
+//         if (!req.file) {
+//             return res.status(400).json({ error: 'No file uploaded' });
+//         }
+
+//         const filePath = 'uploads/' + req.file.filename;
+
+//         const excelData = convertExcelToJson({
+//             sourceFile: filePath,
+//             header: {
+//                 rows: 1
+//             },
+//             columnToKey: {
+//                 "*": "{{columnHeader}}"
+//             }
+//         })
+
+//         console.log('Excel Data:', excelData); // Debug log to check Excel data
+
+//         if (!excelData || typeof excelData !== 'object') {
+//             throw new Error('Invalid data format returned from convertExcelToJson')
+//         }
+
+//         // Combine all data from different sheets into a single array
+//         let combinedData = [];
+//         Object.values(excelData).forEach(sheetData => {
+//             combinedData = [...combinedData, ...sheetData]
+//         })
+
+//         console.log('Combined Data:', combinedData) // Debug log to check combined data
+
+//         // Process and save combinedData
+//         // for (const data of combinedData) {
+//         //     console.log('Processing Data:', data) // Debug log to check each data entry
+//         //     const baseModelInstance = new BaseModel(data);
+//         //     await baseModelInstance.validate() // Validate the data
+//         //     await baseModelInstance.save() // Save the data // Assuming data matches the Patient schema
+//         // }
+// //Na  rread yung excel File pero di nag ssave sa database
+// //Di ko sure if tama ba na pinaghiwalay ko mga sheets
+        
+//         // Delete the temporary file after processing
+//         fs.unlink(filePath, (err) => {
+//             if (err) {
+//                 console.error('Error deleting file:', err);
+//             }
+//         })
+
+//         res.status(200).json({ success: true, message: 'Data imported successfully' })
+//     } catch (error) {
+//         console.error('Error:', error)
+//         res.status(500).json({ error: 'An error occurred' })
+//     }
+// }
+
+
 const addBulk = async (req, res) => {
     try {
         if (!req.file) {
@@ -21,47 +78,66 @@ const addBulk = async (req, res) => {
                 rows: 1
             },
             columnToKey: {
-                "*": "{{columnHeader}}"
+                '*': '{{columnHeader}}'
             }
-        })
-
-        console.log('Excel Data:', excelData); // Debug log to check Excel data
+        });
 
         if (!excelData || typeof excelData !== 'object') {
-            throw new Error('Invalid data format returned from convertExcelToJson')
+            throw new Error('Invalid data format returned from convertExcelToJson');
         }
 
-        // Combine all data from different sheets into a single array
+        // Parse and combine excelData
         let combinedData = [];
         Object.values(excelData).forEach(sheetData => {
-            combinedData = [...combinedData, ...sheetData]
-        })
+            combinedData = [...combinedData, ...sheetData];
+        });
 
-        console.log('Combined Data:', combinedData) // Debug log to check combined data
+        // Iterate over combinedData
+        for (const row of combinedData) {
+            const baseModelData = {};
+            Object.entries(row).forEach(([header, value]) => {
+                const keys = header.split('.'); // Split header at each period
+                let currentObject = baseModelData;
+                for (let i = 1; i < keys.length - 1; i++) {
+                    const key = keys[i];
+                    if (!currentObject[key]) {
+                        currentObject[key] = {}; // Create nested object if it doesn't exist
+                    }
+                    currentObject = currentObject[key]; // Move to the next nested object
+                }
+                const lastKey = keys[keys.length - 1];
+                currentObject[lastKey] = value; // Assign the value to the last nested object
+            })
 
-        // Process and save combinedData
-        // for (const data of combinedData) {
-        //     console.log('Processing Data:', data) // Debug log to check each data entry
-        //     const baseModelInstance = new BaseModel(data);
-        //     await baseModelInstance.validate() // Validate the data
-        //     await baseModelInstance.save() // Save the data // Assuming data matches the Patient schema
-        // }
-//Na  rread yung excel File pero di nag ssave sa database
-//Di ko sure if tama ba na pinaghiwalay ko mga sheets
-        
+            console.log('combinedData:',baseModelData)
+
+            // //Create an instance of BaseModel
+            // const baseModelInstance = new BaseModel(baseModelData);
+
+            // // Validate the instance against the schema
+            // const validationError = baseModelInstance.validateSync();
+            // if (validationError) {
+            //     console.error('Validation error:', validationError);
+            //     // Handle validation error, e.g., skip saving or log the error
+            // } else {
+            //     // Save the validated instance
+            //     await baseModelInstance.save();
+            // }
+        }
+
         // Delete the temporary file after processing
         fs.unlink(filePath, (err) => {
             if (err) {
                 console.error('Error deleting file:', err);
             }
-        })
+        });
 
-        res.status(200).json({ success: true, message: 'Data imported successfully' })
+        res.status(200).json({ success: true, message: 'Data imported successfully' });
     } catch (error) {
-        console.error('Error:', error)
-        res.status(500).json({ error: 'An error occurred' })
+        console.error('Error:', error);
+        res.status(500).json({ error: 'An error occurred' });
     }
-}
+};
 
 
 
