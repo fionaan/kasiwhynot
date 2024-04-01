@@ -24,7 +24,10 @@ const login = async (req, res, next) => {
             if (user.passChangeable === false) {
                 let accessToken = generateAccessToken({ userId: user._id })
                 let refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET)
-                res.json({ accessToken: accessToken, refreshToken: refreshToken})
+
+                res.cookie('refreshToken', refreshToken, {httpOnly: true})
+                res.json({ accessToken });
+
                 // return res.status(200).send({
                 //     successful: true,
                 //     message: "Login successful."
@@ -123,6 +126,23 @@ const forgetPassword = async (req, res, next) => {
     }
 }
 
+const tokenRefresh = async (req, res, next) => {
+    const refreshToken = req.cookies.refreshToken
+    if (!refreshToken){
+        return res.sendStatus(401)
+    }
+
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err){
+            return res.sendStatus(403)
+        }
+
+        const accessToken = jwt.sign({username: user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10s'});
+        res.cookie('accessToken', accessToken, {httpOnly: true})
+        res.sendStatus(200)
+    })
+}
+
 function authenticateToken (req, res, next) {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
@@ -142,7 +162,7 @@ function authenticateToken (req, res, next) {
 }
 
 function generateAccessToken (user) {
-    return jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1h'})
+    return jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10s'})
 }
 
 module.exports = {
@@ -150,5 +170,6 @@ module.exports = {
     changePassword,
     forgetPassword,
     authenticateToken,
-    generateAccessToken
+    generateAccessToken,
+    tokenRefresh
 }

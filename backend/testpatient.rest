@@ -1,5 +1,5 @@
 GET http://localhost:8000/patients/get/1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NWVhYzhiNzA4YmI4NjE3NDMxMDhjZWQiLCJpYXQiOjE3MTA1MDU1NDJ9.gxOwjnurrxrImo6hmXjDUAw0RIJjhLOy9VoEVnEfJvQ
+Authorization: Bearer 
 Content-Type: application/json
 
 {

@@ -3,6 +3,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 //IMPORT DATABASE INSTANCE AND STORE TO db
 const db = require('./APP/models/con_db')
@@ -20,6 +21,8 @@ db.connectDB()
 //MIDDLEWARES
 //TO LOG CLIENT REQUEST-RESPONSE DATA IN A DEV ENVIRONMENT
 app.use(morgan('dev'));
+
+app.use(cookieParser())
 
 //PARSE DATA THAT ARE URLENCODED
 //content-type: application/x-www-form-urlencoded
@@ -55,6 +58,7 @@ app.use((req, res, next)=>{
 //MIDDLEWARE FOR THE ROUTERS
 app.use('/auth', authRouter)
 app.use(express.json())
+
 
 //ERROR MIDDLEWARES
 app.use((req, res, next)=>{
