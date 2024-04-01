@@ -1,5 +1,5 @@
 const historyLog = require('../models/historylog_model')
-const { BaseModel } = require('../models/patient_model')
+const { BaseModel, Student, Employee } = require('../models/patient_model')
 const user = require('../models/user_model')
 const { historyTypeList,
     recordClassList,
@@ -37,10 +37,23 @@ const getAllLogs = async(req, res, next)=>{
             },
             {
                 $lookup: {
-                    from: 'basepatients',
+                    from: 'students',
                     localField: 'patientName',
-                    foreignField: '_id',
-                    as: 'patients'
+                    foreignField: 'studentNo',
+                    as: 'studentPatients'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'employees',
+                    localField: 'patientName',
+                    foreignField: 'employeeNo',
+                    as: 'employeePatients'
+                }
+            },
+            {
+                $project: {
+                    patients: { $concatArrays: ['$studentPatients', '$employeePatients'] }
                 }
             },
             {
@@ -202,28 +215,6 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
             }
         }
 
-        // CHECKS IF PATIENT EXISTS
-        if (!isObjIdValid(patientName)) {
-            nullFields.push('patient name')
-        }
-        else {
-            let patient = await BaseModel.findOne({_id: patientName})
-
-            if (patient === null) {
-                nullFields.push('patientName/patient not existing')
-            }
-            else {
-                if (checkObjNull(patient.basicInfo.fullName)) {
-                    nullFields.push('patientName - full name')
-                } 
-                else {
-                    if (checkIfNull2(patient.basicInfo.fullName.firstName)) nullFields.push('patientName - first name')
-                    if (!(typeof patient.basicInfo.fullName.middleName === "undefined") && checkIfNull2(patient.basicInfo.fullName.middleName)) nullFields.push('patientName - middle name')
-                    if (checkIfNull2(patient.basicInfo.fullName.lastName)) nullFields.push('patientName - last name')
-                }
-            }
-        }
-
         if(nullFields.length > 0){
             callback(404, false, `Missing data in the following fields: ${nullFields.join(', ')}`)
             // res.status(404).send({
@@ -232,7 +223,6 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
             // })
         } 
         else {
-
             historyType = historyType.trim().toUpperCase()
             recordClass = recordClass.trim().toProperCase()
 

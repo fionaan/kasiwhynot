@@ -1,80 +1,112 @@
 const {checkIfNull, checkIfNull2, checkObjNull, checkArrNull, q4Values, q6Values} = require('../../utils')
 const {BaseModel, Student, Employee} = require('../models/patient_model')
+const HistoryLog = require('../models/historylog_model')
 const { addLog } = require('./historylog_controller') 
 const mongoose = require('mongoose')
 const utilFunc = require('../../utils')
 
+const addLogPromise = (editedBy, type, record, id) => {
+    return new Promise((resolve, reject) => {
+        addLog(editedBy, type, record, id, (status_log, successful_log, message_log) => {
+            resolve({ status_log, successful_log, message_log })
+        })
+    })
+}
+
 const addRecord = async (req, res) => {
-    let pass_patient = {}
-    const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category, editedBy } = req.body;
+    try{
+        const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category, editedBy } = req.body
 
-    // Create a new BasePatient document
-    const basePatient = new BaseModel({
-      basicInfo,
-      laboratory,
-      vaccination,
-      medicalHistory,
-      dentalRecord,
-    });
+        // Create a new BasePatient document
+        const basePatient = new BaseModel({
+            basicInfo,
+            laboratory,
+            vaccination,
+            medicalHistory,
+            dentalRecord,
+        })
 
-    // Save the BasePatient document
-    basePatient.save()
-      .then(savedBasePatient => {
-        pass_patient = savedBasePatient
-        if (category === 'students') {
-          // If the category is a student, create a new Student document
-          const studentData = { ...exclusiveData, details: savedBasePatient._id };
-          const student = new Student(studentData);
-  
-          // Save the Student document
-          return student.save();
-        } else if (category === 'employees') {
-          // If the category is an employee, create a new Employee document
-          const employeeData = { ...exclusiveData, details: savedBasePatient._id };
-          const employee = new Employee(employeeData);
-  
-          // Save the Employee document
-          return employee.save();
-        } else {
-          // Handle other categories as needed
-          return Promise.resolve();
-        }
-      })
-      .then(() => {
-        //ADD LOG FOR CREATION OF PATIENT RECORD 
-        const addLogPromise = (editedBy, type, category, id) => {
-            return new Promise((resolve, reject) => {
-                addLog(editedBy, type, category, id, (status_log, successful, message) => {
-                    resolve({ status_log, successful, message })
+        let log_id = category === 'students' ? exclusiveData.studentNo : exclusiveData.employeeNo 
+        //ADD LOG FOR CREATION OF PATIENT RECORD
+        addLogPromise(editedBy, "ADD", "Medical", log_id)
+            .then(({ status_log, successful_log, message_log }) => {
+                if (successful_log === true) { 
+                    let pass_patient
+                    //ADD PATIENT RECORD
+                    basePatient.save()
+                    .then(async (savedBasePatient) => {
+                        pass_patient = savedBasePatient
+                        let newRecord
+                        if (category === 'students') {
+                            // If the category is a student, create a new Student document
+                            const studentData = { ...exclusiveData, details: savedBasePatient._id }
+                            newRecord = new Student(studentData)
+                        } 
+                        else if (category === 'employees') {
+                             // If the category is an employee, create a new Employee document
+                             const employeeData = { ...exclusiveData, details: savedBasePatient._id }
+                              newRecord = new Employee(employeeData)
+                        }
+                        return newRecord.save()
+                    })
+                    .then(() => {
+                        return res.status(200).send({
+                            successful_record: true,
+                            successful_log: true,
+                            message: "Successfully added base record, patient record, & log."
+                        })
+                    })
+                    .catch(async (error) => {
+                        if (pass_patient) {
+                            try {
+                                const deletedBase = await BaseModel.findByIdAndDelete(pass_patient._id)
+                                message = deletedBase ? 'Base patient was successfully deleted.' : 'Error in deleting base patient.';
+                            }
+                            catch (err) {
+                                message = err.message
+                            }
+                            error.message += ` Base Record Deletion status:${message}`
+                        }
+                        
+                        let isDeletedLog = false
+                        error.message += 'Log Deletion status:'
+                        try {
+                            deleteLog = message_log._id
+                            const deleted_log = await HistoryLog.findByIdAndDelete({_id: deleteLog})
+                            if (deleted_log) isDeletedLog = true
+                            error.message += isDeletedLog ? ' Successfully deleted the log.' : '  Error deleting log.'
+                        } 
+                        catch (err) {
+                            error.message += err.message
+                        }
+
+                        return res.status(500).send({
+                            successful_patient_record: false,
+                            isDeletedLog,
+                            error_report: error.message
+                        })
+                    })
+                } 
+                else {
+                    let error = new Error(message_log)
+                    error.status_log = status_log
+                    throw error
+                }
+            }).catch((error) => {
+                const status = error.status_log ? error.status_log : 500
+
+                return res.status(status).send({
+                    successful_log: false,
+                    message_log: error.message
                 })
             })
         }
-
-        addLogPromise(editedBy, "ADD", "Medical", pass_patient._id.toString())
-        .then(({ status_log, successful, message }) => {
-            res.status(200).send({
-                successful_patient: true,
-                message_patient: 'Patient data added successfully',
-                added_record: pass_patient,
-                successful_log: successful,
-                message_log: message
+        catch (error) {
+            res.status(500).send({
+                successful: false,
+                error: error.message
             })
-        }).catch((error) => {
-            res.status(200).send({
-                successful_patient: true,
-                message_patient: 'Patient data added successfully',
-                error_log: error.message
-            })
-        })
-      })
-      .catch(error => {
-        console.error(error);
-        res.status(500).json({
-          successful: false,
-          message: 'Error adding patient data',
-          error: error.message,
-        })
-      })
+        }
   }
 
 const getPatientList = async (req, res, next) => { 
@@ -414,7 +446,7 @@ const searchPatientList = async (req, res, next) => {
 const addDentalRecord = async(req, res, next) => {
 
     try {
-        let { patientId, category, dentalRecord } = req.body
+        let { patientId, category, dentalRecord, editedBy } = req.body
         category = category.trim().toLowerCase()
 
         const odontogramKeys = [55,54,53,52,51,61,62,63,64,65,18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28,48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38,85,84,83,82,81,71,72,73,74,75]
@@ -647,15 +679,50 @@ const addDentalRecord = async(req, res, next) => {
 
                         //check if attachments is an array
 
+                        blank_dental = base.dentalRecord
                         dentalRecord.isFilledOut = true
                         base.dentalRecord = dentalRecord
         
                         base.save()
                         .then((result) => {
-                            res.status(200).send({
-                                successful: true,
-                                message: `Successfully added Dental Record to ${result.basicInfo.fullName.firstName + " "+ result.basicInfo.fullName.lastName}`,
-                                data: result
+                            //ADD LOG FOR CREATION OF DENTAL RECORD
+                            addLogPromise(editedBy, "ADD", "Dental", patient.details)
+                            .then(({ status_log, successful, message }) => {
+                                if (successful === true) {
+                                    res.status(200).send({
+                                        successful_dental: true,
+                                        message_dental: 'Dental record added successfully.',
+                                        dental_record: result,
+                                        successful_log: successful,
+                                        message_log: message
+                                    })
+                                }
+                                else {
+                                    throw new Error(message)
+                                }
+                            })
+                            .catch(async (error) => {
+                                base.dentalRecord = blank_dental
+                                base.save()
+                                .then((result) => {
+                                    res.status(500).send({
+                                        successful_log: false,
+                                        successful_deletion: true,
+                                        message_log: 'Error in adding log. Successful deletion of dental record.',
+                                        error_log: error.message
+                                    })
+                                })
+                                .catch((nestedError) => {
+                                    res.status(500).send({
+                                        successful_log: false,
+                                        successful_deletion: false,
+                                        message_log: 'Error in adding log. Error in deleting dental record.',
+                                        error: {
+                                            log: error.message,
+                                            dental: nestedError.message
+                                        }
+                                    })
+                                })
                             })
                         })
                         .catch((err) => {
@@ -717,7 +784,7 @@ const updateRecord = async (req, res) => {
                 });
             }
         }
-        console.log(updatedData)
+        // console.log(updatedData)
         // Send a success response
         res.json({
             successful: true,
@@ -797,7 +864,13 @@ const unarchivePatient = async (req, res) => {
         // Unarchive the patient
         patient.archived = false;
         patient.archivedDate = null;
-        await patient.save();
+        await patient.save()
+        .then(() => {
+            //ikabit yung history logs
+        })
+        .catch(() => {
+
+        })
 
         res.json({
             successful: true,
