@@ -5,15 +5,15 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 const login = async (req, res, next) => {
-    const {email, password} = req.body
+    const { email, password } = req.body
 
     //check for missing fields
-    if(utilFunc.checkIfNull(email) || utilFunc.checkIfNull(password)) {
+    if (utilFunc.checkIfNull(email) || utilFunc.checkIfNull(password)) {
         return res.status(400).send("Please fill in the missing fields.")
     }
 
     try {
-        let user = await User.findOne({emailAddress: email})
+        let user = await User.findOne({ emailAddress: email })
 
         //check if user exists
         if (user == null) {
@@ -24,7 +24,7 @@ const login = async (req, res, next) => {
             if (user.passChangeable === false) {
                 let accessToken = generateAccessToken({ userId: user._id })
                 let refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET)
-                res.json({ accessToken: accessToken, refreshToken: refreshToken})
+                res.json({ accessToken: accessToken, refreshToken: refreshToken })
                 // return res.status(200).send({
                 //     successful: true,
                 //     message: "Login successful."
@@ -39,7 +39,7 @@ const login = async (req, res, next) => {
         }
     }
 
-    catch (err){
+    catch (err) {
         res.status(500).send({
             successful: false,
             message: err.message
@@ -48,27 +48,27 @@ const login = async (req, res, next) => {
 }
 
 const changePassword = async (req, res, next) => {
-    const {email, newPassword, confirmNewPassword} = req.body
+    const { email, newPassword, confirmNewPassword } = req.body
     console.log(newPassword)
 
     //check for missing fields
-    if(utilFunc.checkIfNull(email) || utilFunc.checkIfNull(newPassword) || utilFunc.checkIfNull(confirmNewPassword)) {
+    if (utilFunc.checkIfNull(email) || utilFunc.checkIfNull(newPassword) || utilFunc.checkIfNull(confirmNewPassword)) {
         return res.status(400).send("Please fill in the missing fields.")
     }
 
     try {
-        let user = await User.findOne({emailAddress: email})
+        let user = await User.findOne({ emailAddress: email })
 
         //check if the specified user exists
-        if(user == null) {
+        if (user == null) {
             return res.status(400).send("The specified user does not exist in the database.")
         }
 
         //check if New Password and Confirm New Password match each other
-        if(newPassword != confirmNewPassword) {
+        if (newPassword != confirmNewPassword) {
             return res.status(400).send("The passwords in the fields don't match with each other.")
-        } 
-        else if(newPassword === confirmNewPassword){
+        }
+        else if (newPassword === confirmNewPassword) {
             const hashedPassword = await bcrypt.hash(newPassword, 10);
             user.password = hashedPassword;
             user.passChangeable = false;
@@ -81,7 +81,7 @@ const changePassword = async (req, res, next) => {
         }
     }
 
-    catch (err){
+    catch (err) {
         res.status(500).send({
             successful: false,
             message: err.message
@@ -93,15 +93,15 @@ const forgetPassword = async (req, res, next) => {
     const email = req.body.email
 
     //check for missing fields
-    if(utilFunc.checkIfNull(email)) {
+    if (utilFunc.checkIfNull(email)) {
         return res.status(400).send("No user selected.")
     }
 
     try {
-        let user = await User.findOne({emailAddress: email})
+        let user = await User.findOne({ emailAddress: email })
 
         //check if the specified user exists
-        if(user == null) {
+        if (user == null) {
             return res.status(400).send("The specified user does not exist in the database.")
         }
         else {
@@ -115,7 +115,7 @@ const forgetPassword = async (req, res, next) => {
         }
     }
 
-    catch (err){
+    catch (err) {
         res.status(500).send({
             successful: false,
             message: err.message
@@ -123,10 +123,10 @@ const forgetPassword = async (req, res, next) => {
     }
 }
 
-function authenticateToken (req, res, next) {
+function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
-    
+
     if (!authHeader) {
         return res.status(401).send("Authorization header is missing.");
     }
@@ -141,8 +141,8 @@ function authenticateToken (req, res, next) {
     })
 }
 
-function generateAccessToken (user) {
-    return jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1h'})
+function generateAccessToken(user) {
+    return jwt.sign({ userId: user._id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
 }
 
 module.exports = {
