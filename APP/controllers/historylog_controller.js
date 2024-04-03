@@ -8,6 +8,15 @@ const { historyTypeList,
     checkObjNull,
     toProperCase } = require('../../utils')
 
+const deleteLogs = async (req,res) => {
+    await historyLog.deleteMany()
+        .then(() => {
+            res.status(200).send({
+                successful: true,
+                message: 'deleted logs'
+            })
+        })
+}
 
 const getAllLogs = async(req, res, next)=>{
     try{
@@ -291,5 +300,6 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
 
 module.exports = {
     getAllLogs,
-    addLog
+    addLog,
+    deleteLogs
 }

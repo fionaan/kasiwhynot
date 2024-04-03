@@ -438,155 +438,157 @@ Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False):
 
 COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
 {
-  "basicInfo": {
-    "fullName": {
-          "firstName": "Juan",
-          "middleName": "Dela",
-          "lastName": "Cruz"
+    "basicInfo": {
+        "fullName": {
+            "firstName": "Ohno",
+            "middleName": "sdfsdf",
+            "lastName": "Llllsdasdll"
+        },
+        "emailAddress": "eme.doe@example.com",
+        "dateOfBirth": "1990-01-01",
+        "age": 32,
+        "gender": "Male",
+        "campus": "Main Campus",
+        "homeAddress": "123 Main St, City",
+        "contactNo": 1234567890,
+        "nationality": "American",
+        "religion": "Christian",
+        "bloodType": "A+",
+        "civilStatus": "Single",
+        "height": 175,
+        "weight": 70,
+        "bmi": 23,
+        "guardianName": "Jane Doe",
+        "guardianContactNo": 9876543210,
+        "guardianRelationship": "Parent",
+        "attachment": "attachment-url"
     },
-    "emailAddress": "john.doe@example.com",
-    "dateOfBirth": "1990-01-01",
-    "age": 32,
-    "gender": "Male",
-    "campus": "Main Campus",
-    "homeAddress": "123 Main St, City",
-    "contactNo": 1234567890,
-    "nationality": "American",
-    "religion": "Christian",
-    "bloodType": "A+",
-    "civilStatus": "Single",
-    "height": 175,
-    "weight": 70,
-    "bmi": 23,
-    "guardianName": "Jane Doe",
-    "guardianContactNo": 9876543210,
-    "guardianRelationship": "Parent",
-    "attachment": "attachment-url"
-  },
-  "laboratory": {
-    "chestXray": {
-      "findings": "Normal",
-      "date": "2023-01-15"
+    "laboratory": {
+        "chestXray": {
+            "findings": "Normal",
+            "date": "2023-01-15"
+        },
+        "cbc": {
+            "findings": "Normal",
+            "date": "2023-01-10"
+        },
+        "hepatitisProfile": {
+            "hbsag": "Negative",
+            "antiHbs": "Positive",
+            "antiHbcIgg": "Negative",
+            "antiHbcIgm": "Negative"
+        },
+        "drugTest": {
+            "methamphethamineResults": "Negative",
+            "methamphetamineRemarks": "No remarks",
+            "tetrahydrocannabinolResults": "Negative",
+            "tetrahydrocannabinolRemarks": "No remarks"
+        },
+        "urinalysis": {
+            "color": "Yellow",
+            "transparency": "Clear",
+            "blood": "Negative",
+            "bilirubin": "Normal",
+            "urobilinogen": "Normal",
+            "ketones": "Negative",
+            "glutones": "Negative",
+            "protein": "Negative",
+            "nitrite": "Negative",
+            "leukocyte": "Normal",
+            "phLevel": 7,
+            "spGravity": "Normal",
+            "wbc": "Normal",
+            "rbc": "Normal",
+            "bacteria": "Negative",
+            "epithelialCells": "Normal",
+            "amorphousUrates": "Normal",
+            "mucusThreads": "Normal"
+        },
+        "fecalysis": {
+            "color": "Brown",
+            "consistency": "Formed",
+            "wbc": "Normal",
+            "rbc": "Normal",
+            "fatGlobules": "Negative",
+            "muscleFibers": "Negative",
+            "results": "Normal"
+        },
+        "others": {
+            "pregnancyTest": "Negative"
+        },
+        "attachments": "attachments-url"
     },
-    "cbc": {
-      "findings": "Normal",
-      "date": "2023-01-10"
+    "vaccination": {
+        "covidVaccination": {
+            "firstDose": "Pfizer",
+            "dateGiven": "2023-01-05"
+        },
+        "fluVaccination": {
+            "firstDose": "Influvac",
+            "dateGiven": "2023-01-08"
+        },
+        "hepatitisBVaccination": {
+            "firstDose": "Engerix-B",
+            "dateGiven": "2023-01-12"
+        },
+        "pneumoniaVaccination": {
+            "firstDose": "Pneumovax",
+            "dateGiven": "2023-01-15"
+        },
+        "attachments": "vaccination-attachments-url"
     },
-    "hepatitisProfile": {
-      "hbsag": "Negative",
-      "antiHbs": "Positive",
-      "antiHbcIgg": "Negative",
-      "antiHbcIgm": "Negative"
+    "medicalHistory": {
+        "tattoo": false,
+        "bloodPressure": {
+            "systolic": 120,
+            "diastolic": 80
+        },
+        "conditions": {
+            "anemia": false,
+            "asthma": false,
+            "blackJointProblem": false,
+            "heartDiseases": false,
+            "hepatitis": false,
+            "highBloodPressure": false,
+            "kidneyProblem": false,
+            "chronicDiseases": false,
+            "thyroidProblems": false,
+            "bloodDyscrasia": false,
+            "others": false
+        },
+        "q1": {
+            "yesOrNo": false,
+            "doctorName": "Abukar",
+            "phone": 0,
+            "homeAddress": "Iran",
+            "forWhatCondition": "Autism"
+        },
+        "q2": {
+            "yesOrNo": false,
+            "pastIllnessSurgery": "Tagos"
+        },
+        "q3": {
+            "yesOrNo": false,
+            "drugFoodAllergies": "Feather"
+        },
+        "q4": {
+            "yesOrNo": false,
+            "nameOfMedication": "Meth",
+            "type": "2",
+            "brand": "jajaka",
+            "others": "none"
+        },
+        "q5": {
+            "yesOrNo": false,
+            "physicalLearningDisability": "Lack of Choromosomes"
+        },
+        "attachments": "medical-history-attachments-url"
     },
-    "drugTest": {
-      "methamphetamineResults": "Negative",
-      "methamphetamineRemarks": "No remarks",
-      "tetrahydrocannabinolResults": "Negative",
-      "tetrahydrocannabinolRemarks": "No remarks"
-    },
-    "urinalysis": {
-      "color": "Yellow",
-      "transparency": "Clear",
-      "blood": "Negative",
-      "bilirubin": "Normal",
-      "urobilinogen": "Normal",
-      "ketones": "Negative",
-      "glutones": "Negative",
-      "protein": "Negative",
-      "nitrite": "Negative",
-      "leukocyte": "Normal",
-      "phLevel": 7,
-      "spGravity": "Normal",
-      "wbc": "Normal",
-      "rbc": "Normal",
-      "bacteria": "Negative",
-      "epithelialCells": "Normal",
-      "amorphousUrates": "Normal",
-      "mucusThreads": "Normal"
-    },
-    "fecalysis": {
-      "color": "Brown",
-      "consistency": "Formed",
-      "wbc": "Normal",
-      "rbc": "Normal",
-      "fatGlobules": "Negative",
-      "muscleFibers": "Negative",
-      "results": "Normal"
-    },
-    "others": {
-      "pregnancyTest": "Negative"
-    },
-    "attachments": "attachments-url"
-  },
-  "vaccination": {
-    "covidVaccination": {
-      "firstDose": "Pfizer",
-      "dateGiven": "2023-01-05"
-    },
-    "fluVaccination": {
-      "firstDose": "Influvac",
-      "dateGiven": "2023-01-08"
-    },
-    "hepatitisBVaccination": {
-      "firstDose": "Engerix-B",
-      "dateGiven": "2023-01-12"
-    },
-    "pneumoniaVaccination": {
-      "firstDose": "Pneumovax",
-      "dateGiven": "2023-01-15"
-    },
-    "attachments": "vaccination-attachments-url"
-  },
-  "medicalHistory": {
-    "tattoo": false,
-    "bloodPressure": {
-      "systolic": 120,
-      "diastolic": 80
-    },
-    "conditions": {
-      "anemia": false,
-      "asthma": false,
-      "blackJointProblem": false,
-      "heartDiseases": false,
-      "hepatitis": false,
-      "highBloodPressure": false,
-      "kidneyProblem": false,
-      "chronicDiseases": false,
-      "thyroidProblems": false,
-      "bloodDyscrasia": false,
-      "others": false
-    },
-    "q1": {
-      "yesOrNo": false,
-      "doctorName": "Abukar",
-      "phone": 0,
-      "homeAddress": "Iran",
-      "forWhatCondition": "Autism"
-    },
-    "q2": {
-      "yesOrNo": false,
-      "pastIllnessSurgery": "Tagos"
-    },
-    "q3": {
-      "yesOrNo": false,
-      "drugFoodAllergies": "Feather"
-    },
-    "q4": {
-      "yesOrNo": false,
-      "nameOfMedication": "Meth",
-      "type": "2",
-      "brand": "jajaka",
-      "others": "none"
-    },
-    "q5": {
-      "yesOrNo": false,
-      "physicalLearningDisability": "Lack of Choromosomes"
-    },
-    "attachments": "medical-history-attachments-url"
-  },
-"dentalRecord": {
+    "dentalRecord": {
         "isFilledOut": false,
-        "q1": [""],
+        "q1": [
+            ""
+        ],
         "q2": "1999-03-09T12:00:00Z",
         "q3": {
             "hasDentures": false,
@@ -595,65 +597,170 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
         "q4": " ",
         "q5": {
             "hasDentalProcedure": false,
-            "pastDentalSurgery": [{
-                "name": "",
-                "date": ""
-            }]
+            "pastDentalSurgery": [
+                {
+                    "name": "",
+                    "date": ""
+                }
+            ]
         },
         "q6": {
-            "55": [""],	
-            "54": [""],	
-            "53": [""],	
-            "52": [""],	
-            "51": [""],	
-            "61": [""],	
-            "62": [""],	
-            "63": [""],	
-            "64": [""],	
-            "65": [""],	
-            "18": [""],		
-            "17": [""],		
-            "16": [""],		
-            "15": [""],		
-            "14": [""],		
-            "13": [""],		
-            "12": [""],		
-            "11": [""],		
-            "21": [""],	
-            "22": [""],	
-            "23": [""],	
-            "24": [""],	
-            "25": [""],	
-            "26": [""],	
-            "27": [""],	
-            "28": [""],	
-            "48": [""],	
-            "47": [""],	
-            "46": [""],	
-            "45": [""],	
-            "44": [""],	
-            "43": [""],	
-            "42": [""],	
-            "41": [""],	
-            "31": [""],	
-            "32": [""],	
-            "33": [""],	
-            "34": [""],	
-            "35": [""],	
-            "36": [""],	
-            "37": [""],	
-            "38": [""],	
-            "85": [""],	
-            "84": [""],	
-            "83": [""],	
-            "82": [""],	
-            "81": [""],	
-            "71": [""],	
-            "72": [""],	
-            "73": [""],	
-            "74": [""],	
-            "75": [""]
-            
+            "55": [
+                ""
+            ],
+            "54": [
+                ""
+            ],
+            "53": [
+                ""
+            ],
+            "52": [
+                ""
+            ],
+            "51": [
+                ""
+            ],
+            "61": [
+                ""
+            ],
+            "62": [
+                ""
+            ],
+            "63": [
+                ""
+            ],
+            "64": [
+                ""
+            ],
+            "65": [
+                ""
+            ],
+            "18": [
+                ""
+            ],
+            "17": [
+                ""
+            ],
+            "16": [
+                ""
+            ],
+            "15": [
+                ""
+            ],
+            "14": [
+                ""
+            ],
+            "13": [
+                ""
+            ],
+            "12": [
+                ""
+            ],
+            "11": [
+                ""
+            ],
+            "21": [
+                ""
+            ],
+            "22": [
+                ""
+            ],
+            "23": [
+                ""
+            ],
+            "24": [
+                ""
+            ],
+            "25": [
+                ""
+            ],
+            "26": [
+                ""
+            ],
+            "27": [
+                ""
+            ],
+            "28": [
+                ""
+            ],
+            "48": [
+                ""
+            ],
+            "47": [
+                ""
+            ],
+            "46": [
+                ""
+            ],
+            "45": [
+                ""
+            ],
+            "44": [
+                ""
+            ],
+            "43": [
+                ""
+            ],
+            "42": [
+                ""
+            ],
+            "41": [
+                ""
+            ],
+            "31": [
+                ""
+            ],
+            "32": [
+                ""
+            ],
+            "33": [
+                ""
+            ],
+            "34": [
+                ""
+            ],
+            "35": [
+                ""
+            ],
+            "36": [
+                ""
+            ],
+            "37": [
+                ""
+            ],
+            "38": [
+                ""
+            ],
+            "85": [
+                ""
+            ],
+            "84": [
+                ""
+            ],
+            "83": [
+                ""
+            ],
+            "82": [
+                ""
+            ],
+            "81": [
+                ""
+            ],
+            "71": [
+                ""
+            ],
+            "72": [
+                ""
+            ],
+            "73": [
+                ""
+            ],
+            "74": [
+                ""
+            ],
+            "75": [
+                ""
+            ]
         },
         "q7": {
             "presenceOfDebris": false,
@@ -664,46 +771,48 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
             "underOrthodonticTreatment": {
                 "hasTreatment": false,
                 "yearStarted": 0,
-                "lastAdjustment": "" 
+                "lastAdjustment": ""
             }
         },
         "q8": {
             "numTeethPresent": {
-                "temporary": 0, 
+                "temporary": 0,
                 "permanent": 0
-            }, 
+            },
             "numCariesFreeTeeth": {
-                "temporary": 0, 
+                "temporary": 0,
                 "permanent": 0
-            }, 
+            },
             "numTeethforFilling": {
-                "temporary": 0, 
+                "temporary": 0,
                 "permanent": 0
-            }, 
+            },
             "numTeethforExtraction": {
-                "temporary": 0, 
+                "temporary": 0,
                 "permanent": 0
-            }, 
+            },
             "totalNumDecayedTeeth": {
-                "temporary": 0, 
+                "temporary": 0,
                 "permanent": 0
-            }, 
+            },
             "numFilledTeeth": {
-                "temporary": 0, 
+                "temporary": 0,
                 "permanent": 0
-            }, 
+            },
             "numMissingTeeth": {
-                "temporary": 0, 
+                "temporary": 0,
                 "permanent": 0
-            }, 
+            },
             "numUneruptedTeeth": {
-                "temporary": 0, 
+                "temporary": 0,
                 "permanent": 0
             }
         },
         "q9": {
             "hasDentofacialAb": false,
-            "name": [""]
+            "name": [
+                ""
+            ]
         },
         "q10": {
             "needUpperDenture": 0,
@@ -717,11 +826,12 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
             }
         ]
     },
-  "exclusiveData": {
-    "studentNo": "2023001",
-    "course": "Computer Science",
-    "year": "1",
-    "section": "A"
-  },
-  "category": "students"
-}  
+    "exclusiveData": {
+        "studentNo": "789456",
+        "course": "Ohno",
+        "year": "2",
+        "section": "C"
+    },
+    "category": "students",
+    "editedBy": "65eac8b708bb861743108ced"
+}
