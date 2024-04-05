@@ -2,6 +2,9 @@ const mongoose = require('mongoose')
 
 //LIST OF ALL UTILITY FUNCTIONS
 
+// INDICATOR FOR DATES THAT HOLD DUMMY DATA
+const dateNone = new Date("9999-12-31T23:59:59.999Z")
+
 //CHECKS IF DATA CONTAINS COMPLETE DATE & TIME VALUE
 const dateTimeRegex = /^(?:\d{4})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2][0-9]|3[0-1])T(?:[0-1][0-9]|2[0-3]):(?:[0-5][0-9]):(?:[0-5][0-9])$/
 
@@ -41,25 +44,54 @@ const isObjIdValid = (id) => {
 }
 
 //CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
-const checkIfNull = (data) => {
-    return data == null || data === '' || typeof data === 'undefined' || data == [];
-}
+// const checkIfNull = (data) => {
+//     return data == null || data === '' || typeof data === 'undefined' || data == [];
+// }
 
 //CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
 //HAS .TRIM() METHOD
-const checkIfNull2 = (data)=>{
-    return (data == null || data == "null" || data == "" || data.trim() == "" || (typeof data === "undefined"))
+// const checkIfNull2 = (data)=>{
+//     return (data == null || data == "null" || data == "" || data.trim() == "" || (typeof data === "undefined"))
+// }
+
+//new
+const checkIfNull = (data)=>{
+    return (data == null || data == "null" || data === "" || (typeof data === 'string' && data.trim() == "") || (typeof data === "undefined"))
 }
 
 //CHECKS IF AN OBJ/DATA W DATATYPES OTHER THAN STRING ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
+// const checkObjNull = (obj)=>{
+//     return (obj === null || obj == "null" || obj === "" || (typeof obj === "undefined"))
+// }
 const checkObjNull = (obj)=>{
-    return (obj === null || obj == "null" || obj === "" || (typeof obj === "undefined"))
+    return (obj === null || obj === "null" || obj === "" || (typeof obj === "undefined") || (obj !== null && typeof obj === 'object' && Object.keys(obj).length === 0)
+    || (obj !== null && typeof obj !== 'object'))
 }
 
 //CHECKS IF AN ARRAY ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARRAY IS NULL/EMPTY, OTHERWISE RETURNS FALSE.
 const checkArrNull = (arr)=>{
     return ((typeof arr === "undefined") || arr.length === 0 || arr.includes("") && arr.length === 1)
 } 
+
+const checkFullArr = (arr, message, func)=>{
+    if (arr) {
+        if (Array.isArray(arr)) {
+            if (!checkArrNull(arr)) {
+                if (typeof func === 'function') {
+                    return (func(arr))
+                } else {
+                    return null
+                }
+            } else {
+                return (message)
+            }
+        } else {
+            return (message + ': Not an Array')
+        }
+    } else {
+       return (message)
+    }
+}
 
 //CHECKS IF THE VALUE OF A MANDATORY FIELD IS NULL OR NOT. RETURNS TRUE IF ALL MANDATORY FIELDS ARE NOT NULL, OTHERWISE RETURNS FALSE.
 const checkMandatoryFields = (arrs)=>{
@@ -117,11 +149,12 @@ module.exports = {
     recordClassList,
     q4Values,
     q6Values,
+    dateNone,
     isObjIdValid,
     checkIfNull,
-    checkIfNull2,
     checkObjNull,
     checkArrNull,
+    checkFullArr,
     checkMandatoryFields,
     generatePassword,
     toProperCase: String.prototype.toProperCase

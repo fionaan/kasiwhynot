@@ -4,7 +4,7 @@ const user = require('../models/user_model')
 const { historyTypeList,
     recordClassList,
     isObjIdValid,
-    checkIfNull2,
+    checkIfNull,
     checkObjNull,
     toProperCase } = require('../../utils')
 
@@ -207,10 +207,10 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
 
         //CHECK FOR NULL OR EMPTY FIELDS
         const nullFields = []
-        if (checkObjNull(editedBy)) nullFields.push('edited by')
-        if (checkIfNull2(historyType)) nullFields.push('history type')
-        if (checkIfNull2(recordClass)) nullFields.push('record class')
-        if (checkObjNull(patientName)) nullFields.push('patient name')
+        if (checkIfNull(editedBy)) nullFields.push('edited by')
+        if (checkIfNull(historyType)) nullFields.push('history type')
+        if (checkIfNull(recordClass)) nullFields.push('record class')
+        if (checkIfNull(patientName)) nullFields.push('patient name')
 
         //CHECKS IF USER EXISTS
         if (!isObjIdValid(editedBy)) {
@@ -228,9 +228,9 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
                     nullFields.push('edited by - full name')
                 }
                 else {
-                    if (checkIfNull2(editor.fullName.firstName)) nullFields.push('edited by - first name')
-                    if (!(typeof editor.fullName.middleName === "undefined") && checkIfNull2(editor.fullName.middleName)) nullFields.push('edited by - middle name')
-                    if (checkIfNull2(editor.fullName.lastName)) nullFields.push('edited by - last name')
+                    if (checkIfNull(editor.fullName.firstName)) nullFields.push('edited by - first name')
+                    if (!(typeof editor.fullName.middleName === "undefined") && checkIfNull(editor.fullName.middleName)) nullFields.push('edited by - middle name')
+                    if (checkIfNull(editor.fullName.lastName)) nullFields.push('edited by - last name')
                 }
             }
         }

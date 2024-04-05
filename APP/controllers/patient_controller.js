@@ -1,10 +1,11 @@
-const { checkIfNull, checkIfNull2, checkObjNull, checkArrNull, q4Values, q6Values } = require('../../utils')
+const { checkIfNull, checkObjNull, checkArrNull, checkFullArr, q4Values, q6Values } = require('../../utils')
 const { BaseModel, Student, Employee } = require('../models/patient_model')
 const HistoryLog = require('../models/historylog_model')
 const { addLog } = require('./historylog_controller')
 const mongoose = require('mongoose')
-const utilFunc = require('../../utils')
 
+
+// ALL DELETE FUNCTIONS ARE FOR TESTING PURPOSES ONLY
 const deleteStudents = async (req, res) => {
     await Student.deleteMany()
         .then(() => {
@@ -43,72 +44,6 @@ const addLogPromise = (editedBy, type, record, id) => {
     })
 }
 
-// const addHistoryLog = async (editedBy, type, record, id, saveDocument, successMessage, saveHandler, undoExcess) => {
-//     const addLogPromise = (editedBy, type, record, id) => {
-//         return new Promise((resolve, reject) => {
-//             addLog(editedBy, type, record, id, (status_log, successful_log, message_log) => {
-//                 resolve({ status_log, successful_log, message_log })
-//             })
-//         })
-//     }
-
-//     addLogPromise(editedBy, type, record, id)
-//         .then(async ({ status_log, successful_log, message_log }) => {
-//             if (successful_log === true) {
-//                 let pass_data
-//                 await saveDocument.save()
-//                     .then((result) => {
-//                         if (saveHandler !== null) {
-//                             pass_data = result
-//                             const newDocument = saveHandler(result)
-//                             return newDocument.save()
-//                         }
-//                     })
-//                     .then(() => {
-//                         return res.status(200).send({
-//                             successful_action: true,
-//                             successful_log: true,
-//                             message: successMessage
-//                         })
-//                     })
-//                     .catch(async (error) => {
-//                         if (saveHandler !== null) {
-//                             error.message += undoExcess(pass_data._id)
-//                         }
-//                         let isDeletedLog = false
-//                         error.message += 'Log Deletion status:'
-//                         try {
-//                             deleteLog = message_log._id
-//                             const deleted_log = await HistoryLog.findByIdAndDelete({ _id: deleteLog })
-//                             if (deleted_log) isDeletedLog = true
-//                             error.message += isDeletedLog ? ' Successfully deleted the log.' : '  Error deleting log.'
-//                         }
-//                         catch (err) {
-//                             error.message += err.message
-//                         }
-
-//                         return res.status(500).send({
-//                             successful_action: false,
-//                             isDeletedLog,
-//                             error_report: error.message
-//                         })
-//                     })
-//             }
-//             else {
-//                 let error = new Error(message_log)
-//                 error.status_log = status_log
-//                 throw error
-//             }
-//         })
-//         .catch((error) => {
-//             const status = error.status_log ? error.status_log : 500
-//             return res.status(status).send({
-//                 successful_log: false,
-//                 message_log: error.message
-//             })
-//         })
-// }
-
 const addRecord = async (req, res) => {
     try {
         const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category, editedBy } = req.body
@@ -125,32 +60,6 @@ const addRecord = async (req, res) => {
         //add log -> add record
 
         let log_id = category === 'students' ? exclusiveData.studentNo : exclusiveData.employeeNo
-        
-        //let success_message = "Successfully added base record, patient record, & log."
-        // addHistoryLog(editedBy, "ADD", "Medical", log_id, basePatient, success_message, ((savedBase) => {
-        //     if (category === 'students') {
-        //         // If the category is a student, create a new Student document
-        //         const studentData = { ...exclusiveData, details: savedBase._id }
-        //         const student = new Student(studentData)
-        //         return student
-        //     }
-        //     else if (category === 'employees') {
-        //         // If the category is an employee, create a new Employee document
-        //         const employeeData = { ...exclusiveData, details: savedBase._id }
-        //         const employee = new Employee(employeeData)
-        //         return employee
-        //     }
-        // }),
-        //     (async (base_id) => {
-        //         try {
-        //             const deletedBase = await BaseModel.findByIdAndDelete(base_id)
-        //             message = deletedBase ? 'Base patient was successfully deleted.' : 'Error in deleting base patient.';
-        //         }
-        //         catch (err) {
-        //             message = err.message
-        //         }
-        //         return ` Base Record Deletion status:${message}`
-        //     }))
 
         //ADD LOG FOR CREATION OF PATIENT RECORD
         addLogPromise(editedBy, "ADD", "Medical", log_id)
@@ -236,7 +145,7 @@ const addRecord = async (req, res) => {
 }
 
 const getPatientList = async (req, res, next) => {
-    const { category, sort } = req.body //user must input in body to select a category
+    const { category, sort, role } = req.body //user must input in body to select a category
     const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
     const pageSize = 50 //limit of records to be fetched
     const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
@@ -257,7 +166,7 @@ const getPatientList = async (req, res, next) => {
             });
         }
 
-        let patient = await patientModel.aggregate([
+        let pipeline = [
             {
                 $lookup: { //join base schema
                     from: 'basepatients',
@@ -313,11 +222,20 @@ const getPatientList = async (req, res, next) => {
             {
                 $limit: pageSize, //for pagination
             },
-        ])
+        ]
+
+        if (role === 'dentist') {
+            pipeline.splice(2, 0, {
+                $match: {
+                    'patientDetails.dentalRecord.isFilledOut': false
+                }
+            })
+        }
+
+        let patient = await patientModel.aggregate(pipeline)
 
         //check if null
-        if (utilFunc.checkIfNull(patient) == true) {
-            console.log(patient)
+        if (checkObjNull(patient)) {
             res.status(404).send({
                 successful: false,
                 message: "No patients found"
@@ -332,7 +250,6 @@ const getPatientList = async (req, res, next) => {
             })
         }
     }
-
     catch (err) {
         res.status(500).send({
             successful: false,
@@ -400,8 +317,7 @@ const getPatient = async (req, res, next) => {
         ])
 
         //check if null
-        if (utilFunc.checkIfNull(patient) == true) {
-            console.log(patient)
+        if (checkObjNull(patient)) {
             res.status(404).send({
                 successful: false,
                 message: "Patient not found"
@@ -434,7 +350,7 @@ const searchPatientList = async (req, res, next) => {
         let matchCondition = {} // what the condition for the search would be
         let noHyphen = search.replace(/-/g, '') //remove the hyphen from the id in case there is
 
-        if (utilFunc.checkIfNull(search) == true || search.trim() == "") { //check if search field is empty
+        if (checkIfNull(search)) { //check if search field is empty
             return res.status(400).send({
                 successful: false,
                 message: "The search field is empty"
@@ -546,8 +462,7 @@ const searchPatientList = async (req, res, next) => {
         ])
 
         //check if null
-        if (utilFunc.checkIfNull(patient) == true) {
-            console.log(patient)
+        if (checkObjNull(patient)) {
             res.status(404).send({
                 successful: false,
                 message: "No patients found"
@@ -576,7 +491,7 @@ const addDentalRecord = async (req, res, next) => {
     try {
         let { patientId, category, dentalRecord, editedBy } = req.body
         category = category.trim().toLowerCase()
-        let surgeries
+        let message, surgeries
 
         const odontogramKeys = [55, 54, 53, 52, 51, 61, 62, 63, 64, 65, 18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28, 48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38, 85, 84, 83, 82, 81, 71, 72, 73, 74, 75]
         const q8Keys = ["numTeethPresent", "numCariesFreeTeeth", "numTeethforFilling", "numTeethforExtraction", "totalNumDecayedTeeth", "numFilledTeeth", "numMissingTeeth", "numUneruptedTeeth"]
@@ -599,7 +514,7 @@ const addDentalRecord = async (req, res, next) => {
             }
 
             let patient = await patientModel.findOne({ _id: patientId })
-
+            
             if (patient === null) {
                 res.status(404).send({
                     successful: false,
@@ -616,59 +531,56 @@ const addDentalRecord = async (req, res, next) => {
                     })
                 }
                 else {
-                    // CHECK IF THE PATIENT RECORD ALREADY CONTAINS DENTAL RECORD
-                    if (base.dentalRecord.isFilledOut === true) {
-                        return res.status(400).send({
-                            successful: false,
-                            message: `Base record with id ${base._id} already contains a dental record.`
-                        })
-                    }
+                    // // CHECK IF THE PATIENT RECORD ALREADY CONTAINS DENTAL RECORD
+                    // if (base.dentalRecord.isFilledOut === true) {
+                    //     return res.status(400).send({
+                    //         successful: false,
+                    //         message: `Base record with id ${base._id} already contains a dental record.`
+                    //     })
+                    // }
 
                     // CHECK FOR NULL DENTAL FIELDS  
                     nullFields = []
-                    if (checkArrNull(dentalRecord.q1)) nullFields.push('q1')
-                    if (checkIfNull2(dentalRecord.q2)) nullFields.push('q2')
-
+                    message = (checkFullArr(dentalRecord.q1, 'q1', null))
+                    if (message !== null) nullFields.push(message)
+                    
+                    if (checkIfNull(dentalRecord.q2)) nullFields.push('q2')
+   
                     if (checkObjNull(dentalRecord.q3)) {
                         nullFields.push('q3')
+
                     }
                     else {
-                        if (checkObjNull(dentalRecord.q3.hasDentures)) {
+                        if (checkIfNull(dentalRecord.q3.hasDentures)) {
                             nullFields.push('q3: Has Dentures')
                         }
                         else {
-                            if (dentalRecord.q3.hasDentures === true && checkIfNull2(dentalRecord.q3.dentureType)) nullFields.push('q3: Denture Type')
+                            if (dentalRecord.q3.hasDentures === true && checkIfNull(dentalRecord.q3.dentureType)) nullFields.push('q3: Denture Type')
                         }
                     }
 
-                    if (checkIfNull2(dentalRecord.q4)) nullFields.push('q4')
+                    if (checkIfNull(dentalRecord.q4)) nullFields.push('q4')
 
                     if (checkObjNull(dentalRecord.q5)) {
                         nullFields.push('q5')
                     }
                     else {
-                        if (checkObjNull(dentalRecord.q5.hasDentalProcedure)) {
+                        if (checkIfNull(dentalRecord.q5.hasDentalProcedure)) {
                             nullFields.push('q5: Has Dental Procedure')
                         }
                         else {
-                            if (dentalRecord.q5.hasDentalProcedure === true && checkArrNull(dentalRecord.q5.pastDentalSurgery)) nullFields.push('q5: Past Dental Surgery')
-                            if (dentalRecord.q5.hasDentalProcedure === true && !checkArrNull(dentalRecord.q5.pastDentalSurgery)) {
-                                surgeries = dentalRecord.q5.pastDentalSurgery
-
-                                if (Array.isArray(surgeries)) {
-                                    surgeries.forEach((surgery, index) => {
-                                        if (checkIfNull2(surgery.name)) missingKeys.push(`q5: Past Dental Surgery: name - Index no. ${index}`)
-                                        if (checkObjNull(surgery.date)) missingKeys.push(`q5: Past Dental Surgery: date - Index no. ${index}`)
-                                    })
-                                }
-                                else {
-                                    nullFields.push('q5: Past Dental Surgery is not an array error')
-                                }
-                            }
+                            message = checkFullArr(dentalRecord.q5.pastDentalSurgery, 'q5: Past Dental Surgery', (arr) => {
+                                let list = []
+                                arr.forEach((element, index) => {
+                                    if (checkIfNull(element.name)) list.push(`q5: Past Dental Surgery: name - Index no. ${index}`)
+                                    if (checkIfNull(element.date)) list.push(`q5: Past Dental Surgery: date - Index no. ${index}`)
+                                })
+                                return list
+                            })
+                            if (message !== null) Array.isArray(message) ? nullFields = nullFields.concat(message) : nullFields.push(message)
                         }
                     }
 
-                    missingKeys = []
                     if (checkObjNull(dentalRecord.q6)) {
                         nullFields.push('q6')
                     }
@@ -684,23 +596,23 @@ const addDentalRecord = async (req, res, next) => {
                         nullFields.push('q7')
                     }
                     else {
-                        if (checkObjNull(dentalRecord.q7.presenceOfDebris)) nullFields.push('q7: Presence Of Debris')
-                        if (checkObjNull(dentalRecord.q7.presenceOfToothStain)) nullFields.push('q7: Presence Of Tooth Stain')
-                        if (checkObjNull(dentalRecord.q7.presenceOfGingivitis)) nullFields.push('q7: Presence Of Gingivitis')
-                        if (checkObjNull(dentalRecord.q7.presenceOfPeriodontalPocket)) nullFields.push('q7: Presence Of Periodontal Pocket')
-                        if (checkObjNull(dentalRecord.q7.presenceOfOralBiofilm)) nullFields.push('q7: Presence Of Oral Biofilm')
+                        if (checkIfNull(dentalRecord.q7.presenceOfDebris)) nullFields.push('q7: Presence Of Debris')
+                        if (checkIfNull(dentalRecord.q7.presenceOfToothStain)) nullFields.push('q7: Presence Of Tooth Stain')
+                        if (checkIfNull(dentalRecord.q7.presenceOfGingivitis)) nullFields.push('q7: Presence Of Gingivitis')
+                        if (checkIfNull(dentalRecord.q7.presenceOfPeriodontalPocket)) nullFields.push('q7: Presence Of Periodontal Pocket')
+                        if (checkIfNull(dentalRecord.q7.presenceOfOralBiofilm)) nullFields.push('q7: Presence Of Oral Biofilm')
 
                         if (checkObjNull(dentalRecord.q7.underOrthodonticTreatment)) {
                             nullFields.push('q7: Under Orthodontic Treatment')
                         }
                         else {
-                            if (checkObjNull(dentalRecord.q7.underOrthodonticTreatment.hasTreatment)) {
+                            if (checkIfNull(dentalRecord.q7.underOrthodonticTreatment.hasTreatment)) {
                                 nullFields.push('q7: Under Orthodontic Treatment: Has Treatment')
                             }
                             else {
                                 if (dentalRecord.q7.underOrthodonticTreatment.hasTreatment === true) {
-                                    if (checkObjNull(dentalRecord.q7.underOrthodonticTreatment.yearStarted)) nullFields.push('q7: Under Orthodontic Treatment: yearStarted')
-                                    if (checkObjNull(dentalRecord.q7.underOrthodonticTreatment.lastAdjustment)) nullFields.push('q7: Under Orthodontic Treatment: lastAdjustment')
+                                    if (checkIfNull(dentalRecord.q7.underOrthodonticTreatment.yearStarted)) nullFields.push('q7: Under Orthodontic Treatment: yearStarted')
+                                    if (checkIfNull(dentalRecord.q7.underOrthodonticTreatment.lastAdjustment)) nullFields.push('q7: Under Orthodontic Treatment: lastAdjustment')
                                 }
                             }
                         }
@@ -720,8 +632,8 @@ const addDentalRecord = async (req, res, next) => {
                         }
                         else {
                             q8Keys.forEach((key) => {
-                                if (checkObjNull(dentalRecord.q8[key].temporary)) missingKeys.push(`q8: ${key}: temporary`)
-                                if (checkObjNull(dentalRecord.q8[key].permanent)) missingKeys.push(`q8: ${key}: permanent`)
+                                if (checkIfNull(dentalRecord.q8[key].temporary)) missingKeys.push(`q8: ${key}: temporary`)
+                                if (checkIfNull(dentalRecord.q8[key].permanent)) missingKeys.push(`q8: ${key}: permanent`)
                             })
 
                             if (missingKeys.length > 0) {
@@ -734,11 +646,13 @@ const addDentalRecord = async (req, res, next) => {
                         nullFields.push('q9')
                     }
                     else {
-                        if (checkObjNull(dentalRecord.q9.hasDentofacialAb)) {
+                        if (checkIfNull(dentalRecord.q9.hasDentofacialAb)) {
                             nullFields.push('q9: Has Dentofacial Abnormality')
                         }
                         else {
-                            if (dentalRecord.q9.hasDentofacialAb === true && checkArrNull(dentalRecord.q9.name)) nullFields.push('q9: name')
+                            //if (dentalRecord.q9.hasDentofacialAb === true && checkArrNull(dentalRecord.q9.name)) nullFields.push('q9: name')
+                            message = checkFullArr(dentalRecord.q9.name, 'q9: name', null)
+                            if (message !== null) nullFields.push(message)
                         }
                     }
 
@@ -746,8 +660,8 @@ const addDentalRecord = async (req, res, next) => {
                         nullFields.push('q10')
                     }
                     else {
-                        if (checkObjNull(dentalRecord.q10.needUpperDenture)) nullFields.push('q10: Need Upper Denture')
-                        if (checkObjNull(dentalRecord.q10.needLowerDenture)) nullFields.push('q10: Need Lower Denture')
+                        if (checkIfNull(dentalRecord.q10.needUpperDenture)) nullFields.push('q10: Need Upper Denture')
+                        if (checkIfNull(dentalRecord.q10.needLowerDenture)) nullFields.push('q10: Need Lower Denture')
                     }
 
                     // ENSURES THAT THE FF FIELDS ARE PRESENT   
@@ -756,26 +670,22 @@ const addDentalRecord = async (req, res, next) => {
                         nullFields.push('attachments')
                     }
                     else {
-                        if (!checkArrNull(dentalRecord.attachments)) {
-                            let listAtts = dentalRecord.attachments //array of attachments
-
-                            if (Array.isArray(listAtts)) {
-                                listAtts.forEach((attachments, index) => {
-                                    if (typeof attachments.filename === "undefined") nullFields.push(`attachment no. ${index}: filename`)
-                                    if (typeof attachments.urlLink === "undefined") nullFields.push(`attachment no. ${index}: urlLink`)
-                                })
-                            }
-                            else {
-                                nullFields.push(`attachments array reassignment failed`)
-                            }
-                        }
+                        message = checkFullArr(dentalRecord.attachments, 'attachments', ((arr)=>{
+                            let list = []
+                            arr.forEach((attachments, index) => {
+                                if (typeof attachments.filename === "undefined") list.push(`attachment no. ${index}: filename`)
+                                if (typeof attachments.urlLink === "undefined") list.push(`attachment no. ${index}: urlLink`)
+                            })
+                            return list
+                        }))
+                        if (message !== null) Array.isArray(message) ? nullFields = nullFields.concat(message) : nullFields.push(message)
                     }
 
                     //CHECK FOR ANY NULL FIELDS 
                     if (nullFields.length > 0) {
                         res.status(404).send({
                             successful: false,
-                            message: `Missing data for the foll owing fields: ${nullFields.join(', ')}`
+                            message: `Missing data for the following fields: ${nullFields.join(', ')}`
                         })
                     }
                     else {
@@ -807,15 +717,8 @@ const addDentalRecord = async (req, res, next) => {
                             if (dentalRecord.q8[key].temporary < 0 || dentalRecord.q8[key].temporary > 50) invalidFields.push(`q8: ${key}: invalid number for temporary`)
                             if (dentalRecord.q8[key].permanent < 0 || dentalRecord.q8[key].permanent > 50) invalidFields.push(`q8: ${key}: invalid number for permanent`)
                         }
-                        if (dentalRecord.q9.hasDentofacialAb === true) {
-                            //check if array nga
-                        }
                         if (dentalRecord.q10.needUpperDenture < 0 || dentalRecord.q10.needUpperDenture > 3) invalidFields.push('q10: Need Upper Denture invalid number')
                         if (dentalRecord.q10.needLowerDenture < 0 || dentalRecord.q10.needLowerDenture > 3) invalidFields.push('q10: Need Lower Denture invalid number')
-
-                        //check if attachments is an array
-
-                        //lagyan ng invalid field [] validation
 
                         dentalRecord.isFilledOut = true
                         base.dentalRecord = dentalRecord
@@ -1068,7 +971,7 @@ const unarchivePatient = async (req, res) => {
         // Check if the patient is archived
         const patient = await BaseModel.findById(patientId);
 
-        if (!patient) {
+        if (patient === "") {
             return res.status(404).json({
                 successful: false,
                 message: 'Patient not found',
@@ -1288,8 +1191,7 @@ const getFilteredResultList = async (req, res, next) => {
             },
         ])
 
-        if (utilFunc.checkIfNull(patient) == true) {
-            console.log(patient)
+        if (checkObjNull(patient)) {
             res.status(404).send({
                 successful: false,
                 message: "No patients found"

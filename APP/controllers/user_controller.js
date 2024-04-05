@@ -4,7 +4,7 @@ const { nameRegex,
         userTypeList,
         toProperCase,
         checkObjNull,
-        checkIfNull2,
+        checkIfNull,
         generatePassword } = require('../../utils')
 
 const viewProfileSetting = async (req, res, next) => {
@@ -44,7 +44,6 @@ const viewProfileSetting = async (req, res, next) => {
             userProfile: userProfile
         })
     } catch (error) {
-        console.error(error)
         res.status(500).json({
             successful: false,
             message: 'Internal Server Error'
@@ -65,15 +64,15 @@ const addUser = async (req, res, next)=>{
             nullFields.push('full name')
         }else{
             
-            if (checkIfNull2(fullName.firstName)) nullFields.push('first name')
-            if (!(typeof fullName.middleName === "undefined") && (checkIfNull2(fullName.middleName))) nullFields.push('middle name')
+            if (checkIfNull(fullName.firstName)) nullFields.push('first name')
+            if (!(typeof fullName.middleName === "undefined") && (checkIfNull(fullName.middleName))) nullFields.push('middle name')
 
-            if (checkIfNull2(fullName.lastName)) nullFields.push('last name')
+            if (checkIfNull(fullName.lastName)) nullFields.push('last name')
         }
 
-        if (checkIfNull2(emailAddress)) nullFields.push('email address')
-        if (checkIfNull2(password)) nullFields.push('password')
-        if (checkIfNull2(userType)) nullFields.push('user type')
+        if (checkIfNull(emailAddress)) nullFields.push('email address')
+        if (checkIfNull(password)) nullFields.push('password')
+        if (checkIfNull(userType)) nullFields.push('user type')
 
         if (nullFields.length > 0) {
             res.status(404).send({
@@ -86,14 +85,14 @@ const addUser = async (req, res, next)=>{
             userType = userType.trim().toProperCase()
             fullName.firstName = fullName.firstName.trim()
             fullName.lastName = fullName.lastName.trim()
-            if (!checkIfNull2(fullName.middleName)) fullName.middleName = fullName.middleName.trim()
+            if (!checkIfNull(fullName.middleName)) fullName.middleName = fullName.middleName.trim()
 
             //CHECK FOR FIELDS W INVALID VALUES
             const user = await User.findOne({emailAddress: emailAddress})
 
             const invalidFields = []
             if (!nameRegex.test(fullName.firstName)) invalidFields.push('first name')
-            if ((!checkIfNull2(fullName.middleName)) && (!nameRegex.test(fullName.middleName))) invalidFields.push('middle name')
+            if ((!checkIfNull(fullName.middleName)) && (!nameRegex.test(fullName.middleName))) invalidFields.push('middle name')
             if (!nameRegex.test(fullName.lastName)) invalidFields.push('last name')
             if (user) {
                 invalidFields.push('email address already exists')
