@@ -27,7 +27,7 @@ const baseSchema = new Schema({
         guardianName: {type: String, required: true},
         guardianContactNo: {type: Number, required: true},
         guardianRelationship: {type: String, required: true},
-        attachment: {type: String, required: true} //temporarily a string
+        attachment: {type: String, required: false} //temporarily a string
     },
 
     laboratory: {
@@ -46,9 +46,9 @@ const baseSchema = new Schema({
             antiHbcIgm: {type: String, required: true},
         },
         drugTest: {
-            methamphethamineResults: {type: String, required: false},
+            methamphethamineResults: {type: String, required: false, default: 'N/A'},
             methamphethamineRemarks: {type: String, required: false},
-            tetrahydrocannabinolResults: {type: String, required: false},
+            tetrahydrocannabinolResults: {type: String, required: false, default: 'N/A'},
             tetrahydrocannabinolRemarks: {type: String, required: false},
         },
         urinalysis: {
@@ -88,6 +88,10 @@ const baseSchema = new Schema({
     vaccination: {
         covidVaccination: {
             firstDose: {type: String, required: true},
+            dateGiven: {type: Date, required: true},
+            secondDose: {type: String, required: true},
+            dateGiven: {type: Date, required: true},
+            thirdDose: {type: String, required: true},
             dateGiven: {type: Date, required: true}
         },
         fluVaccination: {
@@ -96,6 +100,10 @@ const baseSchema = new Schema({
         },
         hepatitisBVaccination: {
             firstDose: {type: String, required: true},
+            dateGiven: {type: Date, required: true},
+            secondDose: {type: String, required: true},
+            dateGiven: {type: Date, required: true},
+            thirdDose: {type: String, required: true},
             dateGiven: {type: Date, required: true}
         },
         pneumoniaVaccination: {
@@ -159,7 +167,7 @@ const baseSchema = new Schema({
             hasDentures: {type: Boolean, required: true, default: false},
             dentureType: {type: String, required: function() {return this.hasDentures}, default: ""},
         },
-        q4: {type: String, required: true, default: ""},
+        q4: {type: String, required: false, default: ""},
         q5: {
             hasDentalProcedure: {type: Boolean, required: true, default: false},
             pastDentalSurgery: [{
