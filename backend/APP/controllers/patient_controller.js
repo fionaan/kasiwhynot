@@ -1,4 +1,4 @@
-const {checkIfNull, checkObjNull, checkArrNull} = require('../../utils')
+const {checkIfNull, checkObjNull, checkArrNull, isValidCampus, emailRegex, gender} = require('../../utils')
 const mongoose = require('mongoose')
 const {BaseModel, Student, Employee} = require('../models/patient_model')
 const utilFunc = require('../../utils')
@@ -207,6 +207,10 @@ const addBulk = async (req, res) => {
 const addRecord = async (req, res) => {
     const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category } = req.body;
 
+
+
+
+
     // Create a new BasePatient document
     const basePatient = new BaseModel({
       basicInfo,
@@ -215,6 +219,47 @@ const addRecord = async (req, res) => {
       medicalHistory,
       dentalRecord,
     });
+
+    const nullFields = []
+
+    if (checkObjNull(basicInfo)) {
+        nullFields.push('basicInfo')
+    } else {
+        
+        if (checkIfNull(basicInfo.campus)){
+            nullFields.push('basicInfo.campus')
+        } else if (!isValidCampus.includes(basicInfo.campus)) {
+            nullFields.push('Invalid Campus' )
+        }
+        
+        if (checkIfNull(basicInfo.fullName.firstName)) nullFields.push('basicInfo.fullName.firstName')
+        
+        if (checkIfNull(basicInfo.fullName.lastName)) nullFields.push('basicInfo.fullName.lastName')
+        if (!basicInfo.emailAddress) {
+            nullFields.push('basicInfo.emailAddress')
+        } else if (!emailRegex.test(basicInfo.emailAddress)) {
+            nullFields.push('Invalid Email Address')
+        }
+        if (checkIfNull(basicInfo.dateOfBirth)) nullFields.push('basicInfo.dateOfBirth')
+        if (checkIfNull(basicInfo.age)) nullFields.push('basicInfo.age')
+
+        if (checkIfNull(basicInfo.gender)) {
+            nullFields.push('basicInfo.gender')
+        } else if (!gender.includes(basicInfo.gender)){
+            nullFields.push('Invalid gender input')
+        }
+
+
+        
+    }
+
+    if (nullFields.length > 0) {
+        const errorResponse = {
+            successful: false,
+            message: `Empty or missing fields: ${nullFields.join(', ')}`,
+        }
+        return res.status(400).send(errorResponse)
+    }
   
     // Save the BasePatient document
     basePatient.save()
