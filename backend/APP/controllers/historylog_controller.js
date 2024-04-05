@@ -1,15 +1,22 @@
 const historyLog = require('../models/historylog_model')
-const { BaseModel } = require('../models/patient_model')
+const { BaseModel, Student, Employee } = require('../models/patient_model')
 const user = require('../models/user_model')
-const { dateTimeRegex,
-    nameRegex,
-    historyTypeList,
+const { historyTypeList,
     recordClassList,
     isObjIdValid,
     checkIfNull,
     checkObjNull,
     toProperCase } = require('../../utils')
 
+const deleteLogs = async (req,res) => {
+    await historyLog.deleteMany()
+        .then(() => {
+            res.status(200).send({
+                successful: true,
+                message: 'deleted logs'
+            })
+        })
+}
 
 const getAllLogs = async(req, res, next)=>{
     try{
@@ -24,7 +31,7 @@ const getAllLogs = async(req, res, next)=>{
         if (skip >= totalCount && totalCount !== 0) {
             return res.status(404).send({
                 successful: false,
-                message: "Invalid page number. No history logs found."
+                message: "Invalid page number."
             })
         }
 
@@ -39,10 +46,34 @@ const getAllLogs = async(req, res, next)=>{
             },
             {
                 $lookup: {
-                    from: 'basepatients',
+                    from: 'students',
                     localField: 'patientName',
-                    foreignField: '_id',
-                    as: 'patients'
+                    foreignField: 'studentNo',
+                    as: 'studentPatients'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'employees',
+                    localField: 'patientName',
+                    foreignField: 'employeeNo',
+                    as: 'employeePatients'
+                }
+            },
+            {
+                $addFields: {
+                  combinedPatients: { $concatArrays: ['$studentPatients', '$employeePatients'] }
+                }
+            },
+            {
+                $unwind: '$combinedPatients'
+            },
+            {
+                $lookup: {
+                  from: 'basepatients', // Collection name for basepatients
+                  localField: 'combinedPatients.details', // Assuming 'details' field contains the ID referencing basepatients
+                  foreignField: '_id', // Assuming '_id' is the field in basepatients collection
+                  as: 'patients'
                 }
             },
             {
@@ -171,18 +202,17 @@ const getAllLogs = async(req, res, next)=>{
     }
 }
 
-const addLog = async (req, res, next) => {
+const addLog = async (editedBy, historyType, recordClass, patientName, callback) => {
     try{
-
-        let {editedBy, historyType, recordClass, patientName} = req.body
 
         //CHECK FOR NULL OR EMPTY FIELDS
         const nullFields = []
-        if (checkObjNull(editedBy)) nullFields.push('edited by')
+        if (checkIfNull(editedBy)) nullFields.push('edited by')
         if (checkIfNull(historyType)) nullFields.push('history type')
         if (checkIfNull(recordClass)) nullFields.push('record class')
-        if (checkObjNull(patientName)) nullFields.push('patient name')
+        if (checkIfNull(patientName)) nullFields.push('patient name')
 
+        //CHECKS IF USER EXISTS
         if (!isObjIdValid(editedBy)) {
             nullFields.push('edited by')
         }
@@ -205,35 +235,14 @@ const addLog = async (req, res, next) => {
             }
         }
 
-        if (!isObjIdValid(patientName)) {
-            nullFields.push('patient name')
-        }
-        else {
-            let patient = await BaseModel.findOne({_id: patientName})
-
-            if (patient === null) {
-                nullFields.push('patientName/patient not existing')
-            }
-            else {
-                if (checkObjNull(patient.basicInfo.fullName)) {
-                    nullFields.push('patientName - full name')
-                } 
-                else {
-                    if (checkIfNull(patient.basicInfo.fullName.firstName)) nullFields.push('patientName - first name')
-                    if (!(typeof patient.basicInfo.fullName.middleName === "undefined") && checkIfNull(patient.basicInfo.fullName.middleName)) nullFields.push('patientName - middle name')
-                    if (checkIfNull(patient.basicInfo.fullName.lastName)) nullFields.push('patientName - last name')
-                }
-            }
-        }
-
         if(nullFields.length > 0){
-            res.status(404).send({
-                successful: false,
-                message: `Missing data in the following fields: ${nullFields.join(', ')}`
-            })
+            callback(404, false, `Missing data in the following fields: ${nullFields.join(', ')}`)
+            // res.status(404).send({
+            //     successful: false,
+            //     message: `Missing data in the following fields: ${nullFields.join(', ')}`
+            // })
         } 
         else {
-
             historyType = historyType.trim().toUpperCase()
             recordClass = recordClass.trim().toProperCase()
 
@@ -244,10 +253,12 @@ const addLog = async (req, res, next) => {
             if (!recordClassList.includes(recordClass)) invalidFields.push('record class')
             
             if (invalidFields.length > 0){
-                res.status(404).send({
-                    successful: false,
-                    message: `Invalid values detected for the following fields: ${invalidFields.join(', ')}`
-                })
+                callback(404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}`)
+                //return {404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}`}
+                // res.status(404).send({
+                //     successful: false,
+                //     message: `Invalid values detected for the following fields: ${invalidFields.join(', ')}`
+                // })
             }
             else {
                 const log = new historyLog ({
@@ -260,31 +271,35 @@ const addLog = async (req, res, next) => {
     
                 log.save()
                 .then((result)=>{
-                    res.status(200).send({
-                        successful: true,
-                        message: "Successfully added a new history log.",
-                        id: result._id
-                    })
+                    callback(200, true, result)
+                    // res.status(200).send({
+                    //     successful: true,
+                    //     message: "Successfully added a new history log.",
+                    //     added_log: result
+                    // })
                 })
                 .catch((error) => {
-                    res.status(500).send({
-                        successful: false,
-                        message: error.message
-                    })
+                    callback(500, false, error.message)
+                    // res.status(500).send({
+                    //     successful: false,
+                    //     message: error.message
+                    // })
                 })
             }
         }
     }
     catch(err){
-        res.status(500).send({
-            successful: false,
-            message: err.message
-        })
+        callback(500, false, err.message)
+        // res.status(500).send({
+        //     successful: false,
+        //     message: err.message
+        // })
     }
 
 }
 
 module.exports = {
     getAllLogs,
-    addLog
+    addLog,
+    deleteLogs
 }

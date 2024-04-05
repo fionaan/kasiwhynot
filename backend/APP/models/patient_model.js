@@ -5,7 +5,6 @@ const Schema = mongoose.Schema
 //Base Schema
 const baseSchema = new Schema({
     basicInfo: {
-        campus: {type: String, required: true},
         fullName: {
             firstName: { type: String, required: true },
             middleName: { type: String, required: false },
@@ -28,12 +27,12 @@ const baseSchema = new Schema({
         guardianName: {type: String, required: true},
         guardianContactNo: {type: Number, required: true},
         guardianRelationship: {type: String, required: true},
-        attachment: {type: String, required: true} //temporarily a string
+        attachment: {type: String, required: false} //temporarily a string
     },
 
     laboratory: {
         chestXray: {
-            findings: {type: String, required: false},
+            findings: {type: String, required: true},
             date: {type: Date, required: true}
         },
         cbc: {
@@ -47,9 +46,9 @@ const baseSchema = new Schema({
             antiHbcIgm: {type: String, required: true},
         },
         drugTest: {
-            methamphethamineResults: {type: String, required: false},
+            methamphethamineResults: {type: String, required: true},
             methamphethamineRemarks: {type: String, required: false},
-            tetrahydrocannabinolResults: {type: String, required: false},
+            tetrahydrocannabinolResults: {type: String, required: true},
             tetrahydrocannabinolRemarks: {type: String, required: false},
         },
         urinalysis: {
@@ -84,7 +83,7 @@ const baseSchema = new Schema({
         others: {
             pregnancyTest: {type: String, required: true}
         },
-        attachments: {type: String, required: true}
+        attachments: {type: String, required: false}
     },
     vaccination: {
         covidVaccination: {
@@ -103,7 +102,7 @@ const baseSchema = new Schema({
             firstDose: {type: String, required: true},
             dateGiven: {type: Date, required: true}
         },
-        attachments: {type: String, required: true}
+        attachments: {type: String, required: false}
     },
     medicalHistory: {
         tattoo: {type: Boolean, required: true, default: false},
@@ -231,7 +230,8 @@ const baseSchema = new Schema({
             presenceOfOralBiofilm: {type: Boolean, required: true, default: false},
             underOrthodonticTreatment: {
                 hasTreatment: {type: Boolean, required: true, default: false},
-                date: {type: Date, required: function() {return this.hasTreatment}, default: Date.now} 
+                yearStarted: {type: Number, required: function() {return this.hasTreatment}, default: Date.now},
+                lastAdjustment: {type: Date, required: function() {return this.hasTreatment}, default: Date.now}
             }
         },
         q8: {

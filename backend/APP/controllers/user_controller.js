@@ -2,7 +2,6 @@ const User = require('../models/user_model')
 const { nameRegex,
         emailRegex,
         userTypeList,
-        dateRegex,
         toProperCase,
         checkObjNull,
         checkIfNull,
@@ -45,7 +44,6 @@ const viewProfileSetting = async (req, res, next) => {
             userProfile: userProfile
         })
     } catch (error) {
-        console.error(error)
         res.status(500).json({
             successful: false,
             message: 'Internal Server Error'
@@ -53,7 +51,7 @@ const viewProfileSetting = async (req, res, next) => {
     }
 }
 
-const addUser = (req, res, next)=>{
+const addUser = async (req, res, next)=>{
     
     try {
         let {fullName, emailAddress, userType} = req.body
@@ -90,11 +88,18 @@ const addUser = (req, res, next)=>{
             if (!checkIfNull(fullName.middleName)) fullName.middleName = fullName.middleName.trim()
 
             //CHECK FOR FIELDS W INVALID VALUES
+            const user = await User.findOne({emailAddress: emailAddress})
+
             const invalidFields = []
             if (!nameRegex.test(fullName.firstName)) invalidFields.push('first name')
             if ((!checkIfNull(fullName.middleName)) && (!nameRegex.test(fullName.middleName))) invalidFields.push('middle name')
             if (!nameRegex.test(fullName.lastName)) invalidFields.push('last name')
-            if (!emailRegex.test(emailAddress)) invalidFields.push('email address')
+            if (user) {
+                invalidFields.push('email address already exists')
+            }
+            else {
+                if (!emailRegex.test(emailAddress)) invalidFields.push('email address')
+            }
             if (!userTypeList.includes(userType)) invalidFields.push('user type')
 
             if (invalidFields.length > 0){
@@ -118,7 +123,7 @@ const addUser = (req, res, next)=>{
                     res.status(200).send({
                         successful: true,
                         message: "Successfully added a new user.",
-                        id: result._id
+                        added_user: result
                     })
                 })
                 .catch((error) => {
