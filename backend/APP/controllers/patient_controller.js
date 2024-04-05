@@ -4,7 +4,7 @@ const {BaseModel, Student, Employee} = require('../models/patient_model')
 const utilFunc = require('../../utils')
 const convertExcelToJson = require('convert-excel-to-json')
 const fs = require('fs-extra')
-const xlsx = require('xlsx')
+//const xlsx = require('xlsx')
 
 
 // const addBulk = async (req, res) => {
@@ -64,86 +64,145 @@ const xlsx = require('xlsx')
 // }
 
 
+// const addBulk = async (req, res) => {
+//     try {
+//         if (!req.file) {
+//             return res.status(400).json({ error: 'No file uploaded' });
+//         }
+
+//         const filePath = 'uploads/' + req.file.filename;
+
+//         const excelData = convertExcelToJson({
+//             sourceFile: filePath,
+//             header: {
+//                 rows: 1
+//             },
+//             columnToKey: {
+//                 '*': '{{columnHeader}}'
+//             },
+//             sheets: ['medicalRecords']
+//         })
+
+//         if (!excelData || typeof excelData !== 'object') {
+//             throw new Error('Invalid data format returned from convertExcelToJson');
+//         }
+
+//         // Parse and combine excelData
+//         let combinedData = [];
+//         Object.values(excelData).forEach(sheetData => {
+//             combinedData = [...combinedData, ...sheetData];
+//         })
+
+//         // Iterate over combinedData
+//         for (const row of combinedData) {
+//             const baseModelData = {};
+//             Object.entries(row).forEach(([header, value]) => {
+//                 const keys = header.split('.'); // Split header at each period
+//                 let currentObject = baseModelData;
+//                 for (let i = 1; i < keys.length - 1; i++) {
+//                     const key = keys[i];
+//                     if (!currentObject[key]) {
+//                         currentObject[key] = {}; // Create nested object if it doesn't exist
+//                     }
+//                     currentObject = currentObject[key]// Move to the next nested object
+//                 }
+//                 const lastKey = keys[keys.length - 1]
+//                 currentObject[lastKey] = value; // Assign the value to the last nested object
+//             })
+
+//             console.log('baseModel:',baseModelData)
+
+//             //Create an instance of BaseModel
+//             const baseModelInstance = new BaseModel(baseModelData);
+
+//             // Validate the instance against the schema
+//             // const validationError = baseModelInstance.validate();
+//             // if (validationError) {
+//             //     await baseModelInstance.save();
+//             //     // Handle validation error, e.g., skip saving or log the error
+//             // } else {
+//             //     // Save the validated instance
+//             //     await baseModelInstance.save();
+//             // }
+
+//             await baseModelInstance.save()
+            
+            
+//         }
+        
+
+//         // Delete the temporary file after processing
+//         fs.unlink(filePath, (err) => {
+//             if (err) {
+//                 console.error('Error deleting file:', err)
+//             }
+//         })
+
+//         res.status(200).json({ success: true, message: 'Data imported successfully' })
+//     } catch (error) {
+//         console.error('Error:', error)
+//         res.status(500).json({ error: 'An error occurred' })
+//     }
+// }
+
+
+
+
 const addBulk = async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' })
+    }
+
+    const filePath = `uploads/${req.file.filename}`
+
     try {
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' });
-        }
-
-        const filePath = 'uploads/' + req.file.filename;
-
         const excelData = convertExcelToJson({
             sourceFile: filePath,
-            header: {
-                rows: 1
-            },
-            columnToKey: {
-                '*': '{{columnHeader}}'
-            }
-        });
+            header: { rows: 1 },
+            columnToKey: { '*': '{{columnHeader}}' },
+            sheets: ['medicalRecords', 'student'] // Add the new sheet name here
+        })
 
         if (!excelData || typeof excelData !== 'object') {
             throw new Error('Invalid data format returned from convertExcelToJson');
         }
 
-        // Parse and combine excelData
-        let combinedData = [];
-        Object.values(excelData).forEach(sheetData => {
-            combinedData = [...combinedData, ...sheetData];
-        });
+        let savedBaseModelId
+        // Process medical records
+        for (const row of excelData.medicalRecords) {
+            const instance = new BaseModel(row);
+            await instance.save();
 
-        // Iterate over combinedData
-        for (const row of combinedData) {
-            const baseModelData = {};
-            Object.entries(row).forEach(([header, value]) => {
-                const keys = header.split('.'); // Split header at each period
-                let currentObject = baseModelData;
-                for (let i = 1; i < keys.length - 1; i++) {
-                    const key = keys[i];
-                    if (!currentObject[key]) {
-                        currentObject[key] = {}; // Create nested object if it doesn't exist
-                    }
-                    currentObject = currentObject[key]; // Move to the next nested object
-                }
-                const lastKey = keys[keys.length - 1];
-                currentObject[lastKey] = value; // Assign the value to the last nested object
-            })
-
-            console.log('combinedData:',baseModelData)
-
-            // //Create an instance of BaseModel
-            // const baseModelInstance = new BaseModel(baseModelData);
-
-            // // Validate the instance against the schema
-            // const validationError = baseModelInstance.validateSync();
-            // if (validationError) {
-            //     console.error('Validation error:', validationError);
-            //     // Handle validation error, e.g., skip saving or log the error
-            // } else {
-            //     // Save the validated instance
-            //     await baseModelInstance.save();
-            // }
+            savedBaseModelId = instance._id
         }
 
-        // Delete the temporary file after processing
-        fs.unlink(filePath, (err) => {
-            if (err) {
-                console.error('Error deleting file:', err);
-            }
+        for (const row of excelData.student) {
+            
+
+            // Assign BaseModel _id to student details field
+            const studentInstance = new Student({ ...row, details: savedBaseModelId });
+            await studentInstance.save()
+        }
+
+        await fs.unlink(filePath) // Clean up the file after processing
+        res.json({
+            successful: true,
+            message: 'Bulk data added successfully',
         });
-
-        res.status(200).json({ success: true, message: 'Data imported successfully' });
     } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'An error occurred' });
+        console.error('Error:', error)
+        res.status(500).json({
+            successful: false,
+            message: 'Error adding bulk data',
+            error: error.message,
+        })
+        try {
+            await fs.unlink(filePath); // Attempt to clean up the file in case of errors
+        } catch (cleanupError) {
+            console.error('Error deleting file:', cleanupError)
+        }
     }
-};
-
-
-
-
-
-
+}
 
 const addRecord = async (req, res) => {
     const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category } = req.body;
