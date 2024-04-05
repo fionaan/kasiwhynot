@@ -1,7 +1,7 @@
 const express = require('express')
 const patientController = require('../controllers/patient_controller')
 const router = express.Router()
-const {authenticateToken} = require('../controllers/auth_controller')
+const { authenticateToken } = require('../controllers/auth_controller')
 
 router.put('/addDental', patientController.addDentalRecord)
 router.post('/add', patientController.addRecord)
@@ -14,6 +14,7 @@ router.put('/archive/:id', patientController.archivePatient)
 router.put('/unarchive/:id', patientController.unarchivePatient)
 router.get('/filterList', patientController.getFilterList)
 router.get('/getFilter/:pageNumber?', patientController.getFilteredResultList)
+router.put('/bulkArchive', patientController.bulkArchivePatients)
 
 // ALL 'DELETE' ROUTERS ARE FOR TESTING PURPOSES ONLY
 router.delete('/deletestud', patientController.deleteStudents)

@@ -27,20 +27,20 @@ const historyTypeList = ['ADD', 'UPDATE', 'ARCHIVE', 'UNARCHIVE']
 const recordClassList = ['Medical', 'Dental']
 
 //CHECKS IF THE GIVEN VALUE IS A VALID MONGOOSE OBJ ID
-const isObjIdValid = (id) => {   
+const isObjIdValid = (id) => {
 
     const objId = mongoose.Types.ObjectId
-    if (objId.isValid(id)) {     
-        if (String(new objId(id)) === id) {        
-            return true      
-        } 
-        else {        
-            return false      
-        }    
-    } 
-    else {      
-        return false    
-    }  
+    if (objId.isValid(id)) {
+        if (String(new objId(id)) === id) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    else {
+        return false
+    }
 }
 
 //CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
@@ -71,7 +71,7 @@ const checkObjNull = (obj)=>{
 //CHECKS IF AN ARRAY ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARRAY IS NULL/EMPTY, OTHERWISE RETURNS FALSE.
 const checkArrNull = (arr)=>{
     return ((typeof arr === "undefined") || arr.length === 0 || arr.includes("") && arr.length === 1)
-} 
+}
 
 const checkFullArr = (arr, message, func)=>{
     if (arr) {
@@ -94,14 +94,18 @@ const checkFullArr = (arr, message, func)=>{
 }
 
 //CHECKS IF THE VALUE OF A MANDATORY FIELD IS NULL OR NOT. RETURNS TRUE IF ALL MANDATORY FIELDS ARE NOT NULL, OTHERWISE RETURNS FALSE.
-const checkMandatoryFields = (arrs)=>{
+const checkMandatoryFields = (arrs) => {
     let result = true
-    
+
     arrs.forEach(data => {
-        if (checkIfNull(data) == true){
+        if (checkIfNull(data) == true) {
             result = false
         }
     })
+}
+
+String.prototype.toProperCase = function () {
+    return this.toLowerCase().replace(/^(.)|\s(.)/g, function ($1) { return $1.toUpperCase(); })
 }
 
 //GENERATES RANDOM PASSWORD
@@ -114,13 +118,13 @@ const generatePassword = () => {
     const number = "1234567890"
     const symbol = "~!@#$%^&*()_-+=/|{}[]><"
     const allChars = upperCase + lowerCase + number + symbol
-    
+
     password += upperCase[Math.floor(Math.random() * upperCase.length)]
     password += lowerCase[Math.floor(Math.random() * lowerCase.length)]
     password += number[Math.floor(Math.random() * number.length)]
     password += symbol[Math.floor(Math.random() * symbol.length)]
 
-    while (password.length < length){
+    while (password.length < length) {
         const randomIndex = Math.floor(Math.random() * allChars.length)
         password += allChars[randomIndex]
     }
@@ -128,9 +132,8 @@ const generatePassword = () => {
     return password
 }
 
-String.prototype.toProperCase = function()
-{
-    return this.toLowerCase().replace(/^(.)|\s(.)/g, function($1) { return $1.toUpperCase(); })
+String.prototype.toProperCase = function () {
+    return this.toLowerCase().replace(/^(.)|\s(.)/g, function ($1) { return $1.toUpperCase(); })
 }
 
 // DENTAL RECORD FIELDS WITH FIXED VALUES (LIST)

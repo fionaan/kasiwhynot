@@ -487,7 +487,6 @@ const searchPatientList = async (req, res, next) => {
 }
 
 const addDentalRecord = async (req, res, next) => {
-    //patientId = student_id/employee_id
     try {
         let { patientId, category, dentalRecord, editedBy } = req.body
         category = category.trim().toLowerCase()
@@ -514,7 +513,6 @@ const addDentalRecord = async (req, res, next) => {
             }
 
             let patient = await patientModel.findOne({ _id: patientId })
-            
             if (patient === null) {
                 res.status(404).send({
                     successful: false,
@@ -532,12 +530,12 @@ const addDentalRecord = async (req, res, next) => {
                 }
                 else {
                     // // CHECK IF THE PATIENT RECORD ALREADY CONTAINS DENTAL RECORD
-                    // if (base.dentalRecord.isFilledOut === true) {
-                    //     return res.status(400).send({
-                    //         successful: false,
-                    //         message: `Base record with id ${base._id} already contains a dental record.`
-                    //     })
-                    // }
+                    if (base.dentalRecord.isFilledOut === true) {
+                        return res.status(400).send({
+                            successful: false,
+                            message: `Base record with id ${base._id} already contains a dental record.`
+                        })
+                    }
 
                     // CHECK FOR NULL DENTAL FIELDS  
                     nullFields = []
@@ -1214,6 +1212,41 @@ const getFilteredResultList = async (req, res, next) => {
         })
     }
 }
+
+const bulkArchivePatients = async (req, res) => {
+    const { patientIds } = req.body;
+
+    try {
+        const patients = await BaseModel.find({ _id: { $in: patientIds } });
+        const notFoundIds = patientIds.filter(id => !patients.find(patient => patient._id.equals(id)));
+        if (notFoundIds.length > 0) {
+            return res.status(404).json({
+                successful: false,
+                message: `Patients with the following IDs not found: ${notFoundIds.join(', ')}`,
+            });
+        }
+
+        await Promise.all(patients.map(async patient => {
+            if (!patient.archived) {
+                patient.archived = true;
+                patient.archivedDate = new Date();
+                await patient.save();
+            }
+        }));
+
+        res.json({
+            successful: true,
+            message: 'Patients archived successfully',
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            successful: false,
+            message: 'Error archiving patients',
+            error: error.message,
+        });
+    }
+};
 
 module.exports = {
     getPatientList,

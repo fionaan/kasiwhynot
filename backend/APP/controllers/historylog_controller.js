@@ -18,9 +18,9 @@ const deleteLogs = async (req,res) => {
         })
 }
 
-const getAllLogs = async(req, res, next)=>{
-    try{
-        
+const getAllLogs = async (req, res, next) => {
+    try {
+
         const pageNumber = parseInt(req.params.pageNumber) || 1 // default to 1 if no param is set
         const pageSize = 50 // limits of records to be fetched per page
         const skip = (pageNumber - 1) * pageSize
@@ -99,7 +99,7 @@ const getAllLogs = async(req, res, next)=>{
                             {
                                 $cond: { // middle name rules
                                     if: {
-                                        $ne: [ {$type: '$users.fullName.middleName'}, 'missing']
+                                        $ne: [{ $type: '$users.fullName.middleName' }, 'missing']
                                     },
                                     then: {
                                         $cond: {
@@ -108,14 +108,14 @@ const getAllLogs = async(req, res, next)=>{
                                                     { $ne: ['$users.fullName.middleName', null] },
                                                     { $ne: ['$users.fullName.middleName', ''] },
                                                     { $ne: ['$users.fullName.middleName', 'null'] },
-                                                    { $ne: [{ $trim: { input: '$users.fullName.middleName' }}, ''] },
-                                                    { $ne: [{ $trim: { input: '$users.fullName.middleName' }}, 'null'] }
+                                                    { $ne: [{ $trim: { input: '$users.fullName.middleName' } }, ''] },
+                                                    { $ne: [{ $trim: { input: '$users.fullName.middleName' } }, 'null'] }
                                                 ]
-                                            }, 
+                                            },
                                             then: {
                                                 $concat: [
                                                     ' ',
-                                                    { $substr: ['$users.fullName.middleName', 0, 1]},
+                                                    { $substr: ['$users.fullName.middleName', 0, 1] },
                                                     '.'
                                                 ]
                                             },
@@ -137,7 +137,7 @@ const getAllLogs = async(req, res, next)=>{
                             {
                                 $cond: {    // middle name rules
                                     if: {
-                                        $ne: [{type: '$patients.basicInfo.fullName.middleName'}, 'missing']
+                                        $ne: [{ type: '$patients.basicInfo.fullName.middleName' }, 'missing']
                                     },
                                     then: {
                                         $cond: {
@@ -146,14 +146,14 @@ const getAllLogs = async(req, res, next)=>{
                                                     { $ne: ['$patients.basicInfo.fullName.middleName', null] },
                                                     { $ne: ['$patients.basicInfo.fullName.middleName', ''] },
                                                     { $ne: ['$patients.basicInfo.fullName.middleName', 'null'] },
-                                                    { $ne: [{ $trim: { input: '$patients.basicInfo.fullName.middleName' }}, ''] },
-                                                    { $ne: [{ $trim: { input: '$patients.basicInfo.fullName.middleName' }}, 'null'] }
+                                                    { $ne: [{ $trim: { input: '$patients.basicInfo.fullName.middleName' } }, ''] },
+                                                    { $ne: [{ $trim: { input: '$patients.basicInfo.fullName.middleName' } }, 'null'] }
                                                 ]
                                             },
                                             then: {
                                                 $concat: [
                                                     ' ',
-                                                    { $substr: ['$patients.basicInfo.fullName.middleName', 0, 1]},
+                                                    { $substr: ['$patients.basicInfo.fullName.middleName', 0, 1] },
                                                     '.'
                                                 ]
                                             },
@@ -180,12 +180,12 @@ const getAllLogs = async(req, res, next)=>{
             },
         ])
 
-        if(logs.length === 0){
+        if (logs.length === 0) {
             res.status(404).send({
                 successful: false,
                 message: "No history logs recorded yet."
             })
-        }else{
+        } else {
             res.status(200).send({
                 successful: true,
                 message: "Retrieved all history logs.",
@@ -194,7 +194,7 @@ const getAllLogs = async(req, res, next)=>{
             })
         }
     }
-    catch(err){
+    catch (err) {
         res.status(500).send({
             successful: false,
             message: err.message
@@ -217,7 +217,7 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
             nullFields.push('edited by')
         }
         else {
-            let editor = await user.findOne({_id: editedBy})
+            let editor = await user.findOne({ _id: editedBy })
 
             if (editor === null) {
                 nullFields.push('`edited by` user not existing')
@@ -261,14 +261,14 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
                 // })
             }
             else {
-                const log = new historyLog ({
+                const log = new historyLog({
                     dateTime: Date.now(),
                     editedBy: editedBy,
                     historyType: historyType,
                     recordClass: recordClass,
                     patientName: patientName
                 })
-    
+
                 log.save()
                 .then((result)=>{
                     callback(200, true, result)
