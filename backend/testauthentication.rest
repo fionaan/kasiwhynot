@@ -31,3 +31,7 @@ Content-Type: application/json
 {
     "email": "panona@gmail.com"
 }
+
+###
+
+DELETE http://localhost:7000/auth/logout

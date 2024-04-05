@@ -23,11 +23,10 @@ const login = async (req, res, next) => {
             //check if user is in a passChangeable state
             if (user.passChangeable === false) {
                 let accessToken = generateAccessToken({ userId: user._id })
-                let refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET)
+                let refreshToken = jwt.sign({userId: user._id}, process.env.REFRESH_TOKEN_SECRET)
 
-                res.cookie('refreshToken', refreshToken, {httpOnly: true})
-                res.json({ accessToken });
-
+                res.cookie('refreshToken', refreshToken, {httpOnly: false})
+                console.log(accessToken)
                 // return res.status(200).send({
                 //     successful: true,
                 //     message: "Login successful."
@@ -126,39 +125,52 @@ const forgetPassword = async (req, res, next) => {
     }
 }
 
-const tokenRefresh = async (req, res, next) => {
-    const refreshToken = req.cookies.refreshToken
-    if (!refreshToken){
-        return res.sendStatus(401)
-    }
-
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err){
-            return res.sendStatus(403)
-        }
-
-        const accessToken = jwt.sign({username: user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10s'});
-        res.cookie('accessToken', accessToken, {httpOnly: true})
-        res.sendStatus(200)
-    })
+const logout = (req, res, next) => {
+    // Clear the refresh token cookie
+    res.clearCookie('refreshToken')
+    res.sendStatus(204)
 }
 
-function authenticateToken (req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-    
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const refreshToken = req.cookies.refreshToken;
+
     if (!authHeader) {
         return res.status(401).send("Authorization header is missing.");
-    }
-    else if (utilFunc.checkIfNull(token)) {
-        return res.status(401).send("Can't find token.")
+    } else if (utilFunc.checkIfNull(token)) {
+        return res.status(401).send("Can't find token.");
     }
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403)
-        req.user = user
-        next()
-    })
+        if (err) {
+            if (err.name === 'TokenExpiredError') {
+                if (!refreshToken) {
+                    return res.sendStatus(401);
+                } else {
+                    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+                        if (err) {
+                            return res.sendStatus(403);
+                        } else {
+                            let accessToken = generateAccessToken({ userId: user._id });
+                            req.user = user;
+                            console.log("AT: " + accessToken);
+                            console.log("RT: " + refreshToken);
+                            next();
+                        }
+                    });
+                }
+            } else {
+                return res.sendStatus(403)
+            }
+        } 
+        
+        else {
+            console.log("yessss");
+            req.user = user;
+            next();
+        }
+    });
 }
 
 function generateAccessToken (user) {
@@ -169,7 +181,7 @@ module.exports = {
     login,
     changePassword,
     forgetPassword,
-    authenticateToken,
     generateAccessToken,
-    tokenRefresh
+    authenticateToken,
+    logout
 }
