@@ -17,6 +17,11 @@ const nameRegex = /^[a-zA-Z][a-zA-Z.,'\s-]*$/
 //CHECKS IF EMAIL IS VALID
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+//Valid Campus
+const isValidCampus = ['Manila','Makati', 'Malolos']
+
+const gender = ['Male', 'Female']
+
 //LIST REFERENCE FOR USER TYPES
 const userTypeList = ['Dentist', 'Nurse', 'Doctor']
 
@@ -160,5 +165,7 @@ module.exports = {
     checkFullArr,
     checkMandatoryFields,
     generatePassword,
-    toProperCase: String.prototype.toProperCase
+    toProperCase: String.prototype.toProperCase,
+    isValidCampus,
+    gender
 }

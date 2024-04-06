@@ -14,7 +14,6 @@ const baseSchema = new Schema({
         dateOfBirth: {type: Date, required: true},
         age: {type: Number, required: true}, //should be automatic based on date of birth and current date next time
         gender: {type: String, required: true},
-        campus:{type: String, required: true},
         homeAddress: {type: String, required: true},
         contactNo: {type: Number, required: true},
         nationality: {type: String, required: true},
@@ -46,10 +45,10 @@ const baseSchema = new Schema({
             antiHbcIgm: { type: String, required: true },
         },
         drugTest: {
-            methamphethamineResults: { type: String, required: false },
-            methamphethamineRemarks: { type: String, required: false },
-            tetrahydrocannabinolResults: { type: String, required: false },
-            tetrahydrocannabinolRemarks: { type: String, required: false },
+            methamphethamineResults: {type: String, required: false, default: 'N/A'},
+            methamphethamineRemarks: {type: String, required: false},
+            tetrahydrocannabinolResults: {type: String, required: false, default: 'N/A'},
+            tetrahydrocannabinolRemarks: {type: String, required: false},
         },
         urinalysis: {
             color: { type: String, required: true },
@@ -87,16 +86,24 @@ const baseSchema = new Schema({
     },
     vaccination: {
         covidVaccination: {
-            firstDose: { type: String, required: true },
-            dateGiven: { type: Date, required: true }
+            firstDose: {type: String, required: true},
+            dateGiven: {type: Date, required: true},
+            secondDose: {type: String, required: true},
+            dateGiven: {type: Date, required: true},
+            thirdDose: {type: String, required: true},
+            dateGiven: {type: Date, required: true}
         },
         fluVaccination: {
             firstDose: { type: String, required: true },
             dateGiven: { type: Date, required: true }
         },
         hepatitisBVaccination: {
-            firstDose: { type: String, required: true },
-            dateGiven: { type: Date, required: true }
+            firstDose: {type: String, required: true},
+            dateGiven: {type: Date, required: true},
+            secondDose: {type: String, required: true},
+            dateGiven: {type: Date, required: true},
+            thirdDose: {type: String, required: true},
+            dateGiven: {type: Date, required: true}
         },
         pneumoniaVaccination: {
             firstDose: { type: String, required: true },
@@ -159,7 +166,7 @@ const baseSchema = new Schema({
             hasDentures: { type: Boolean, required: true, default: false },
             dentureType: { type: String, required: function () { return this.hasDentures }, default: "" },
         },
-        q4: { type: String, required: true, default: "" },
+        q4: {type: String, required: false, default: ""},
         q5: {
             hasDentalProcedure: { type: Boolean, required: true, default: false },
             pastDentalSurgery: [{

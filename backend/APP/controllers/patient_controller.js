@@ -1,8 +1,10 @@
-const { checkIfNull, checkObjNull, checkArrNull, checkFullArr, q4Values, q6Values } = require('../../utils')
+const { checkIfNull, checkObjNull, checkArrNull, checkFullArr, q4Values, q6Values, isValidCampus, emailRegex, gender } = require('../../utils')
 const { BaseModel, Student, Employee } = require('../models/patient_model')
 const HistoryLog = require('../models/historylog_model')
 const { addLog } = require('./historylog_controller')
 const mongoose = require('mongoose')
+const convertExcelToJson = require('convert-excel-to-json')
+const fs = require('fs-extra')
 
 
 // ALL DELETE FUNCTIONS ARE FOR TESTING PURPOSES ONLY
@@ -43,6 +45,205 @@ const addLogPromise = (editedBy, type, record, id) => {
         })
     })
 }
+//const xlsx = require('xlsx')
+
+
+// const addBulk = async (req, res) => {
+//     try {
+//         if (!req.file) {
+//             return res.status(400).json({ error: 'No file uploaded' });
+//         }
+
+//         const filePath = 'uploads/' + req.file.filename;
+
+//         const excelData = convertExcelToJson({
+//             sourceFile: filePath,
+//             header: {
+//                 rows: 1
+//             },
+//             columnToKey: {
+//                 "*": "{{columnHeader}}"
+//             }
+//         })
+
+//         console.log('Excel Data:', excelData); // Debug log to check Excel data
+
+//         if (!excelData || typeof excelData !== 'object') {
+//             throw new Error('Invalid data format returned from convertExcelToJson')
+//         }
+
+//         // Combine all data from different sheets into a single array
+//         let combinedData = [];
+//         Object.values(excelData).forEach(sheetData => {
+//             combinedData = [...combinedData, ...sheetData]
+//         })
+
+//         console.log('Combined Data:', combinedData) // Debug log to check combined data
+
+//         // Process and save combinedData
+//         // for (const data of combinedData) {
+//         //     console.log('Processing Data:', data) // Debug log to check each data entry
+//         //     const baseModelInstance = new BaseModel(data);
+//         //     await baseModelInstance.validate() // Validate the data
+//         //     await baseModelInstance.save() // Save the data // Assuming data matches the Patient schema
+//         // }
+// //Na  rread yung excel File pero di nag ssave sa database
+// //Di ko sure if tama ba na pinaghiwalay ko mga sheets
+
+//         // Delete the temporary file after processing
+//         fs.unlink(filePath, (err) => {
+//             if (err) {
+//                 console.error('Error deleting file:', err);
+//             }
+//         })
+
+//         res.status(200).json({ success: true, message: 'Data imported successfully' })
+//     } catch (error) {
+//         console.error('Error:', error)
+//         res.status(500).json({ error: 'An error occurred' })
+//     }
+// }
+
+
+// const addBulk = async (req, res) => {
+//     try {
+//         if (!req.file) {
+//             return res.status(400).json({ error: 'No file uploaded' });
+//         }
+
+//         const filePath = 'uploads/' + req.file.filename;
+
+//         const excelData = convertExcelToJson({
+//             sourceFile: filePath,
+//             header: {
+//                 rows: 1
+//             },
+//             columnToKey: {
+//                 '*': '{{columnHeader}}'
+//             },
+//             sheets: ['medicalRecords']
+//         })
+
+//         if (!excelData || typeof excelData !== 'object') {
+//             throw new Error('Invalid data format returned from convertExcelToJson');
+//         }
+
+//         // Parse and combine excelData
+//         let combinedData = [];
+//         Object.values(excelData).forEach(sheetData => {
+//             combinedData = [...combinedData, ...sheetData];
+//         })
+
+//         // Iterate over combinedData
+//         for (const row of combinedData) {
+//             const baseModelData = {};
+//             Object.entries(row).forEach(([header, value]) => {
+//                 const keys = header.split('.'); // Split header at each period
+//                 let currentObject = baseModelData;
+//                 for (let i = 1; i < keys.length - 1; i++) {
+//                     const key = keys[i];
+//                     if (!currentObject[key]) {
+//                         currentObject[key] = {}; // Create nested object if it doesn't exist
+//                     }
+//                     currentObject = currentObject[key]// Move to the next nested object
+//                 }
+//                 const lastKey = keys[keys.length - 1]
+//                 currentObject[lastKey] = value; // Assign the value to the last nested object
+//             })
+
+//             console.log('baseModel:',baseModelData)
+
+//             //Create an instance of BaseModel
+//             const baseModelInstance = new BaseModel(baseModelData);
+
+//             // Validate the instance against the schema
+//             // const validationError = baseModelInstance.validate();
+//             // if (validationError) {
+//             //     await baseModelInstance.save();
+//             //     // Handle validation error, e.g., skip saving or log the error
+//             // } else {
+//             //     // Save the validated instance
+//             //     await baseModelInstance.save();
+//             // }
+
+//             await baseModelInstance.save()
+
+
+//         }
+
+
+//         // Delete the temporary file after processing
+//         fs.unlink(filePath, (err) => {
+//             if (err) {
+//                 console.error('Error deleting file:', err)
+//             }
+//         })
+
+//         res.status(200).json({ success: true, message: 'Data imported successfully' })
+//     } catch (error) {
+//         console.error('Error:', error)
+//         res.status(500).json({ error: 'An error occurred' })
+//     }
+// }
+
+
+
+
+const addBulk = async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' })
+    }
+
+    const filePath = `uploads/${req.file.filename}`
+
+    try {
+        const excelData = convertExcelToJson({
+            sourceFile: filePath,
+            header: { rows: 1 },
+            columnToKey: { '*': '{{columnHeader}}' },
+            sheets: ['medicalRecords', 'student'] // Add the new sheet name here
+        })
+
+        if (!excelData || typeof excelData !== 'object') {
+            throw new Error('Invalid data format returned from convertExcelToJson');
+        }
+
+        let savedBaseModelId
+        // Process medical records
+        for (const row of excelData.medicalRecords) {
+            const instance = new BaseModel(row);
+            await instance.save();
+
+            savedBaseModelId = instance._id
+        }
+
+        for (const row of excelData.student) {
+
+
+            // Assign BaseModel _id to student details field
+            const studentInstance = new Student({ ...row, details: savedBaseModelId });
+            await studentInstance.save()
+        }
+
+        await fs.unlink(filePath) // Clean up the file after processing
+        res.json({
+            successful: true,
+            message: 'Bulk data added successfully',
+        });
+    } catch (error) {
+        console.error('Error:', error)
+        res.status(500).json({
+            successful: false,
+            message: 'Error adding bulk data',
+            error: error.message,
+        })
+        try {
+            await fs.unlink(filePath); // Attempt to clean up the file in case of errors
+        } catch (cleanupError) {
+            console.error('Error deleting file:', cleanupError)
+        }
+    }
+}
 
 const addRecord = async (req, res) => {
     try {
@@ -56,6 +257,45 @@ const addRecord = async (req, res) => {
             medicalHistory,
             dentalRecord,
         })
+
+        const nullFields = []
+
+        if (checkObjNull(basicInfo)) {
+            nullFields.push('basicInfo')
+        } else {
+
+            if (checkIfNull(basicInfo.campus)) {
+                nullFields.push('basicInfo.campus')
+            } else if (!isValidCampus.includes(basicInfo.campus)) {
+                nullFields.push('Invalid Campus')
+            }
+
+            if (checkIfNull(basicInfo.fullName.firstName)) nullFields.push('basicInfo.fullName.firstName')
+
+            if (checkIfNull(basicInfo.fullName.lastName)) nullFields.push('basicInfo.fullName.lastName')
+            if (!basicInfo.emailAddress) {
+                nullFields.push('basicInfo.emailAddress')
+            } else if (!emailRegex.test(basicInfo.emailAddress)) {
+                nullFields.push('Invalid Email Address')
+            }
+            if (checkIfNull(basicInfo.dateOfBirth)) nullFields.push('basicInfo.dateOfBirth')
+            if (checkIfNull(basicInfo.age)) nullFields.push('basicInfo.age')
+
+            if (checkIfNull(basicInfo.gender)) {
+                nullFields.push('basicInfo.gender')
+            } else if (!gender.includes(basicInfo.gender)) {
+                nullFields.push('Invalid gender input')
+            }
+
+        }
+
+        if (nullFields.length > 0) {
+            const errorResponse = {
+                successful: false,
+                message: `Empty or missing fields: ${nullFields.join(', ')}`,
+            }
+            return res.status(400).send(errorResponse)
+        }
 
         //add log -> add record
 
@@ -541,9 +781,9 @@ const addDentalRecord = async (req, res, next) => {
                     nullFields = []
                     message = (checkFullArr(dentalRecord.q1, 'q1', null))
                     if (message !== null) nullFields.push(message)
-                    
+
                     if (checkIfNull(dentalRecord.q2)) nullFields.push('q2')
-   
+
                     if (checkObjNull(dentalRecord.q3)) {
                         nullFields.push('q3')
 
@@ -668,7 +908,7 @@ const addDentalRecord = async (req, res, next) => {
                         nullFields.push('attachments')
                     }
                     else {
-                        message = checkFullArr(dentalRecord.attachments, 'attachments', ((arr)=>{
+                        message = checkFullArr(dentalRecord.attachments, 'attachments', ((arr) => {
                             let list = []
                             arr.forEach((attachments, index) => {
                                 if (typeof attachments.filename === "undefined") list.push(`attachment no. ${index}: filename`)
@@ -1261,5 +1501,6 @@ module.exports = {
     getFilteredResultList,
     deleteStudents,
     deleteEmployees,
-    deleteBase
+    deleteBase,
+    addBulk
 }
