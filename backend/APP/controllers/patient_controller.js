@@ -1488,6 +1488,41 @@ const bulkArchivePatients = async (req, res) => {
     }
 };
 
+const bulkUnarchivePatients = async (req, res) => {
+    const { patientIds } = req.body;
+
+    try {
+        const patients = await BaseModel.find({ _id: { $in: patientIds } });
+        const notFoundIds = patientIds.filter(id => !patients.find(patient => patient._id.equals(id)));
+        if (notFoundIds.length > 0) {
+            return res.status(404).json({
+                successful: false,
+                message: `Patients with the following IDs not found: ${notFoundIds.join(', ')}`,
+            });
+        }
+
+        await Promise.all(patients.map(async patient => {
+            if (!patient.archived) {
+                patient.archived = true;
+                patient.archivedDate = new Date();
+                await patient.save();
+            }
+        }));
+
+        res.json({
+            successful: true,
+            message: 'Patients unarchived successfully',
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            successful: false,
+            message: 'Error unarchiving patients',
+            error: error.message,
+        });
+    }
+};
+
 module.exports = {
     getPatientList,
     getPatient,
@@ -1503,5 +1538,6 @@ module.exports = {
     deleteEmployees,
     deleteBase,
     addBulk,
-    bulkArchivePatients
+    bulkArchivePatients,
+    bulkUnarchivePatients
 }

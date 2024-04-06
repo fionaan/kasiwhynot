@@ -24,6 +24,7 @@ router.put('/unarchivePatient', patientController.unarchivePatient)
 router.get('/filterList', patientController.getFilterList)
 router.get('/getFilter/:pageNumber?', patientController.getFilteredResultList)
 router.put('/bulkArchive', patientController.bulkArchivePatients)
+router.put('/bulkUnarchive', patientController.bulkUnarchivePatients)
 
 // ALL 'DELETE' ROUTERS ARE FOR TESTING PURPOSES ONLY
 router.delete('/deletestud', patientController.deleteStudents)
