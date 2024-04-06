@@ -1502,5 +1502,6 @@ module.exports = {
     deleteStudents,
     deleteEmployees,
     deleteBase,
-    addBulk
+    addBulk,
+    bulkArchivePatients
 }
