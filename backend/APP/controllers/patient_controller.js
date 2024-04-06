@@ -1121,7 +1121,7 @@ const updateRecord = async (req, res) => {
 };
 
 const archivePatient = async (req, res) => {
-    const patientId = req.params.id
+    const { patientId, editedBy } = req.body;
 
     try {
         // Check if the patient is already archived
@@ -1203,7 +1203,7 @@ const archivePatient = async (req, res) => {
 }
 
 const unarchivePatient = async (req, res) => {
-    const patientId = req.params.id
+    const { patientId, editedby } = req.body;
 
     try {
         // Check if the patient is archived
