@@ -86,24 +86,36 @@ const baseSchema = new Schema({
     },
     vaccination: {
         covidVaccination: {
-            firstDose: {type: String, required: true},
-            dateGiven: {type: Date, required: true},
-            secondDose: {type: String, required: true},
-            dateGiven: {type: Date, required: true},
-            thirdDose: {type: String, required: true},
-            dateGiven: {type: Date, required: true}
+            firstDose: {
+                dose: {type: String, required: true},
+                dateGiven: {type: Date, required: true}
+            },
+            secondDose :{
+                dose: {type: String, required: true},
+                dateGiven: {type: Date, required: true}    
+            },
+            thirdDose:{
+                dose: {type: String, required: true},
+                dateGiven: {type: Date, required: true} 
+            }
         },
         fluVaccination: {
             firstDose: { type: String, required: true },
             dateGiven: { type: Date, required: true }
         },
         hepatitisBVaccination: {
-            firstDose: {type: String, required: true},
-            dateGiven: {type: Date, required: true},
-            secondDose: {type: String, required: true},
-            dateGiven: {type: Date, required: true},
-            thirdDose: {type: String, required: true},
-            dateGiven: {type: Date, required: true}
+            firstDose: {
+                dose: {type: String, required: true},
+                dateGiven: {type: Date, required: true}
+            },
+            secondDose :{
+                dose: {type: String, required: true},
+                dateGiven: {type: Date, required: true}    
+            },
+            thirdDose:{
+                dose: {type: String, required: true},
+                dateGiven: {type: Date, required: true} 
+            }
         },
         pneumoniaVaccination: {
             firstDose: { type: String, required: true },

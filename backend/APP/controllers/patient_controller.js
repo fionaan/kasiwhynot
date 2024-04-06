@@ -1203,7 +1203,7 @@ const archivePatient = async (req, res) => {
 }
 
 const unarchivePatient = async (req, res) => {
-    const { patientId, editedby } = req.body;
+    const { patientId, editedBy } = req.body;
 
     try {
         // Check if the patient is archived
