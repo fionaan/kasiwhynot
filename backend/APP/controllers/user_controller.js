@@ -1,11 +1,14 @@
+const nodeMailer = require('nodemailer')
+
 const User = require('../models/user_model')
 const { nameRegex,
-        emailRegex,
-        userTypeList,
-        toProperCase,
-        checkObjNull,
-        checkIfNull,
-        generatePassword } = require('../../utils')
+    emailRegex,
+    userTypeList,
+    toProperCase,
+    checkObjNull,
+    checkIfNull,
+    generatePassword } = require('../../utils')
+const { emptyDirSync } = require('fs-extra')
 
 const viewProfileSetting = async (req, res, next) => {
     try {
@@ -51,8 +54,8 @@ const viewProfileSetting = async (req, res, next) => {
     }
 }
 
-const addUser = async (req, res, next)=>{
-    
+const addUser = async (req, res, next) => {
+
     try {
         let { fullName, emailAddress, userType } = req.body
         password = generatePassword()
@@ -88,7 +91,7 @@ const addUser = async (req, res, next)=>{
             if (!checkIfNull(fullName.middleName)) fullName.middleName = fullName.middleName.trim()
 
             //CHECK FOR FIELDS W INVALID VALUES
-            const user = await User.findOne({emailAddress: emailAddress})
+            const user = await User.findOne({ emailAddress: emailAddress })
 
             const invalidFields = []
             if (!nameRegex.test(fullName.firstName)) invalidFields.push('first name')
@@ -121,13 +124,13 @@ const addUser = async (req, res, next)=>{
                 })
 
                 user.save()
-                .then((result) =>{
-                    res.status(200).send({
-                        successful: true,
-                        message: "Successfully added a new user.",
-                        added_user: result
+                    .then((result) => {
+                        res.status(200).send({
+                            successful: true,
+                            message: "Successfully added a new user.",
+                            added_user: result
+                        })
                     })
-                })
                     .catch((error) => {
                         res.status(500).send({
                             successful: false,
@@ -218,6 +221,48 @@ const unarchiveUser = async (req, res, next) => {
         });
     }
 };
+
+const html = `
+    <h1>Hello World</h1>
+    <p>isn't NodeMailer useful?</p>
+    <img src="cid:unique@openjavascript.info" width="400'>
+`
+
+const sendEmail = async (req, res) => {
+    try {
+        const transporter = nodeMailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+                name: '',
+                user: '',
+                pass: 'NodeMailer123'
+            }
+        })
+
+        const info = await transporter.sendMail({
+            from: 'OpenJavaScript <test@openjavascript.info>',
+            to: 'test2@openjavascript.info',
+            subject: 'Testing, Testing, 123!',
+            text: "Test text content",
+            html: html,
+            attachments: [{
+                filename: 'file_name',
+                path: '../../../../../frontend/assets/img/teletubbies.jpg',
+                cid: 'unique@openjavascript.info'
+            }]
+        })
+
+        console.log("Message sent" + info.messageId)
+    }
+    catch (error){
+        res.status(500).json({
+            successful: false,
+            message: error.message
+        })
+    }
+}
 
 module.exports = {
     addUser,
