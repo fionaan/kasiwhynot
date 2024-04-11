@@ -13,8 +13,8 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
-    "cookie-parser": "^1.4.6",
     "convert-excel-to-json": "^1.7.0",
+    "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "express": "^4.18.2",
     "fs-extra": "^11.2.0",
@@ -23,6 +23,7 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
+    "validator": "^13.11.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

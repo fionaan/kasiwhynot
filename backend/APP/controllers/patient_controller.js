@@ -258,44 +258,44 @@ const addRecord = async (req, res) => {
             dentalRecord,
         })
 
-        const nullFields = []
+        // const nullFields = []
 
-        if (checkObjNull(basicInfo)) {
-            nullFields.push('basicInfo')
-        } else {
+        // if (checkObjNull(basicInfo)) {
+        //     nullFields.push('basicInfo')
+        // } else {
 
-            if (checkIfNull(basicInfo.campus)) {
-                nullFields.push('basicInfo.campus')
-            } else if (!isValidCampus.includes(basicInfo.campus)) {
-                nullFields.push('Invalid Campus')
-            }
+        //     if (checkIfNull(basicInfo.campus)) {
+        //         nullFields.push('basicInfo.campus')
+        //     } else if (!isValidCampus.includes(basicInfo.campus)) {
+        //         nullFields.push('Invalid Campus')
+        //     }
 
-            if (checkIfNull(basicInfo.fullName.firstName)) nullFields.push('basicInfo.fullName.firstName')
+        //     if (checkIfNull(basicInfo.fullName.firstName)) nullFields.push('basicInfo.fullName.firstName')
 
-            if (checkIfNull(basicInfo.fullName.lastName)) nullFields.push('basicInfo.fullName.lastName')
-            if (!basicInfo.emailAddress) {
-                nullFields.push('basicInfo.emailAddress')
-            } else if (!emailRegex.test(basicInfo.emailAddress)) {
-                nullFields.push('Invalid Email Address')
-            }
-            if (checkIfNull(basicInfo.dateOfBirth)) nullFields.push('basicInfo.dateOfBirth')
-            if (checkIfNull(basicInfo.age)) nullFields.push('basicInfo.age')
+        //     if (checkIfNull(basicInfo.fullName.lastName)) nullFields.push('basicInfo.fullName.lastName')
+        //     if (!basicInfo.emailAddress) {
+        //         nullFields.push('basicInfo.emailAddress')
+        //     } else if (!emailRegex.test(basicInfo.emailAddress)) {
+        //         nullFields.push('Invalid Email Address')
+        //     }
+        //     if (checkIfNull(basicInfo.dateOfBirth)) nullFields.push('basicInfo.dateOfBirth')
+        //     if (checkIfNull(basicInfo.age)) nullFields.push('basicInfo.age')
 
-            if (checkIfNull(basicInfo.gender)) {
-                nullFields.push('basicInfo.gender')
-            } else if (!gender.includes(basicInfo.gender)) {
-                nullFields.push('Invalid gender input')
-            }
+        //     if (checkIfNull(basicInfo.gender)) {
+        //         nullFields.push('basicInfo.gender')
+        //     } else if (!gender.includes(basicInfo.gender)) {
+        //         nullFields.push('Invalid gender input')
+        //     }
 
-        }
+        // }
 
-        if (nullFields.length > 0) {
-            const errorResponse = {
-                successful: false,
-                message: `Empty or missing fields: ${nullFields.join(', ')}`,
-            }
-            return res.status(400).send(errorResponse)
-        }
+        // if (nullFields.length > 0) {
+        //     const errorResponse = {
+        //         successful: false,
+        //         message: `Empty or missing fields: ${nullFields.join(', ')}`,
+        //     }
+        //     return res.status(400).send(errorResponse)
+        // }
 
         //add log -> add record
 
@@ -305,7 +305,8 @@ const addRecord = async (req, res) => {
         addLogPromise(editedBy, "ADD", "Medical", log_id)
             .then(async ({ status_log, successful_log, message_log }) => {
                 if (successful_log === true) {
-                    let pass_patient
+                    let savedBasePatient = await basePatient.save({ new: true, runValidators: true }); // Adding options here
+                    let pass_patient = savedBasePatient;
                     //ADD PATIENT RECORD
                     await basePatient.save()
                         .then(async (savedBasePatient) => {
