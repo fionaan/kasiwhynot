@@ -39,7 +39,7 @@ app.use(bodyParser.json({ limit: "50mb" }));
 
 
 //
-app.use((req, res, next)=>{
+app.use((req, res, next) => {
     //The Access-Control-Allow-Origin response header indicates whether the response can be shared with requesting code from the given origin. See origin definition in the dictionary.json. In this case, the server allows all origin, whether it matches the origin of the server or not.
     res.header("Access-Control-Allow-Origin", "*");
 
@@ -49,11 +49,11 @@ app.use((req, res, next)=>{
     res.header("Access-Control-Allow-Headers", "*");
 
     //This code checks if the request method is HTTP OPTIONS. The HTTP OPTIONS method requests permitted communication options for a given URL or server. 
-    if (req.method === 'OPTIONS'){
-       
+    if (req.method === 'OPTIONS') {
+
         //This writes in the response header that these are the only allowed HTTP methods.
         res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-        
+
         //IF THE request method allowed, then the server will respond an OK status.
         return res.status(200).json({});
     }
@@ -69,7 +69,7 @@ app.use('/logs', historyLogRouter)
 app.use(express.json())
 
 //ERROR MIDDLEWARES
-app.use((req, res, next)=>{
+app.use((req, res, next) => {
     //THIS CODE CREATE A NEW ERROR OBJECT FOR UNKNOWN ENDPOINTS. MEANING, THE REQUEST DID NOT PROCEED WITH THE MIDDLEWARE ABOVE.
 
     const error = new Error('Not Found');
@@ -80,15 +80,15 @@ app.use((req, res, next)=>{
 });
 
 
-app.use((error, req, res, next)=>{
+app.use((error, req, res, next) => {
     //SENDS ERROR RESPONSE TO THE CLIENT. IF THE ERROR IS UNKNOWN ENDPOINT, THEN THIS WILL SEND ERROR RESPONSE WITH "NOT FOUND" MESSAGE AND 404 STATUS CODE. IF NOT, THEN IT WILL GET WHATEVER THE SYSTEM ENCOUNTERED.
     res.status(error.status || 500);
     res.json({
-        error:{
+        error: {
             message: error.message
         }
     })
-}); 
+});
 
 //EXPORTS THE EXPRESS APPLICATION SO THAT IT CAN BE IMPORTED FROM OTHE FILES.
 module.exports = app; 

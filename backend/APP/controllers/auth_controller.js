@@ -5,15 +5,15 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 const login = async (req, res, next) => {
-    const {email, password} = req.body
+    const { email, password } = req.body
 
     //check for missing fields
-    if(utilFunc.checkIfNull(email) || utilFunc.checkIfNull(password)) {
+    if (utilFunc.checkIfNull(email) || utilFunc.checkIfNull(password)) {
         return res.status(400).send("Please fill in the missing fields.")
     }
 
     try {
-        let user = await User.findOne({emailAddress: email})
+        let user = await User.findOne({ emailAddress: email })
 
         //check if user exists
         if (user == null) {
@@ -41,7 +41,7 @@ const login = async (req, res, next) => {
         }
     }
 
-    catch (err){
+    catch (err) {
         res.status(500).send({
             successful: false,
             message: err.message
@@ -50,27 +50,27 @@ const login = async (req, res, next) => {
 }
 
 const changePassword = async (req, res, next) => {
-    const {email, newPassword, confirmNewPassword} = req.body
+    const { email, newPassword, confirmNewPassword } = req.body
     console.log(newPassword)
 
     //check for missing fields
-    if(utilFunc.checkIfNull(email) || utilFunc.checkIfNull(newPassword) || utilFunc.checkIfNull(confirmNewPassword)) {
+    if (utilFunc.checkIfNull(email) || utilFunc.checkIfNull(newPassword) || utilFunc.checkIfNull(confirmNewPassword)) {
         return res.status(400).send("Please fill in the missing fields.")
     }
 
     try {
-        let user = await User.findOne({emailAddress: email})
+        let user = await User.findOne({ emailAddress: email })
 
         //check if the specified user exists
-        if(user == null) {
+        if (user == null) {
             return res.status(400).send("The specified user does not exist in the database.")
         }
 
         //check if New Password and Confirm New Password match each other
-        if(newPassword != confirmNewPassword) {
+        if (newPassword != confirmNewPassword) {
             return res.status(400).send("The passwords in the fields don't match with each other.")
-        } 
-        else if(newPassword === confirmNewPassword){
+        }
+        else if (newPassword === confirmNewPassword) {
             const hashedPassword = await bcrypt.hash(newPassword, 10);
             user.password = hashedPassword;
             user.passChangeable = false;
@@ -83,7 +83,7 @@ const changePassword = async (req, res, next) => {
         }
     }
 
-    catch (err){
+    catch (err) {
         res.status(500).send({
             successful: false,
             message: err.message
@@ -95,15 +95,15 @@ const forgetPassword = async (req, res, next) => {
     const email = req.body.email
 
     //check for missing fields
-    if(utilFunc.checkIfNull(email)) {
+    if (utilFunc.checkIfNull(email)) {
         return res.status(400).send("No user selected.")
     }
 
     try {
-        let user = await User.findOne({emailAddress: email})
+        let user = await User.findOne({ emailAddress: email })
 
         //check if the specified user exists
-        if(user == null) {
+        if (user == null) {
             return res.status(400).send("The specified user does not exist in the database.")
         }
         else {
@@ -117,7 +117,7 @@ const forgetPassword = async (req, res, next) => {
         }
     }
 
-    catch (err){
+    catch (err) {
         res.status(500).send({
             successful: false,
             message: err.message

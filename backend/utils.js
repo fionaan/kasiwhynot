@@ -2,6 +2,9 @@ const mongoose = require('mongoose')
 
 //LIST OF ALL UTILITY FUNCTIONS
 
+// INDICATOR FOR DATES THAT HOLD DUMMY DATA
+const dateNone = new Date("9999-12-31T23:59:59.999Z")
+
 //CHECKS IF DATA CONTAINS COMPLETE DATE & TIME VALUE
 const dateTimeRegex = /^(?:\d{4})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2][0-9]|3[0-1])T(?:[0-1][0-9]|2[0-3]):(?:[0-5][0-9]):(?:[0-5][0-9])$/
 
@@ -11,11 +14,13 @@ const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$
 //CHECKS IF STRING ONLY CONTAINS LETTERS, PERIOD, APOSTROPHE, HYPHEN, OR SPACE - MUST START W LETTER
 const nameRegex = /^[a-zA-Z][a-zA-Z.,'\s-]*$/
 
-//CHECKS IF STRING ONLY CONTAINS LETTERS, PERIOD, APOSTROPHE, HYPHEN, OR SPACE - MUST START W LETTER
-const tempNameRegex = /^\p{L}[\p{L}.' -]*$/
-
 //CHECKS IF EMAIL IS VALID
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+//Valid Campus
+const isValidCampus = ['Manila','Makati', 'Malolos']
+
+const gender = ['Male', 'Female']
 
 //LIST REFERENCE FOR USER TYPES
 const userTypeList = ['Dentist', 'Nurse', 'Doctor']
@@ -27,54 +32,89 @@ const historyTypeList = ['ADD', 'UPDATE', 'ARCHIVE', 'UNARCHIVE']
 const recordClassList = ['Medical', 'Dental']
 
 //CHECKS IF THE GIVEN VALUE IS A VALID MONGOOSE OBJ ID
-const isObjIdValid = (id) => {   
+const isObjIdValid = (id) => {
 
     const objId = mongoose.Types.ObjectId
-    if (objId.isValid(id)) {     
-        if (String(new objId(id)) === id) {        
-            return true      
-        } 
-        else {        
-            return false      
-        }    
-    } 
-    else {      
-        return false    
-    }  
+    if (objId.isValid(id)) {
+        if (String(new objId(id)) === id) {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+    else {
+        return false
+    }
 }
 
 //CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
-const checkIfNull = (data) => {
-    return data == null || data === '' || typeof data === 'undefined' || data == [];
+// const checkIfNull = (data) => {
+//     return data == null || data === '' || typeof data === 'undefined' || data == [];
+// }
+
+//CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
+//HAS .TRIM() METHOD
+// const checkIfNull2 = (data)=>{
+//     return (data == null || data == "null" || data == "" || data.trim() == "" || (typeof data === "undefined"))
+// }
+
+//new
+const checkIfNull = (data)=>{
+    return (data == null || data == "null" || data === "" || (typeof data === 'string' && data.trim() == "") || (typeof data === "undefined"))
 }
 
-//CHECKS IF AN OBJECT ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE OBJECT IS NULL, OTHERWISE RETURNS FALSE.
+//CHECKS IF AN OBJ/DATA W DATATYPES OTHER THAN STRING ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
+// const checkObjNull = (obj)=>{
+//     return (obj === null || obj == "null" || obj === "" || (typeof obj === "undefined"))
+// }
 const checkObjNull = (obj)=>{
-    return (obj === null || obj == "null" || obj === "" || (typeof obj === "undefined"))
+    return (obj === null || obj === "null" || obj === "" || (typeof obj === "undefined") || (obj !== null && typeof obj === 'object' && Object.keys(obj).length === 0)
+    || (obj !== null && typeof obj !== 'object'))
 }
 
+//CHECKS IF AN ARRAY ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARRAY IS NULL/EMPTY, OTHERWISE RETURNS FALSE.
 const checkArrNull = (arr)=>{
     return ((typeof arr === "undefined") || arr.length === 0 || arr.includes("") && arr.length === 1)
-} 
+}
+
+const checkFullArr = (arr, message, func)=>{
+    if (arr) {
+        if (Array.isArray(arr)) {
+            if (!checkArrNull(arr)) {
+                if (typeof func === 'function') {
+                    return (func(arr))
+                } else {
+                    return null
+                }
+            } else {
+                return (message)
+            }
+        } else {
+            return (message + ': Not an Array')
+        }
+    } else {
+       return (message)
+    }
+}
 
 //CHECKS IF THE VALUE OF A MANDATORY FIELD IS NULL OR NOT. RETURNS TRUE IF ALL MANDATORY FIELDS ARE NOT NULL, OTHERWISE RETURNS FALSE.
-const checkMandatoryFields = (arrs)=>{
+const checkMandatoryFields = (arrs) => {
     let result = true
-    
+
     arrs.forEach(data => {
-        if (checkIfNull(data) == true){
+        if (checkIfNull(data) == true) {
             result = false
         }
     })
 }
 
-String.prototype.toProperCase = function()
-{
-    return this.toLowerCase().replace(/^(.)|\s(.)/g, function($1) { return $1.toUpperCase(); })
+String.prototype.toProperCase = function () {
+    return this.toLowerCase().replace(/^(.)|\s(.)/g, function ($1) { return $1.toUpperCase(); })
 }
 
 //GENERATES RANDOM PASSWORD
-function generatePassword() {
+const generatePassword = () => {
 
     let password = ''
     length = 15
@@ -83,13 +123,13 @@ function generatePassword() {
     const number = "1234567890"
     const symbol = "~!@#$%^&*()_-+=/|{}[]><"
     const allChars = upperCase + lowerCase + number + symbol
-    
+
     password += upperCase[Math.floor(Math.random() * upperCase.length)]
     password += lowerCase[Math.floor(Math.random() * lowerCase.length)]
     password += number[Math.floor(Math.random() * number.length)]
     password += symbol[Math.floor(Math.random() * symbol.length)]
 
-    while (password.length < length){
+    while (password.length < length) {
         const randomIndex = Math.floor(Math.random() * allChars.length)
         password += allChars[randomIndex]
     }
@@ -97,10 +137,15 @@ function generatePassword() {
     return password
 }
 
-String.prototype.toProperCase = function()
-{
-    return this.toLowerCase().replace(/^(.)|\s(.)/g, function($1) { return $1.toUpperCase(); })
+String.prototype.toProperCase = function () {
+    return this.toLowerCase().replace(/^(.)|\s(.)/g, function ($1) { return $1.toUpperCase(); })
 }
+
+// DENTAL RECORD FIELDS WITH FIXED VALUES (LIST)
+
+const q4Values = ["2x a day", "3x a day", "every after meal", "before going to bed"] 
+
+const q6Values = ["/", "C", "X", "Rf", "M", "Tf", "Co", "Gf", "JC", "S", "Im", "Fb", "SC", "Un", "P", "CD", "Am", "Ab", "RCT"]
 
 module.exports = {
     dateTimeRegex,
@@ -110,11 +155,17 @@ module.exports = {
     userTypeList,
     historyTypeList,
     recordClassList,
+    q4Values,
+    q6Values,
+    dateNone,
     isObjIdValid,
     checkIfNull,
     checkObjNull,
     checkArrNull,
+    checkFullArr,
     checkMandatoryFields,
     generatePassword,
-    toProperCase: String.prototype.toProperCase
+    toProperCase: String.prototype.toProperCase,
+    isValidCampus,
+    gender
 }

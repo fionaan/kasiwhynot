@@ -8,12 +8,12 @@ uri = uri.replace('database', constants.DB_NAME)
 
 const connectDB = () => {
     mongoose.connect(uri)
-    .then((result)=>{
-        console.log("Success")
-    })
-    .catch((e)=>{
-        console.log(e.message)
-    })
+        .then((result) => {
+            console.log("Success")
+        })
+        .catch((e) => {
+            console.log(e.message)
+        })
 }
 
 module.exports = {
