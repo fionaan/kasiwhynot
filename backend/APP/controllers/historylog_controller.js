@@ -237,10 +237,6 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
 
         if(nullFields.length > 0){
             callback(404, false, `Missing data in the following fields: ${nullFields.join(', ')}`)
-            // res.status(404).send({
-            //     successful: false,
-            //     message: `Missing data in the following fields: ${nullFields.join(', ')}`
-            // })
         } 
         else {
             historyType = historyType.trim().toUpperCase()
@@ -254,11 +250,6 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
             
             if (invalidFields.length > 0){
                 callback(404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}`)
-                //return {404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}`}
-                // res.status(404).send({
-                //     successful: false,
-                //     message: `Invalid values detected for the following fields: ${invalidFields.join(', ')}`
-                // })
             }
             else {
                 const log = new historyLog({
@@ -271,29 +262,17 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
 
                 log.save()
                 .then((result)=>{
-                    callback(200, true, result)
-                    // res.status(200).send({
-                    //     successful: true,
-                    //     message: "Successfully added a new history log.",
-                    //     added_log: result
-                    // })
+                    callback(200, true, result)                    
                 })
                 .catch((error) => {
                     callback(500, false, error.message)
-                    // res.status(500).send({
-                    //     successful: false,
-                    //     message: error.message
-                    // })
                 })
             }
         }
     }
     catch(err){
         callback(500, false, err.message)
-        // res.status(500).send({
-        //     successful: false,
-        //     message: err.message
-        // })
+        
     }
 
 }

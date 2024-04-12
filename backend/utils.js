@@ -29,7 +29,7 @@ const userTypeList = ['Dentist', 'Nurse', 'Doctor']
 const historyTypeList = ['ADD', 'UPDATE', 'ARCHIVE', 'UNARCHIVE']
 
 //LIST REFERENCE FOR RECORD CLASS
-const recordClassList = ['Medical', 'Dental']
+const recordClassList = ['Medical', 'Dental', 'All']
 
 //CHECKS IF THE GIVEN VALUE IS A VALID MONGOOSE OBJ ID
 const isObjIdValid = (id) => {
