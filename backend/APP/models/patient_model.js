@@ -348,39 +348,115 @@ const baseSchema = new Schema({
     vaccination: {
         covidVaccination: {
             firstDose: {
-                dose: {type: String, required: true},
-                dateGiven: {type: Date, required: true}
+                dose: {type: String, required: [true, 'This field value is required']},
+                dateGiven: {type: Date, 
+                    required: [true, 'This field value is required'],
+                    validate: {
+                        validator: function(value){
+                            return !isNaN(new Date(value))
+                        },
+                        message:  'Data input is not a valid date!'
+                    }
+            }
             },
             secondDose :{
-                dose: {type: String, required: true},
-                dateGiven: {type: Date, required: true}    
+                dose: {type: String, 
+                    required: [true, 'This field value is require']
+            },
+                dateGiven: {type: Date, 
+                    required: [true, 'This field value is required!'],
+                    validate: {
+                        validator: function(value){
+                            return !isNaN(new Date(value))
+                        },
+                            message:  'Data input is not a valid date!'
+                    }
+                }    
             },
             thirdDose:{
-                dose: {type: String, required: true},
-                dateGiven: {type: Date, required: true} 
-            }
+                dose: {type: String, 
+                    required: [true, 'This field value is required!'],
+                },
+                dateGiven: {type: Date, 
+                    required: [true, 'This field value is required!'],
+                    validate: {
+                        validator: function(value){
+                            return !isNaN(new Date(value))
+                        },
+                            message:  'Data input is not a valid date!'
+                    }
+                 }
         },
         fluVaccination: {
-            firstDose: { type: String, required: true },
-            dateGiven: { type: Date, required: true }
+            firstDose: { type: String, 
+                required:[true, 'This field value is required!'],
+                
+        
+        },
+        dateGiven: {type: Date, 
+            required: [true, 'This field value is required!'],
+            validate: {
+                validator: function(value){
+                    return !isNaN(new Date(value))
+                },
+                    message:  'Data input is not a valid date!'
+            }
+        
         },
         hepatitisBVaccination: {
             firstDose: {
-                dose: {type: String, required: true},
-                dateGiven: {type: Date, required: true}
+                dose: {type: String, required: [true, 'This field value is required']},
+                dateGiven: {type: Date, 
+                    required: [true, 'This field value is required'],
+                    validate: {
+                        validator: function(value){
+                            return !isNaN(new Date(value))
+                        },
+                        message:  'Data input is not a valid date!'
+                    }
+            }
             },
             secondDose :{
-                dose: {type: String, required: true},
-                dateGiven: {type: Date, required: true}    
+                dose: {type: String, 
+                    required: [true, 'This field value is require']
+            },
+                dateGiven: {type: Date, 
+                    required: [true, 'This field value is required!'],
+                    validate: {
+                        validator: function(value){
+                            return !isNaN(new Date(value))
+                        },
+                            message:  'Data input is not a valid date!'
+                    }
+                }    
             },
             thirdDose:{
-                dose: {type: String, required: true},
-                dateGiven: {type: Date, required: true} 
-            }
+                dose: {type: String, 
+                    required: [true, 'This field value is required!'],
+                },
+                dateGiven: {type: Date, 
+                    required: [true, 'This field value is required!'],
+                    validate: {
+                        validator: function(value){
+                            return !isNaN(new Date(value))
+                        },
+                            message:  'Data input is not a valid date!'
+                    }
+                 }
+        }
         },
         pneumoniaVaccination: {
-            firstDose: { type: String, required: true },
-            dateGiven: { type: Date, required: true }
+            firstDose: { type: String,
+                 required: [true, 'This field value is required!'] },
+            dateGiven: {type: Date, 
+                    required: [true, 'This field value is required!'],
+                    validate: {
+                        validator: function(value){
+                            return !isNaN(new Date(value))
+                        },
+                            message:  'Data input is not a valid date!'
+                    }
+                 }
         },
         attachments: { type: String, required: true }
     },
@@ -566,7 +642,8 @@ const baseSchema = new Schema({
     },
     archived: { type: Boolean, default: false },
     archivedDate: { type: Date, default: null }
-})
+    }
+}})
 
 // Student Schema
 const studentSchema = new mongoose.Schema({
