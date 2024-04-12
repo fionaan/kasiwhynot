@@ -25,12 +25,12 @@ const login = async (req, res, next) => {
                 let accessToken = generateAccessToken({ userId: user._id })
                 let refreshToken = jwt.sign({userId: user._id}, process.env.REFRESH_TOKEN_SECRET)
 
-                res.cookie('refreshToken', refreshToken, {httpOnly: false})
+                res.cookie('refreshToken', refreshToken, {httpOnly: true})
                 console.log(accessToken)
-                // return res.status(200).send({
-                //     successful: true,
-                //     message: "Login successful."
-                // })
+                return res.status(200).send({
+                    successful: true,
+                    message: "Login successful."
+                })
             }
             else if (user.passChangeable === true) {
                 return res.redirect('/change-password')

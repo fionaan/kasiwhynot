@@ -1,5 +1,10 @@
 {
+  "scripts": {
+    "run": "npx tailwindcss -i ./src/styles.css -o ./assets/css/styles.css --watch"
+  },
+
   "devDependencies": {
     "tailwindcss": "^3.4.3"
   }
+
 }

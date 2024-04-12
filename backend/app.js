@@ -14,6 +14,7 @@ const db = require('./APP/models/con_db')
 const patientRouter = require('./APP/routers/patient_router');
 const userRouter = require('./APP/routers/user_router');
 const historyLogRouter = require('./APP/routers/historylog_router')
+const emailRouter = require('./APP/routers/email_router')
 
 //INITIALIZE EXPRESS APPLICATION AND STORE TO app
 const app = express();
@@ -66,6 +67,7 @@ app.use((req, res, next) => {
 app.use('/patients', patientRouter)
 app.use('/users', userRouter)
 app.use('/logs', historyLogRouter)
+app.use('/email', emailRouter)
 app.use(express.json())
 
 //ERROR MIDDLEWARES
