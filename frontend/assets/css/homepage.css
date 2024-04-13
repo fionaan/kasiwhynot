@@ -1,0 +1,61 @@
+body {
+    font-family: "Noto Sans JP", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    overflow-x: hidden;
+    margin: 0;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.site-nav {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    position: absolute;
+    top: 0;
+    z-index: 9;
+    width: 100%;
+}
+
+.menu-bg-wrap {
+    background-color: #fff;
+    padding: 20px 30px;
+    position: relative;
+    float: left;
+    width: 100%;
+    -webkit-box-shadow: 0 15px 30px -15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 15px 30px -15px rgba(0, 0, 0, 0.3);
+}
+
+.features-1 {
+    max-width: 720px;
+    margin-top: -50px;
+    position: relative;
+    z-index: 8;
+    text-align: center;
+}
+
+.container {
+    width: 100%;
+    padding-right: var(--bs-gutter-x, 0.75rem);
+    padding-left: var(--bs-gutter-x, 0.75rem);
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.homepage-container{
+    display: flex;
+    justify-content: center;
+    padding: 400px;
+}
+
+.box-feature {
+    background: #fff;
+    border-radius: 4px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.1);
+}
