@@ -152,16 +152,17 @@ const baseSchema = new Schema({
             required: [true, 'This field value is required!'],
             maxlength:[255,"Name must be less than 255 characters"],
             minlength: [ 1,"Name must be greater than 1 character"],
-            match: [/^[A-Za-z]+$/, 'Name can only contain letters']
+            match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
         },
-        guardianContactNo: {type: Number, 
+        guardianContactNo: {type: String, 
             required: [true, 'This field value is required!'],
             validate: {
                 validator: function(value) {
                     return /^\d{11}$/.test(value.toString());
                 },
                 message: props => `${props.value} is not a valid contact number!`
-            }},
+            }
+        },
         guardianRelationship: {type: String, required: [true, 'This field value is required!'],
             match: [/^[A-Za-z]+$/, 'This field can only contain letters']
         },
@@ -348,7 +349,11 @@ const baseSchema = new Schema({
     vaccination: {
         covidVaccination: {
             firstDose: {
-                dose: {type: String, required: [true, 'This field value is required']},
+                dose: {type: String, 
+                    required: [true, 'This field value is required'],
+                    minlength: [5, 'Entered text in field is too short'],
+                    maxlength: [50, 'Maximum text entered reached']
+                },
                 dateGiven: {type: Date, 
                     required: [true, 'This field value is required'],
                     validate: {
@@ -361,7 +366,9 @@ const baseSchema = new Schema({
             },
             secondDose :{
                 dose: {type: String, 
-                    required: [true, 'This field value is require']
+                    required: [true, 'This field value is require'],
+                    minlength: [5, 'Entered text in field is too short'],
+                    maxlength: [50, 'Maximum text entered reached']
             },
                 dateGiven: {type: Date, 
                     required: [true, 'This field value is required!'],
@@ -376,6 +383,8 @@ const baseSchema = new Schema({
             thirdDose:{
                 dose: {type: String, 
                     required: [true, 'This field value is required!'],
+                    minlength: [5, 'Entered text in field is too short'],
+                    maxlength: [50, 'Maximum text entered reached']
                 },
                 dateGiven: {type: Date, 
                     required: [true, 'This field value is required!'],
@@ -386,11 +395,13 @@ const baseSchema = new Schema({
                             message:  'Data input is not a valid date!'
                     }
                  }
+            }
         },
         fluVaccination: {
             firstDose: { type: String, 
                 required:[true, 'This field value is required!'],
-                
+                minlength: [5, 'Entered text in field is too short'],
+                maxlength: [50, 'Maximum text entered reached']
         
         },
         dateGiven: {type: Date, 
@@ -401,11 +412,16 @@ const baseSchema = new Schema({
                 },
                     message:  'Data input is not a valid date!'
             }
-        
+        }
         },
         hepatitisBVaccination: {
             firstDose: {
-                dose: {type: String, required: [true, 'This field value is required']},
+                dose: {type: String, 
+                    required: [true, 'This field value is required'],
+                    minlength: [5, 'Entered text in field is too short'],
+                    maxlength: [50, 'Maximum text entered reached']
+                
+                },
                 dateGiven: {type: Date, 
                     required: [true, 'This field value is required'],
                     validate: {
@@ -418,7 +434,9 @@ const baseSchema = new Schema({
             },
             secondDose :{
                 dose: {type: String, 
-                    required: [true, 'This field value is require']
+                    required: [true, 'This field value is require'],
+                    minlength: [5, 'Entered text in field is too short'],
+                    maxlength: [50, 'Maximum text entered reached']
             },
                 dateGiven: {type: Date, 
                     required: [true, 'This field value is required!'],
@@ -433,6 +451,8 @@ const baseSchema = new Schema({
             thirdDose:{
                 dose: {type: String, 
                     required: [true, 'This field value is required!'],
+                    minlength: [5, 'Entered text in field is too short'],
+                    maxlength: [50, 'Maximum text entered reached']
                 },
                 dateGiven: {type: Date, 
                     required: [true, 'This field value is required!'],
@@ -447,7 +467,9 @@ const baseSchema = new Schema({
         },
         pneumoniaVaccination: {
             firstDose: { type: String,
-                 required: [true, 'This field value is required!'] },
+                 required: [true, 'This field value is required!'],
+                 minlength: [5, 'Entered text in field is too short'],
+                 maxlength: [50, 'Maximum text entered reached'] },
             dateGiven: {type: Date, 
                     required: [true, 'This field value is required!'],
                     validate: {
@@ -459,51 +481,253 @@ const baseSchema = new Schema({
                  }
         },
         attachments: { type: String, required: true }
-    },
-    medicalHistory: {
-        tattoo: { type: Boolean, required: true, default: false },
+        },
+    medicalHistory:{
+        tattoo: { type: String, 
+            required: [true, 'This field value is required!'], 
+            default: false, 
+            enum:{
+                values: ["Yes", "No"],
+                messages: ["Invalid input!"]
+            }
+        
+        },
         bloodPressure: {
-            systolic: { type: Number, required: true },
-            diastolic: { type: Number, required: true }
+            systolic: { type: Number, 
+                required: [true, 'This field value is required!'],
+                validate: {
+                    validator: function(value) {
+                        return /^-?\d+(\.\d+)?$/.test(value.toString())
+                    },
+                    message: props => `${props.value} is not a valid float for height!`
+                }
+             },
+            diastolic: { type: Number, 
+                required: [true, 'This field value is required!'],
+                validate: {
+                    validator: function(value) {
+                        return /^-?\d+(\.\d+)?$/.test(value.toString())
+                    },
+                    message: props => `${props.value} is not a valid float for height!`
+                }
+             }
         },
         conditions: {
-            anemia: { type: Boolean, required: true, default: false },
-            asthma: { type: Boolean, required: true, default: false },
-            blackJointProblem: { type: Boolean, required: true, default: false },
-            heartDiseases: { type: Boolean, required: true, default: false },
-            hepatitis: { type: Boolean, required: true, default: false },
-            highBloodPressure: { type: Boolean, required: true, default: false },
-            kidneyProblem: { type: Boolean, required: true, default: false },
-            chronicDiseases: { type: Boolean, required: true, default: false },
-            thyroidProblems: { type: Boolean, required: true, default: false },
-            bloodDyscrasia: { type: Boolean, required: true, default: false },
+            anemia: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                }
+             },
+            asthma: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                } 
+            },
+            blackJointProblem: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                } 
+            },
+            heartDiseases: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                } 
+             },
+            hepatitis: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                }  
+            },
+            highBloodPressure: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                }  
+            },
+            kidneyProblem: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                }  
+            },
+            chronicDiseases: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                }  
+            },
+            thyroidProblems: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                }  
+            },
+            bloodDyscrasia: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                }  
+            },
             others: { type: Boolean, required: true, default: false }
         },
         q1: {
-            yesOrNo: { type: Boolean, required: true, default: false },
-            doctorName: { type: String, required: true },
-            phone: { type: Number, required: true },
+            yesOrNo: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                }  },
+            doctorName: { type: String, 
+                required: [true, 'This field value is required!'],
+                maxlength:[255,"Name must be less than 255 characters"],
+                minlength: [ 1,"Name must be greater than 1 character"],
+                match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
+                
+        },
+            phone: { type: Number, 
+                required: [true, 'This field value is required!'],
+                validate: {
+                    validator: function(value) {
+                        return /^\d{11}$/.test(value.toString());
+                    },
+                    message: props => `${props.value} is not a valid contact number!`
+                } 
+            },
             homeAddress: { type: String, required: true },
             forWhatCondition: { type: String, required: true }
         },
         q2: {
-            yesOrNo: { type: Boolean, required: true, default: false },
+            yesOrNo: {type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                }   
+            },
             pastIllnessSurgery: { type: String, required: true }
         },
         q3: {
-            yesOrNo: { type: Boolean, required: true, default: false },
-            drugFoodAllergies: { type: String, required: true }
+            yesOrNo: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                }
+            },   
+ 
+            drugFoodAllergies: { type: String, 
+                required: true }
         },
         q4: {
-            yesOrNo: { type: Boolean, required: true, default: false },
-            nameOfMedication: { type: String, required: true },
-            type: { type: String, required: true },
+            yesOrNo: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                } 
+            },
+            nameOfMedication: { type: String, 
+                required: [true, 'This field value is required!'],
+                maxlength:[50,"Name must be less than 255 characters"],
+                minlength: [ 5,"Name must be greater than 1 character"],
+                match: [/^[A-Za-z\s]+$/, 'Name can only contain letters'] },
+            type: { type: String, 
+                required: [true, 'This field value is required!'],
+                maxlength:[50,"type must be less than 255 characters"],
+                minlength: [5,"type must be greater than 1 character"],
+                match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
+             },
             brand: { type: String, required: true },
             others: { type: String, required: true },
         },
         q5: {
-            yesOrNo: { type: Boolean, required: true, default: false },
-            physicalLearningDisability: { type: String, required: true },
+            yesOrNo: { type: Boolean, 
+                required: [true, 'This field value is required!'], 
+                default: false,
+                validate: {
+                    validator: function (value){
+                        return value == "Null"
+                    },
+                    message: "Error validation"
+
+                }  
+            },
+            physicalLearningDisability: { type: String, 
+                required: [true, 'This field value is required!'],
+                maxlength:[50,"Name must be less than 255 characters"],
+                minlength: [ 5,"Name must be greater than 1 character"],
+                match: [/^[A-Za-z\s]+$/, 'Name can only contain letters'] },
         },
         attachments: { type: String, required: true }
     },
@@ -642,8 +866,7 @@ const baseSchema = new Schema({
     },
     archived: { type: Boolean, default: false },
     archivedDate: { type: Date, default: null }
-    }
-}})
+    })
 
 // Student Schema
 const studentSchema = new mongoose.Schema({
