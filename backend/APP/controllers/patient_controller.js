@@ -102,6 +102,58 @@ const addBulk = async (req, res) => {
     }
 }
 
+//documents -> array of docs to save?
+//expected -> array of expected arrays to save in string format
+const saveAndHistory = (editedBy, type, record, id, documents, expected, models, undoExcess, successMessage) => {
+    let results = []
+    let exit = false
+
+    if (documents.length > 1 && !undoExcess) {
+        return res.status(500).json({
+            successful: false,
+            message: "'No DELETE operation is specified as argument.'"
+        })
+    }
+
+    return documents.forEach(async (doc, index) => {
+        await doc.save()
+            .then(async (savedDoc) => {
+                if (documents.length > 1) {
+                    results.push(savedDoc)
+                } else {
+                    // insert operation if only single record needs to be added
+                }
+                if (index === documents.length-1) {
+                    // Add log after successful addition of all required documents
+                    const {status_log, successful_log, message_log} = await addLogPromise(editedBy, type, record, id)
+                    if (successful_log === false) throw new Error(message_log)
+                    
+                    return {
+                        status: 200,
+                        successful: true,
+                        message: successMessage
+                    }
+                }
+            })
+            .catch((error) => {
+                let cause = results.length === 0 ? expected[0] : expected[results.length-1]
+                if (documents.length > 1 && results.length >= 1) {
+                    // revert all data in results array 
+                    results.forEach(async (deleteDoc, index) => {
+                     error.message += await undoExcess(deleteDoc, models[index], expected[index])
+                    })
+                }
+                //insert single return
+                exit = true
+                return {
+                    status: 500,
+                    successful: false,
+                    message: error.message
+                }
+            })
+    })
+
+}
 
 const addHistoryLog = async (editedBy, type, record, id, saveDocument, successMessage, saveHandler, undoExcess) => {
 
@@ -872,6 +924,7 @@ const addDentalRecord = async (req, res, next) => {
 const updateRecord = async (req, res, next) => {
     try {
         const { role, patientId, category, editedBy, updatedData } = req.body
+        let response
         let nullFields = []
 
         if (!role || (role !== 'doctor' && role !== 'nurse' && role !== 'dentist' && role !== 'admin')) {
@@ -909,6 +962,9 @@ const updateRecord = async (req, res, next) => {
                 message: 'Patient not found',
             });
         }
+        // original -> successful
+        console.log(patient)
+        const patient_id = category === 'students' ? record.studentNo : record.employeeNo
 
         // Check which record can be updated based on current user's role
         if (role === 'doctor' || role === 'nurse' || role === 'admin') {
@@ -927,7 +983,7 @@ const updateRecord = async (req, res, next) => {
                 if (checkIfNull(updatedData.section)) nullFields.push('Section')
             } else {
                 // Employee null validation
-                if (checkIfNullt(updatedData.employeeNo)) nullFields.push('Employee number')
+                if (checkIfNull(updatedData.employeeNo)) nullFields.push('Employee number')
                 if (checkIfNull(updatedData.department)) nullFields.push('Department')
             }
 
@@ -943,10 +999,9 @@ const updateRecord = async (req, res, next) => {
             patient.vaccination = updatedData.vaccination
             patient.medicalHistory = updatedData.medicalHistory
 
-            //ADD LOG FOR UPDATING PATIENT RECORD
-            const patient_id = category === 'students' ? record.studentNo : record.employeeNo
+            //ADD LOG FOR UPDATING PATIENT MEDICAL RECORD
             let successMessage = "Successfully updated patient medical record and added log."
-            const response = await addHistoryLog(editedBy, 'UPDATE', 'Medical', patient_id, patient, successMessage,
+            response = await addHistoryLog(editedBy, 'UPDATE', 'Medical', patient_id, patient, successMessage,
                 (base_id) => {
                     if (category === 'students') {
                         //record.studentNo
@@ -964,8 +1019,9 @@ const updateRecord = async (req, res, next) => {
                         let baseToRevert = await BaseModel.findById(base_id)
                         baseToRevert = original_base
                         baseToRevert = await baseToRevert.save()
-
-                        message = baseToRevert ? 'Base patient change/s were successfully reverted.' : 'Error in reverting base patient.';
+                        // console.log(original_base)  ->  for checking
+                        // console.log(baseToRevert)  -> check why di nagana
+                        message = baseToRevert ? 'Base patient change/s were successfully reverted.' : 'Error in reverting base patient record.';
                     }
                     catch (err) {
                         message = err.message
@@ -973,104 +1029,26 @@ const updateRecord = async (req, res, next) => {
                     return ` Base Record Revert Changes status:${message}`
                 })
 
-            res.status(response.status).json(response)
-
         } else if (role === 'dentist' || role === 'admin') {
 
-            let inputs = {
-                operation: "update",
-                category: category,
-                patientId: patientId,
-                editedBy: editedBy,
-                dentalRecord: updatedData.dentalRecord
+            if (checkObjNull(updatedData.dentalRecord)) {
+                return res.status(404).json({
+                    successful: false,
+                    message: `Missing dental record.`,
+                });
             }
 
-            await addDentalRecord(inputs, res, next)
+            patient.dentalRecord = updatedData.dentalRecord
+
+            //ADD LOG FOR UPDATING PATIENT DENTAL RECORD
+            let successMessage = "Successfully updated patient dental record and added log."
+            response = await addHistoryLog(editedBy, 'UPDATE', 'Dental', patient_id, patient, successMessage, null, null)
+
         }
 
+        res.status(response.status).json(response)
+
     }
-
-    // addLogPromise(editedBy, "UPDATE", recordType, patientId)
-    //     .then(async ({ status_log, successful_log, message_log }) => {
-    //         if (successful_log === true) {
-    //             try {
-
-    //                 // Update the BasePatient document
-    //                 const updatedBasePatient = await BaseModel.findByIdAndUpdate(patientId, updatedData.basicInfo, { new: true });
-
-    //                 if (!updatedBasePatient) {
-    //                     return res.status(404).json({
-    //                         successful: false,
-    //                         message: 'Base patient not found',
-    //                     })
-    //                 }
-
-    //                 // Update other related documents based on the category
-    //                 if (updatedBasePatient.category === 'students') {
-    //                     // Find and update the Student document
-    //                     const updatedStudent = await Student.findOneAndUpdate({ details: patientId }, updatedData.exclusiveData, { new: true });
-
-    //                     if (!updatedStudent) {
-    //                         return res.status(404).json({
-    //                             successful: false,
-    //                             message: 'Student not found',
-    //                         })
-    //                     }
-    //                 } else if (updatedBasePatient.category === 'employees') {
-    //                     // Find and update the Employee document
-    //                     const updatedEmployee = await Employee.findOneAndUpdate({ details: patientId }, updatedData.exclusiveData, { new: true });
-
-    //                     if (!updatedEmployee) {
-    //                         return res.status(404).json({
-    //                             successful: false,
-    //                             message: 'Employee not found',
-    //                         })
-    //                     }
-    //                 }
-
-    //                 return res.status(200).send({
-    //                     successful_record: true,
-    //                     successful_log: true,
-    //                     message: "Successfully updated patient records."
-    //                 })
-    //             }
-    //             catch (error) {
-    //                 // UNDO CHANGES MADE IN THE RECORDS
-
-
-    //                 let isDeletedLog = false
-    //                 error.message += 'Log Deletion status:'
-    //                 try {
-    //                     deleteLog = message_log._id
-    //                     const deleted_log = await HistoryLog.findByIdAndDelete({ _id: deleteLog })
-    //                     if (deleted_log) isDeletedLog = true
-    //                     error.message += isDeletedLog ? ' Successfully deleted the log.' : '  Error deleting log.'
-    //                 }
-    //                 catch (err) {
-    //                     error.message += err.message
-    //                 }
-
-    //                 return res.status(500).send({
-    //                     successful_dental_record: false,
-    //                     isDeletedLog,
-    //                     error_report: error.message
-    //                 })
-    //             }
-    //         }
-    //         else {
-    //             let error = new Error(message_log)
-    //             error.status_log = status_log
-    //             throw error
-    //         }
-    //     })
-    //     .catch((error) => {
-    //         const status = error.status_log ? error.status_log : 500
-    //         return res.status(status).send({
-    //             successful_log: false,
-    //             message_log: error.message
-    //         })
-    //     })
-    // } 
     catch (error) {
         console.error(error);
         res.status(500).json({
