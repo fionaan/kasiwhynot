@@ -1,4 +1,4 @@
-const { checkIfNull, checkObjNull, checkArrNull, checkFullArr, q4Values, q6Values, isValidCampus, emailRegex, gender } = require('../../utils')
+const { checkIfNull, checkObjNull, checkArrNull, checkFullArr, q4Values, q6Values, isValidCampus, emailRegex, gender, toProperCase } = require('../../utils')
 const { BaseModel, Student, Employee } = require('../models/patient_model')
 const HistoryLog = require('../models/historylog_model')
 const { addLog } = require('./historylog_controller')
@@ -102,57 +102,91 @@ const addBulk = async (req, res) => {
     }
 }
 
+const revertDelete = (deleteDoc, models, name) => {
+
+}
+
+const revertUpdate = (deleteDoc, models, name) => {
+
+}
+
+// ['', () => add extra task] --> for docs requiring extra work
+// [base, null] --> for docs requiring no additional work  
+
 //documents -> array of docs to save?
 //expected -> array of expected arrays to save in string format
-const saveAndHistory = (editedBy, type, record, id, documents, expected, models, undoExcess, successMessage) => {
-    let results = []
-    let exit = false
+const saveAndLog = async (editedBy, type, record, documents, expected, models, successMessage, undoExcess) => {
+    try {
+        let results = [], response, log_id
 
-    if (documents.length > 1 && !undoExcess) {
-        return res.status(500).json({
-            successful: false,
-            message: "'No DELETE operation is specified as argument.'"
-        })
-    }
+        if (documents.length > 1 && !undoExcess) {
+            throw Error('No DELETE operation is specified as argument.')
+            // return res.status(500).json({
+            //     successful: false,
+            //     message: "No DELETE operation is specified as argument."
+            // })
+        }
 
-    return documents.forEach(async (doc, index) => {
-        await doc.save()
-            .then(async (savedDoc) => {
-                if (documents.length > 1) {
-                    results.push(savedDoc)
-                } else {
-                    // insert operation if only single record needs to be added
-                }
-                if (index === documents.length-1) {
-                    // Add log after successful addition of all required documents
-                    const {status_log, successful_log, message_log} = await addLogPromise(editedBy, type, record, id)
-                    if (successful_log === false) throw new Error(message_log)
-                    
-                    return {
-                        status: 200,
-                        successful: true,
-                        message: successMessage
+        await documents.every(async ([doc, task], index) => {
+
+            // Ensures that Base record is the first document to be saved
+            if (index === 0 && !(doc instanceof BaseModel)) {
+                throw Error('Base Record must be listed first in the array.')
+            }
+
+            // Extra task done first before saving the document
+            if (task) {
+                doc = await task(log_id)
+            }
+
+            return await doc.save() //-- Test if kaya ng return without ending all process 
+                .then(async (savedDoc) => {
+
+                    // Use Base record ID in adding log
+                    if (savedDoc instanceof BaseModel) log_id = savedDoc._id
+                    if (documents.length > 1) {
+                        results.push(savedDoc)
+                    } else {
+                        // insert operation if only single record needs to be added
                     }
-                }
-            })
-            .catch((error) => {
-                let cause = results.length === 0 ? expected[0] : expected[results.length-1]
-                if (documents.length > 1 && results.length >= 1) {
-                    // revert all data in results array 
-                    results.forEach(async (deleteDoc, index) => {
-                     error.message += await undoExcess(deleteDoc, models[index], expected[index])
-                    })
-                }
-                //insert single return
-                exit = true
-                return {
-                    status: 500,
-                    successful: false,
-                    message: error.message
-                }
-            })
-    })
+                    if (index === documents.length - 1) {
 
+                        // Validates if no base patient was saved -- REMOVE
+                        if (!log_id) throw Error('Patient ID is required.')
+
+                        // Add log after successful addition of all required documents
+                        const { status_log, successful_log, message_log } = await addLogPromise(editedBy, type, record, log_id)
+                        if (successful_log === false) throw Error(message_log)
+
+                        response = {
+                            status: 200,
+                            successful: true,
+                            message: successMessage
+                        }
+                        return false
+                    }
+                })
+                .catch((error) => {
+                    // let cause = results.length === 0 ? expected[0] : expected[results.length - 1]
+                    if (results.length >= 1) {
+                        // revert all data in results array 
+                        results.forEach(async (deleteDoc, index) => {
+                            error.message += await undoExcess(deleteDoc, models[index], expected[index])
+                        })
+                    }
+
+                    response = error
+                    return false
+                })
+        })
+
+        //holds the response
+        return response
+    } catch(error) {
+        response = error
+        return response
+    }
+    //should i put the return response here instead? lol
 }
 
 const addHistoryLog = async (editedBy, type, record, id, saveDocument, successMessage, saveHandler, undoExcess) => {
@@ -226,6 +260,7 @@ const addHistoryLog = async (editedBy, type, record, id, saveDocument, successMe
 const addRecord = async (req, res) => {
     try {
         const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category, editedBy } = req.body
+        let model, studEmp
 
         // Create a new BasePatient document
         const basePatient = new BaseModel({
@@ -278,35 +313,58 @@ const addRecord = async (req, res) => {
         let patient_id = category === 'students' ? exclusiveData.studentNo : exclusiveData.employeeNo
         let success_message = "Successfully added base record, patient record, & log."
 
+        if (category === 'students') {
+            model = Student
+        }
+        else if (category === 'employees') {
+            model = Employee
+        }
+
+        const studEmpData = { ...exclusiveData, details: savedBase._id }
+        if (category === 'students') {
+            // If the category is a student, create a new Student document
+
+            studEmp = new Student(studentData)
+        }
+        else if (category === 'employees') {
+            // If the category is an employee, create a new Employee document
+            const employeeData = { ...exclusiveData, details: savedBase._id }
+            studEmp = new Employee(employeeData)
+        }
+
+        console.log(studEmp)
+        // ADD -> ADD -> LOG
+        const response = await saveAndLog(editedBy, "ADD", "Medical", [basePatient, studEmp], [`Base record, ${category} record`.format(toProperCase(category).replace(/s$/, ''))], [], undoExcess, successMessage)
+
         //ADD LOG FOR CREATION OF PATIENT RECORD
-        const response = await addHistoryLog(editedBy, "ADD", "Medical", patient_id, basePatient, success_message, ((savedBase) => {
+        // const response = await addHistoryLog(editedBy, "ADD", "Medical", patient_id, basePatient, success_message, ((savedBase) => {
 
-            if (category === 'students') {
-                // If the category is a student, create a new Student document
-                const studentData = { ...exclusiveData, details: savedBase._id }
-                const student = new Student(studentData)
-                return student
-            }
-            else if (category === 'employees') {
-                // If the category is an employee, create a new Employee document
-                const employeeData = { ...exclusiveData, details: savedBase._id }
-                const employee = new Employee(employeeData)
-                return employee
-            }
-        }),
-            (async (base_id) => {
-                try {
-                    const deletedBase = await BaseModel.findByIdAndDelete(base_id)
-                    message = deletedBase ? 'Base patient was successfully deleted.' : 'Error in deleting base patient.';
-                }
-                catch (err) {
-                    message = err.message
-                }
-                return ` Base Record Deletion status:${message}`
-            }))
+        //     if (category === 'students') {
+        //         // If the category is a student, create a new Student document
+        //         const studentData = { ...exclusiveData, details: savedBase._id }
+        //         const student = new Student(studentData)
+        //         return student
+        //     }
+        //     else if (category === 'employees') {
+        //         // If the category is an employee, create a new Employee document
+        //         const employeeData = { ...exclusiveData, details: savedBase._id }
+        //         const employee = new Employee(employeeData)
+        //         return employee
+        //     }
+        // }),
+        //     (async (base_id) => {
+        //         try {
+        //             const deletedBase = await BaseModel.findByIdAndDelete(base_id)
+        //             message = deletedBase ? 'Base patient was successfully deleted.' : 'Error in deleting base patient.';
+        //         }
+        //         catch (err) {
+        //             message = err.message
+        //         }
+        //         return ` Base Record Deletion status:${message}`
+        //     }))
 
-        // Send overall response
-        res.status(response.status).json(response)
+        // // Send overall response
+        // res.status(response.status).json(response)
 
     }
     catch (error) {
