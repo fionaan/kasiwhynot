@@ -134,25 +134,14 @@ const addBulk = async (req, res) => {
                 try {
                     // Process each row of CSV data
                     for (const row of csvData) {
-                        console.log('Row:', row);
+                        console.log('Row:', row)
 
-                        // Parse JSON data from each column
-                        // const jsonData = {
-                        //     basicInfo: row.basicInfo ? JSON.parse(row.basicInfo) : {},
-                        //     laboratory: row.laboratory ? JSON.parse(row.laboratory) : {},
-                        //     vaccination: row.vaccination ? JSON.parse(row.vaccination) : {},
-                        //     medicalHistory: row.medicalHistory ? JSON.parse(row.medicalHistory) : {},
-                        //     dentalRecords: row.dentalRecords ? JSON.parse(row.dentalRecords) : {},
-                        //     exclusiveData: row.exclusiveData ? JSON.parse(row.exclusiveData) : {},
-                        //     category: row.category,
-                        //     editedBy: row.editedBy
-                        // };
-
+                        
                         
 
                         // Save the JSON data to the database
                         const baseModel = new BaseModel(row);
-                        await baseModel.save();
+                        await baseModel.save()
 
                         const exclusiveData = {
                             studentNo: row['exclusiveData.studentNo'],
@@ -164,36 +153,36 @@ const addBulk = async (req, res) => {
                         if (row.category === 'students') {
                             
                             const student = new Student(exclusiveData);
-                            student.details = baseModel._id;
-                            await student.save();
+                            student.details = baseModel._id
+                            await student.save()
                         }
                     }
 
                     // Clean up the file after processing
-                    fs.unlinkSync(filePath);
+                    fs.unlinkSync(filePath)
 
                     res.json({
                         successful: true,
                         message: 'Bulk data added successfully',
-                    });
+                    })
                 } catch (error) {
                     console.error('Error saving data:', error.message);
                     res.status(500).json({
                         successful: false,
                         message: 'Error adding bulk data',
                         error: error.message,
-                    });
+                    })
                 }
-            });
+            })
     } catch (error) {
         console.error('Error:', error)
         res.status(500).json({
             successful: false,
             message: 'Error reading CSV file',
             error: error.message,
-        });
+        })
     }
-};
+}
 
 const addRecord = async (req, res) => {
     try {
