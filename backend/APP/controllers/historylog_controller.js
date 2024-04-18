@@ -33,7 +33,7 @@ const getAllLogs = async (req, res, next) => {
                 successful: false,
                 message: "Invalid page number."
             })
-        }
+        }  
 
         let logs = await historyLog.aggregate([
             {
@@ -214,7 +214,7 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
 
         //CHECKS IF USER EXISTS
         if (!isObjIdValid(editedBy)) {
-            nullFields.push('edited by')
+            nullFields.push('edited by invalid object id')
         }
         else {
             let editor = await user.findOne({ _id: editedBy })
@@ -236,7 +236,7 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
         }
 
         if(nullFields.length > 0){
-            callback(404, false, `Missing data in the following fields: ${nullFields.join(', ')}`)
+            callback(404, false, `Missing data in the following fields: ${nullFields.join(', ')}.`)
         } 
         else {
             historyType = historyType.trim().toUpperCase()
@@ -249,7 +249,7 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
             if (!recordClassList.includes(recordClass)) invalidFields.push('record class')
             
             if (invalidFields.length > 0){
-                callback(404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}`)
+                callback(404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}.`)
             }
             else {
                 const log = new historyLog({
@@ -272,7 +272,6 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
     }
     catch(err){
         callback(500, false, err.message)
-        
     }
 
 }

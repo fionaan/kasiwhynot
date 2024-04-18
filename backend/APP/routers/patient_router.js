@@ -26,10 +26,11 @@ router.get('/getFilter/:pageNumber?', patientController.getFilteredResultList)
 router.put('/bulkArchive', patientController.bulkArchivePatients)
 router.put('/bulkUnarchive', patientController.bulkUnarchivePatients)
 
-// ALL 'DELETE' ROUTERS ARE FOR TESTING PURPOSES ONLY
+// ALL ROUTERS BELOW ARE FOR TESTING PURPOSES ONLY
 router.delete('/deletestud', patientController.deleteStudents)
 router.delete('/deleteemp', patientController.deleteEmployees)
 router.delete('/deletebase', patientController.deleteBase)
 router.post('/addBulk', upload.single('file'), patientController.addBulk)
+router.get('/studbase', patientController.testSb)
 
 module.exports = router;

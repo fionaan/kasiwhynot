@@ -1,4 +1,5 @@
-const { checkIfNull, checkObjNull, checkArrNull, checkFullArr, q4Values, q6Values, isValidCampus, emailRegex, gender, toProperCase } = require('../../utils')
+const { checkIfNull, checkObjNull, checkArrNull, checkFullArr, q4Values,
+    q6Values, isValidCampus, emailRegex, gender, toProperCase, throwError } = require('../../utils')
 const { BaseModel, Student, Employee } = require('../models/patient_model')
 const HistoryLog = require('../models/historylog_model')
 const { addLog } = require('./historylog_controller')
@@ -7,7 +8,7 @@ const convertExcelToJson = require('convert-excel-to-json')
 const fs = require('fs-extra')
 
 
-// ALL DELETE FUNCTIONS ARE FOR TESTING PURPOSES ONLY
+// ALL FUNCTIONS BELOW UNTIL END COMMENT ARE FOR TESTING PURPOSES ONLY ---------------
 const deleteStudents = async (req, res) => {
     await Student.deleteMany()
         .then(() => {
@@ -38,10 +39,85 @@ const deleteBase = async (req, res) => {
         })
 }
 
+const testSb = async (req, res) => {
+    try {
+        const { studEmpId, category } = req.body
+        let model
+
+        if (category === 'students') {
+            model = Student
+        } else if (category === 'employees') {
+            model = Employee
+        } else {
+            throwError('Invalid category name.', 404)
+        }
+
+        const studEmpData = await model.findById(studEmpId)
+        if (!studEmpData) {
+            throwError('Patient Record not found.', 404)
+        }
+
+        const baseData = await BaseModel.findById(studEmpData.details)
+        if (!baseData) {
+            throwError('Base Record not found.', 404)
+        }
+
+        res.status(200).json({
+            successful: true,
+            fromStudEmpId: studEmpData._id,
+            toBaseId: baseData._id,
+            dentalRecord: baseData.dentalRecord
+            // archiveStatus: baseData.archived,
+            // dateArchive: baseData.archivedDate
+        })
+
+    } catch (error) {
+        res.status(error.status || 500).json({
+            successful: false,
+            message: error.message
+        })
+    }
+}
+
+// END OF TEST FUNCTIONS/METHODS -----------------------------------------------------
+
+// Finds base record based on given student/employee ID
+const studentToBase = async (studEmpId, category) => {
+    try {
+        let model
+
+        if (category === 'students') {
+            model = Student
+        } else if (category === 'employees') {
+            model = Employee
+        } else {
+            throwError('Invalid category name.', 400)
+        }
+
+        const studEmpData = await model.findById(studEmpId)
+        if (!studEmpData) {
+            throwError('Patient Record not found.', 404)
+        }
+
+        const baseData = await BaseModel.findById(studEmpData.details)
+        if (!baseData) {
+            throwError('Base Record not found.', 404)
+        }
+
+        return baseData
+    } catch (error) {
+        throw error
+    }
+}
+
 const addLogPromise = (editedBy, type, record, id) => {
     return new Promise((resolve, reject) => {
         addLog(editedBy, type, record, id, (status_log, successful_log, message_log) => {
-            resolve({ status_log, successful_log, message_log })
+            if (successful_log === false) {
+                reject(new Error(message_log))
+            } else {
+                resolve({ status_log, successful_log, message_log })
+            }
         })
     })
 }
@@ -115,19 +191,19 @@ const revertUpdate = (deleteDoc, models, name) => {
 
 //documents -> array of docs to save?
 //expected -> array of expected arrays to save in string format
-const saveAndLog = async (editedBy, type, record, documents, expected, models, successMessage, undoExcess) => {
+const saveAndLog = async (editedBy, type, record, successMessage, models, expected, documents, undoExcess) => {
     try {
         let results = [], response, log_id
 
-        if (documents.length > 1 && !undoExcess) {
-            throw Error('No DELETE operation is specified as argument.')
-            // return res.status(500).json({
-            //     successful: false,
-            //     message: "No DELETE operation is specified as argument."
-            // })
+        if (!undoExcess) {
+            throw Error('No DELETE/REVERT operation is specified as argument.')
         }
 
-        await documents.every(async ([doc, task], index) => {
+        if (!(models.length === expected.length && expected.length == documents.length)) {
+            throw Error('Unequal number of elements for: model, documents, & expected array arguments.')
+        }
+
+        for (let [index, [doc, task]] of documents.entries()) {
 
             // Ensures that Base record is the first document to be saved
             if (index === 0 && !(doc instanceof BaseModel)) {
@@ -136,57 +212,43 @@ const saveAndLog = async (editedBy, type, record, documents, expected, models, s
 
             // Extra task done first before saving the document
             if (task) {
-                doc = await task(log_id)
+                doc = task(log_id)
             }
 
-            return await doc.save() //-- Test if kaya ng return without ending all process 
+            await doc.save()
                 .then(async (savedDoc) => {
-
                     // Use Base record ID in adding log
                     if (savedDoc instanceof BaseModel) log_id = savedDoc._id
-                    if (documents.length > 1) {
-                        results.push(savedDoc)
-                    } else {
-                        // insert operation if only single record needs to be added
-                    }
+
+                    results.push(savedDoc)
+
                     if (index === documents.length - 1) {
-
                         // Validates if no base patient was saved -- REMOVE
-                        if (!log_id) throw Error('Patient ID is required.')
+                        if (!log_id) throw Error('Base Patient ID is required.')
 
-                        // Add log after successful addition of all required documents
+                        // Add log after successfully adding all required documents
                         const { status_log, successful_log, message_log } = await addLogPromise(editedBy, type, record, log_id)
-                        if (successful_log === false) throw Error(message_log)
 
                         response = {
-                            status: 200,
                             successful: true,
                             message: successMessage
                         }
-                        return false
                     }
                 })
-                .catch((error) => {
-                    // let cause = results.length === 0 ? expected[0] : expected[results.length - 1]
-                    if (results.length >= 1) {
-                        // revert all data in results array 
-                        results.forEach(async (deleteDoc, index) => {
-                            error.message += await undoExcess(deleteDoc, models[index], expected[index])
-                        })
+                .catch(async (error) => {
+                    if (results.length >= 1) {  // revert all saved records inside results array 
+                        for (let [index, deleteDoc] of results.entries()) {
+                            error.message += await undoExcess(deleteDoc._id, models[index], expected[index])
+                        }
                     }
-
-                    response = error
-                    return false
+                    throw Error(error.message)
                 })
-        })
+            if (response) return response
+        }
 
-        //holds the response
-        return response
-    } catch(error) {
-        response = error
-        return response
+    } catch (error) {
+        throw new Error(error.message)
     }
-    //should i put the return response here instead? lol
 }
 
 const addHistoryLog = async (editedBy, type, record, id, saveDocument, successMessage, saveHandler, undoExcess) => {
@@ -260,7 +322,7 @@ const addHistoryLog = async (editedBy, type, record, id, saveDocument, successMe
 const addRecord = async (req, res) => {
     try {
         const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category, editedBy } = req.body
-        let model, studEmp
+        let model, message
 
         // Create a new BasePatient document
         const basePatient = new BaseModel({
@@ -310,8 +372,8 @@ const addRecord = async (req, res) => {
             return res.status(400).send(errorResponse)
         }
 
-        let patient_id = category === 'students' ? exclusiveData.studentNo : exclusiveData.employeeNo
-        let success_message = "Successfully added base record, patient record, & log."
+
+        let successMessage = "Successfully added base record, patient record, & log."
 
         if (category === 'students') {
             model = Student
@@ -320,21 +382,28 @@ const addRecord = async (req, res) => {
             model = Employee
         }
 
-        const studEmpData = { ...exclusiveData, details: savedBase._id }
-        if (category === 'students') {
-            // If the category is a student, create a new Student document
-
-            studEmp = new Student(studentData)
-        }
-        else if (category === 'employees') {
-            // If the category is an employee, create a new Employee document
-            const employeeData = { ...exclusiveData, details: savedBase._id }
-            studEmp = new Employee(employeeData)
-        }
-
-        console.log(studEmp)
         // ADD -> ADD -> LOG
-        const response = await saveAndLog(editedBy, "ADD", "Medical", [basePatient, studEmp], [`Base record, ${category} record`.format(toProperCase(category).replace(/s$/, ''))], [], undoExcess, successMessage)
+        const response = await saveAndLog(editedBy, "ADD", "Medical", successMessage,
+            [BaseModel, model], ['Base record', `${category.toProperCase()} record`],
+            [[basePatient, null], [null, (base_id) => {
+                const studEmpData = { ...exclusiveData, details: base_id }
+                const studEmp = new model(studEmpData)
+                // console.log(studEmp)
+                return studEmp
+            }]],
+            (async (id, model, name) => {
+                try {
+                    const deletedDoc = await model.findByIdAndDelete(id)
+                    message = deletedDoc ? 'Successfully deleted.' : 'Error in deleting.';
+                }
+                catch (err) {
+                    message = err.message
+                }
+                return ` ${name} Deletion status: ${message}`
+            }))
+
+        // console.log(response)
+        res.status(200).json(response)
 
         //ADD LOG FOR CREATION OF PATIENT RECORD
         // const response = await addHistoryLog(editedBy, "ADD", "Medical", patient_id, basePatient, success_message, ((savedBase) => {
@@ -397,6 +466,7 @@ const getPatientList = async (req, res, next) => {
             });
         }
 
+        // Default display of all records based on category
         let pipeline = [
             {
                 $lookup: { //join base schema
@@ -455,6 +525,8 @@ const getPatientList = async (req, res, next) => {
             },
         ]
 
+        // Produces records without dental information 
+        // Required if 'Add Dental Record' operation
         if (operation === 'dental') {
             pipeline.splice(2, 0, {
                 $match: {
@@ -465,7 +537,7 @@ const getPatientList = async (req, res, next) => {
 
         let patient = await patientModel.aggregate(pipeline)
 
-        //check if null
+        // Check if null
         if (checkObjNull(patient)) {
             res.status(404).send({
                 successful: false,
@@ -719,7 +791,7 @@ const searchPatientList = async (req, res, next) => {
 
 const addDentalRecord = async (req, res, next) => {
     try {
-        let { operation, category, patientId, editedBy, dentalRecord } = req.body
+        let { category, patientId, editedBy, dentalRecord } = req.body
         category = category.trim().toLowerCase()
         let message, surgeries
 
@@ -760,15 +832,14 @@ const addDentalRecord = async (req, res, next) => {
                     })
                 }
                 else {
-                    // // CHECK IF THE PATIENT RECORD ALREADY CONTAINS DENTAL RECORD
-                    if (operation.toLowerCase() === 'add') {
-                        if (base.dentalRecord.isFilledOut === true) {
-                            return res.status(400).send({
-                                successful: false,
-                                message: `Base record with id ${base._id} already contains a dental record.`
-                            })
-                        }
+                    // CHECK IF THE PATIENT RECORD ALREADY CONTAINS DENTAL RECORD
+                    if (base.dentalRecord.isFilledOut === true) {
+                        return res.status(400).send({
+                            successful: false,
+                            message: `Base record with id ${base._id} already contains a dental record.`
+                        })
                     }
+
 
                     // CHECK FOR NULL DENTAL FIELDS  
                     nullFields = []
@@ -951,17 +1022,51 @@ const addDentalRecord = async (req, res, next) => {
                         }
                         if (dentalRecord.q10.needUpperDenture < 0 || dentalRecord.q10.needUpperDenture > 3) invalidFields.push('q10: Need Upper Denture invalid number')
                         if (dentalRecord.q10.needLowerDenture < 0 || dentalRecord.q10.needLowerDenture > 3) invalidFields.push('q10: Need Lower Denture invalid number')
+                        
+                        // Copy original values in case of reverting
+                        const origDental = JSON.parse(JSON.stringify(base.dentalRecord))
 
+                        console.log("the originals")
+                        console.log(origDental)
+
+                        // Place the new dental record
                         dentalRecord.isFilledOut = true
                         base.dentalRecord = dentalRecord
 
+                        console.log("new to save")
+                        console.log(base.dentalRecord)
+
                         //ADD LOG FOR CREATION OF DENTAL RECORD
-                        let patient_id = category === 'students' ? patient.studentNo : patient.employeeNo
-                        let successMessage = "Successfully added dental record & log."
-                        const response = await addHistoryLog(editedBy, "ADD", "Dental", patient_id, base, successMessage, null, null)
+                        let success_message = "Successfully added dental record & log."
+                        const response = await saveAndLog(editedBy, "ADD", "Dental", success_message, [BaseModel], ['Base Record'], [[base, null]],
+                            async (id, model, name) => {
+                                try { // Revert changes
+
+                                    let latestDoc = await model.findById(id)
+                                    if (!latestDoc) throw Error('Document to Revert: Not found.')
+
+                                    console.log('new changes saveD')
+                                    console.log(latestDoc)
+
+                                    console.log('asa loob ba si origdental')
+                                    console.log(JSON.parse(JSON.stringify(origDental)), "ano ba")
+                                    
+                                    latestDoc.dentalRecord = JSON.parse(JSON.stringify(origDental))
+
+                                    console.log('back to orig')
+                                    console.log(latestDoc)
+
+                                    const revertedDoc = await latestDoc.save()
+                                    message = revertedDoc ? 'Successfully reverted' : 'Error in reverting'
+
+                                } catch (error) {
+                                    message = error.message
+                                }
+                                return ` ${name} Revert status: ${message}.`
+                            })
 
                         // Send overall response
-                        res.status(response.status).json(response)
+                        res.status(200).json(response)
                     }
 
                 }
@@ -971,10 +1076,10 @@ const addDentalRecord = async (req, res, next) => {
         }
 
     }
-    catch (err) {
-        res.status(500).send({
+    catch (error) {
+        res.status(error.status || 500).send({
             successful: false,
-            message: err.message
+            message: error.message
         })
     }
 }
@@ -1021,7 +1126,7 @@ const updateRecord = async (req, res, next) => {
             });
         }
         // original -> successful
-        console.log(patient)
+        // console.log(patient)
         const patient_id = category === 'students' ? record.studentNo : record.employeeNo
 
         // Check which record can be updated based on current user's role
@@ -1119,100 +1224,65 @@ const updateRecord = async (req, res, next) => {
 
 const archivePatient = async (req, res) => {
     try {
-        const { category, patientId, editedBy } = req.body;
-        let model
-        // Check if the patient is already archived
-        if (category === 'students') {
-            model = Student
-        } else if (category === 'employees') {
-            model = Employee
-        } else {
-            return res.status(400).send({
-                successful: false,
-                message: "The category input in the body is not recognized."
-            })
-        }
+        const { category, studEmpId, editedBy } = req.body;
 
-        const record = await model.findById(patientId)
+        // Fetch base patient record using stud/emp id
+        const patient = await studentToBase(studEmpId, category)
 
-        if (!record) {
-            return res.status(404).json({
-                successful: false,
-                message: 'Patient not found',
-            });
-        }
-        const patient = await BaseModel.findById(record.details);
-
-        if (!patient) {
-            return res.status(404).json({
-                successful: false,
-                message: 'Patient not found',
-            });
-        }
-
+        // Check if already archived
         if (patient.archived) {
-            return res.status(400).json({
-                successful: false,
-                message: 'Patient is already archived',
-            })
+            throwError('Patient is already archived', 400)
         }
+
+        // Copy original values in case of reverting
+        let origArchived = patient.archived
+        let origArchivedDate = patient.archivedDate
 
         // Archive the patient
         patient.archived = true
         patient.archivedDate = new Date()
 
-        //ADD LOG FOR ARCHIVING PATIENT RECORD
-        let patient_id = category === 'students' ? record.studentNo : record.employeeNo
-        let successMessage = "Successfully archived patient record & added log."
-        const response = await addHistoryLog(editedBy, "ARCHIVE", "All", patient_id, patient, successMessage, null, null)
+        //SAVE AND LOG FOR ARCHIVING PATIENT RECORD
+        let success_message = "Successfully archived patient record & added log."
+        const response = await saveAndLog(editedBy, "ARCHIVE", "All", success_message, [BaseModel], ['Base Record'], [[patient, null]],
+            async (id, model, name) => {
+                try { // Revert changes
+
+                    let latestDoc = await model.findById(id)
+                    if (!latestDoc) throw Error('Document to Revert: Not found.')
+
+                    latestDoc.archived = origArchived
+                    latestDoc.archivedDate = origArchivedDate
+
+                    const revertedDoc = await latestDoc.save()
+                    message = revertedDoc ? 'Successfully reverted' : 'Error in reverting'
+
+                } catch (error) {
+                    message = error.message
+                }
+                return ` ${name} Revert status: ${message}.`
+            })
 
         // Send overall response
-        res.status(response.status).json(response)
+        res.status(200).json(response)
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({
+        console.log(error.status)
+        res.status(error.status || 500).json({
             successful: false,
-            message: 'Error archiving patient',
-            error: error.message,
+            message: error.message
         });
     }
 }
 
 const unarchivePatient = async (req, res) => {
     try {
-        const { category, patientId, editedBy } = req.body;
-        let model
-        // Check if the patient is already archived
-        if (category === 'students') {
-            model = Student
-        } else if (category === 'employees') {
-            model = Employee
-        } else {
-            return res.status(400).send({
-                successful: false,
-                message: "The category input in the body is not recognized."
-            })
-        }
+        const { category, studEmpId, editedBy } = req.body;
 
-        const record = await model.findById(patientId)
+        // Fetch base patient record using stud/emp id
+        const patient = await studentToBase(studEmpId, category)
 
-        if (!record) {
-            return res.status(404).json({
-                successful: false,
-                message: 'Patient not found',
-            });
-        }
-
-        const patient = await BaseModel.findById(record.details);
-
-        if (patient === "") {
-            return res.status(404).json({
-                successful: false,
-                message: 'Patient not found',
-            });
-        }
-
+        // Check if already unarchived
         if (!patient.archived) {
             return res.status(400).json({
                 successful: false,
@@ -1220,24 +1290,43 @@ const unarchivePatient = async (req, res) => {
             });
         }
 
+        // Copy original values in case of reverting
+        let origArchived = patient.archived
+        let origArchivedDate = patient.archivedDate
+
         // Unarchive the patient
         patient.archived = false
         patient.archivedDate = null
 
-        //ADD LOG FOR UNARCHIVING A RECORD
-        let patient_id = category === 'students' ? record.studentNo : record.employeeNo
-        let successMessage = "Successfully unarchived patient record & added log."
-        const response = await addHistoryLog(editedBy, "UNARCHIVE", "All", patient_id, patient, successMessage, null, null)
+        //SAVE AND LOG FOR UNARCHIVING A RECORD
+        let success_message = "Successfully unarchived patient record & added log."
+        const response = await saveAndLog(editedBy, "UNARCHIVE", "All", success_message, [BaseModel], ['Base Record'], [[patient, null]],
+            async (id, model, name) => {
+                try { // Revert changes
+
+                    let latestDoc = await model.findById(id)
+                    if (!latestDoc) throw Error('Document to Revert: Not found.')
+
+                    latestDoc.archived = origArchived
+                    latestDoc.archivedDate = origArchivedDate
+
+                    const revertedDoc = await latestDoc.save()
+                    message = revertedDoc ? 'Successfully reverted' : 'Error in reverting'
+
+                } catch (error) {
+                    message = error.message
+                }
+                return ` ${name} Revert status: ${message}.`
+            })
 
         // Send overall response
-        res.status(response.status).json(response)
+        res.status(200).json(response)
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({
+        res.status(error.status || 500).json({
             successful: false,
-            message: 'Error unarchiving patient',
-            error: error.message,
+            message: error.message,
         })
     }
 }
@@ -1420,7 +1509,7 @@ const bulkArchivePatients = async (req, res) => {
         if (notFoundIds.length > 0) {
             return res.status(404).json({
                 successful: false,
-                message: `Patients with the following IDs not found: ${notFoundIds.join(', ')}`,
+                message: `Patients with the following IDs not found: ${notFoundIds.join(', ')}.`,
             });
         }
 
@@ -1495,6 +1584,7 @@ module.exports = {
     deleteStudents,
     deleteEmployees,
     deleteBase,
+    testSb,
     addBulk,
     bulkArchivePatients,
     bulkUnarchivePatients
