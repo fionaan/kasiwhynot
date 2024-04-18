@@ -5,6 +5,8 @@ const { addLog } = require('./historylog_controller')
 const mongoose = require('mongoose')
 const convertExcelToJson = require('convert-excel-to-json')
 const fs = require('fs-extra')
+const xlsx = require ('xlsx')
+const csvParser = require('csv-parser')
 
 
 // ALL DELETE FUNCTIONS ARE FOR TESTING PURPOSES ONLY
@@ -45,205 +47,153 @@ const addLogPromise = (editedBy, type, record, id) => {
         })
     })
 }
-//const xlsx = require('xlsx')
 
 
+
+
+// ADDBULK GAMIT EXCEL FILE
 // const addBulk = async (req, res) => {
-//     try {
-//         if (!req.file) {
-//             return res.status(400).json({ error: 'No file uploaded' });
-//         }
-
-//         const filePath = 'uploads/' + req.file.filename;
-
-//         const excelData = convertExcelToJson({
-//             sourceFile: filePath,
-//             header: {
-//                 rows: 1
-//             },
-//             columnToKey: {
-//                 "*": "{{columnHeader}}"
-//             }
-//         })
-
-//         console.log('Excel Data:', excelData); // Debug log to check Excel data
-
-//         if (!excelData || typeof excelData !== 'object') {
-//             throw new Error('Invalid data format returned from convertExcelToJson')
-//         }
-
-//         // Combine all data from different sheets into a single array
-//         let combinedData = [];
-//         Object.values(excelData).forEach(sheetData => {
-//             combinedData = [...combinedData, ...sheetData]
-//         })
-
-//         console.log('Combined Data:', combinedData) // Debug log to check combined data
-
-//         // Process and save combinedData
-//         // for (const data of combinedData) {
-//         //     console.log('Processing Data:', data) // Debug log to check each data entry
-//         //     const baseModelInstance = new BaseModel(data);
-//         //     await baseModelInstance.validate() // Validate the data
-//         //     await baseModelInstance.save() // Save the data // Assuming data matches the Patient schema
-//         // }
-// //Na  rread yung excel File pero di nag ssave sa database
-// //Di ko sure if tama ba na pinaghiwalay ko mga sheets
-
-//         // Delete the temporary file after processing
-//         fs.unlink(filePath, (err) => {
-//             if (err) {
-//                 console.error('Error deleting file:', err);
-//             }
-//         })
-
-//         res.status(200).json({ success: true, message: 'Data imported successfully' })
-//     } catch (error) {
-//         console.error('Error:', error)
-//         res.status(500).json({ error: 'An error occurred' })
+//     if (!req.file) {
+//         return res.status(400).json({ error: 'No file uploaded' })
 //     }
-// }
 
+//     const filePath = `uploads/${req.file.filename}`
 
-// const addBulk = async (req, res) => {
 //     try {
-//         if (!req.file) {
-//             return res.status(400).json({ error: 'No file uploaded' });
-//         }
-
-//         const filePath = 'uploads/' + req.file.filename;
-
 //         const excelData = convertExcelToJson({
 //             sourceFile: filePath,
-//             header: {
-//                 rows: 1
-//             },
-//             columnToKey: {
-//                 '*': '{{columnHeader}}'
-//             },
-//             sheets: ['medicalRecords']
+//             header: { rows: 1 },
+//             columnToKey: { '*': '{{columnHeader}}' },
+//             sheets: ['medicalRecords', 'student'] // Add the new sheet name here
 //         })
 
 //         if (!excelData || typeof excelData !== 'object') {
 //             throw new Error('Invalid data format returned from convertExcelToJson');
 //         }
 
-//         // Parse and combine excelData
-//         let combinedData = [];
-//         Object.values(excelData).forEach(sheetData => {
-//             combinedData = [...combinedData, ...sheetData];
-//         })
+//         let savedBaseModelId
+//         // Process medical records
+//         for (const row of excelData.medicalRecords) {
+//             const instance = new BaseModel(row);
+//             await instance.save();
 
-//         // Iterate over combinedData
-//         for (const row of combinedData) {
-//             const baseModelData = {};
-//             Object.entries(row).forEach(([header, value]) => {
-//                 const keys = header.split('.'); // Split header at each period
-//                 let currentObject = baseModelData;
-//                 for (let i = 1; i < keys.length - 1; i++) {
-//                     const key = keys[i];
-//                     if (!currentObject[key]) {
-//                         currentObject[key] = {}; // Create nested object if it doesn't exist
-//                     }
-//                     currentObject = currentObject[key]// Move to the next nested object
-//                 }
-//                 const lastKey = keys[keys.length - 1]
-//                 currentObject[lastKey] = value; // Assign the value to the last nested object
-//             })
-
-//             console.log('baseModel:',baseModelData)
-
-//             //Create an instance of BaseModel
-//             const baseModelInstance = new BaseModel(baseModelData);
-
-//             // Validate the instance against the schema
-//             // const validationError = baseModelInstance.validate();
-//             // if (validationError) {
-//             //     await baseModelInstance.save();
-//             //     // Handle validation error, e.g., skip saving or log the error
-//             // } else {
-//             //     // Save the validated instance
-//             //     await baseModelInstance.save();
-//             // }
-
-//             await baseModelInstance.save()
-
-
+//             savedBaseModelId = instance._id
 //         }
 
+//         for (const row of excelData.student) {
 
-//         // Delete the temporary file after processing
-//         fs.unlink(filePath, (err) => {
-//             if (err) {
-//                 console.error('Error deleting file:', err)
-//             }
-//         })
 
-//         res.status(200).json({ success: true, message: 'Data imported successfully' })
+//             // Assign BaseModel _id to student details field
+//             const studentInstance = new Student({ ...row, details: savedBaseModelId });
+//             await studentInstance.save()
+//         }
+
+//         await fs.unlink(filePath) // Clean up the file after processing
+//         res.json({
+//             successful: true,
+//             message: 'Bulk data added successfully',
+//         });
 //     } catch (error) {
 //         console.error('Error:', error)
-//         res.status(500).json({ error: 'An error occurred' })
+//         res.status(500).json({
+//             successful: false,
+//             message: 'Error adding bulk data',
+//             error: error.message,
+//         })
+//         try {
+//             await fs.unlink(filePath); // Attempt to clean up the file in case of errors
+//         } catch (cleanupError) {
+//             console.error('Error deleting file:', cleanupError)
+//         }
 //     }
 // }
 
 
 
 
+
+// addBulk using CSV
+
 const addBulk = async (req, res) => {
     if (!req.file) {
-        return res.status(400).json({ error: 'No file uploaded' })
+        return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    const filePath = `uploads/${req.file.filename}`
+    const filePath = `uploads/${req.file.filename}`;
 
     try {
-        const excelData = convertExcelToJson({
-            sourceFile: filePath,
-            header: { rows: 1 },
-            columnToKey: { '*': '{{columnHeader}}' },
-            sheets: ['medicalRecords', 'student'] // Add the new sheet name here
-        })
+        const csvData = [];
 
-        if (!excelData || typeof excelData !== 'object') {
-            throw new Error('Invalid data format returned from convertExcelToJson');
-        }
+        // Read the CSV file and parse its contents
+        fs.createReadStream(filePath)
+            .pipe(csvParser())
+            .on('data', row => {
+                csvData.push(row);
+            })
+            .on('end', async () => {
+                try {
+                    // Process each row of CSV data
+                    for (const row of csvData) {
+                        console.log('Row:', row);
 
-        let savedBaseModelId
-        // Process medical records
-        for (const row of excelData.medicalRecords) {
-            const instance = new BaseModel(row);
-            await instance.save();
+                        // Parse JSON data from each column
+                        // const jsonData = {
+                        //     basicInfo: row.basicInfo ? JSON.parse(row.basicInfo) : {},
+                        //     laboratory: row.laboratory ? JSON.parse(row.laboratory) : {},
+                        //     vaccination: row.vaccination ? JSON.parse(row.vaccination) : {},
+                        //     medicalHistory: row.medicalHistory ? JSON.parse(row.medicalHistory) : {},
+                        //     dentalRecords: row.dentalRecords ? JSON.parse(row.dentalRecords) : {},
+                        //     exclusiveData: row.exclusiveData ? JSON.parse(row.exclusiveData) : {},
+                        //     category: row.category,
+                        //     editedBy: row.editedBy
+                        // };
 
-            savedBaseModelId = instance._id
-        }
+                        
 
-        for (const row of excelData.student) {
+                        // Save the JSON data to the database
+                        const baseModel = new BaseModel(row);
+                        await baseModel.save();
 
+                        const exclusiveData = {
+                            studentNo: row['exclusiveData.studentNo'],
+                            course: row['exclusiveData.course'],
+                            year: row['exclusiveData.year'],
+                            section: row['exclusiveData.section'],
+                        };
+                        // If category is 'students', save to Student model as well
+                        if (row.category === 'students') {
+                            
+                            const student = new Student(exclusiveData);
+                            student.details = baseModel._id;
+                            await student.save();
+                        }
+                    }
 
-            // Assign BaseModel _id to student details field
-            const studentInstance = new Student({ ...row, details: savedBaseModelId });
-            await studentInstance.save()
-        }
+                    // Clean up the file after processing
+                    fs.unlinkSync(filePath);
 
-        await fs.unlink(filePath) // Clean up the file after processing
-        res.json({
-            successful: true,
-            message: 'Bulk data added successfully',
-        });
+                    res.json({
+                        successful: true,
+                        message: 'Bulk data added successfully',
+                    });
+                } catch (error) {
+                    console.error('Error saving data:', error.message);
+                    res.status(500).json({
+                        successful: false,
+                        message: 'Error adding bulk data',
+                        error: error.message,
+                    });
+                }
+            });
     } catch (error) {
         console.error('Error:', error)
         res.status(500).json({
             successful: false,
-            message: 'Error adding bulk data',
+            message: 'Error reading CSV file',
             error: error.message,
-        })
-        try {
-            await fs.unlink(filePath); // Attempt to clean up the file in case of errors
-        } catch (cleanupError) {
-            console.error('Error deleting file:', cleanupError)
-        }
+        });
     }
-}
+};
 
 const addRecord = async (req, res) => {
     try {
