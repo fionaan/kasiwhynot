@@ -1,0 +1,108 @@
+.site-header {
+    background-color: #1e40af;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.site-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+.site-header .site-logo {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+}
+
+.site-header .profile-btn {
+    background-color: #1e40af;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #fff;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 10;
+    display: none;
+    min-width: 120px;
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+}
+
+.dropdown-menu li {
+    list-style: none;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: #333;
+    text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f5f5f5;
+}
+
+.dropdown-menu.hidden {
+    display: none;
+}
+
+.site-footer {
+    background-color: #1e40af;
+    color: #fff;
+    padding: 2rem 0;
+}
+
+.site-footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-footer ul {
+    display: flex;
+    list-style: none;
+}
+
+.site-footer ul li {
+    margin-right: 1.5rem;
+}
+
+.site-footer a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    color: #ccc;
+}
+
+@media (max-width: 639px) {
+    .site-header .container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .site-header .profile-btn {
+        margin-top: 1rem;
+    }
+}
+
+/* For screens larger than 1024px */
+@media (min-width: 1025px) {
+    .site-header .container {
+        flex-direction: row;
+    }
+}
