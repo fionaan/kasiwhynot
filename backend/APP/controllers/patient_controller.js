@@ -6,6 +6,8 @@ const { addLog } = require('./historylog_controller')
 const mongoose = require('mongoose')
 const convertExcelToJson = require('convert-excel-to-json')
 const fs = require('fs-extra')
+const xlsx = require ('xlsx')
+const csvParser = require('csv-parser')
 
 
 // ALL FUNCTIONS BELOW UNTIL END COMMENT ARE FOR TESTING PURPOSES ONLY ---------------
@@ -128,59 +130,75 @@ const addLogPromise = (editedBy, type, record, id) => {
     })
 }
 
+// addBulk using CSV
+
 const addBulk = async (req, res) => {
     if (!req.file) {
-        return res.status(400).json({ error: 'No file uploaded' })
+        return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    const filePath = `uploads/${req.file.filename}`
+    const filePath = `uploads/${req.file.filename}`;
 
     try {
-        const excelData = convertExcelToJson({
-            sourceFile: filePath,
-            header: { rows: 1 },
-            columnToKey: { '*': '{{columnHeader}}' },
-            sheets: ['medicalRecords', 'student'] // Add the new sheet name here
-        })
+        const csvData = [];
 
-        if (!excelData || typeof excelData !== 'object') {
-            throw new Error('Invalid data format returned from convertExcelToJson');
-        }
+        // Read the CSV file and parse its contents
+        fs.createReadStream(filePath)
+            .pipe(csvParser())
+            .on('data', row => {
+                csvData.push(row);
+            })
+            .on('end', async () => {
+                try {
+                    // Process each row of CSV data
+                    for (const row of csvData) {
+                        console.log('Row:', row)
 
-        let savedBaseModelId
-        // Process medical records
-        for (const row of excelData.medicalRecords) {
-            const instance = new BaseModel(row);
-            await instance.save();
+                        
+                        
 
-            savedBaseModelId = instance._id
-        }
+                        // Save the JSON data to the database
+                        const baseModel = new BaseModel(row);
+                        await baseModel.save()
 
-        for (const row of excelData.student) {
+                        const exclusiveData = {
+                            studentNo: row['exclusiveData.studentNo'],
+                            course: row['exclusiveData.course'],
+                            year: row['exclusiveData.year'],
+                            section: row['exclusiveData.section'],
+                        };
+                        // If category is 'students', save to Student model as well
+                        if (row.category === 'students') {
+                            
+                            const student = new Student(exclusiveData);
+                            student.details = baseModel._id
+                            await student.save()
+                        }
+                    }
 
+                    // Clean up the file after processing
+                    fs.unlinkSync(filePath)
 
-            // Assign BaseModel _id to student details field
-            const studentInstance = new Student({ ...row, details: savedBaseModelId });
-            await studentInstance.save()
-        }
-
-        await fs.unlink(filePath) // Clean up the file after processing
-        res.json({
-            successful: true,
-            message: 'Bulk data added successfully',
-        });
+                    res.json({
+                        successful: true,
+                        message: 'Bulk data added successfully',
+                    })
+                } catch (error) {
+                    console.error('Error saving data:', error.message);
+                    res.status(500).json({
+                        successful: false,
+                        message: 'Error adding bulk data',
+                        error: error.message,
+                    })
+                }
+            })
     } catch (error) {
         console.error('Error:', error)
         res.status(500).json({
             successful: false,
-            message: 'Error adding bulk data',
+            message: 'Error reading CSV file',
             error: error.message,
         })
-        try {
-            await fs.unlink(filePath); // Attempt to clean up the file in case of errors
-        } catch (cleanupError) {
-            console.error('Error deleting file:', cleanupError)
-        }
     }
 }
 
@@ -339,44 +357,44 @@ const addRecord = async (req, res) => {
             dentalRecord,
         })
 
-        const nullFields = []
+        // const nullFields = []
 
-        if (checkObjNull(basicInfo)) {
-            nullFields.push('basicInfo')
-        } else {
+        // if (checkObjNull(basicInfo)) {
+        //     nullFields.push('basicInfo')
+        // } else {
 
-            if (checkIfNull(basicInfo.campus)) {
-                nullFields.push('basicInfo.campus')
-            } else if (!isValidCampus.includes(basicInfo.campus)) {
-                nullFields.push('Invalid Campus')
-            }
+        //     if (checkIfNull(basicInfo.campus)) {
+        //         nullFields.push('basicInfo.campus')
+        //     } else if (!isValidCampus.includes(basicInfo.campus)) {
+        //         nullFields.push('Invalid Campus')
+        //     }
 
-            if (checkIfNull(basicInfo.fullName.firstName)) nullFields.push('basicInfo.fullName.firstName')
+        //     if (checkIfNull(basicInfo.fullName.firstName)) nullFields.push('basicInfo.fullName.firstName')
 
-            if (checkIfNull(basicInfo.fullName.lastName)) nullFields.push('basicInfo.fullName.lastName')
-            if (!basicInfo.emailAddress) {
-                nullFields.push('basicInfo.emailAddress')
-            } else if (!emailRegex.test(basicInfo.emailAddress)) {
-                nullFields.push('Invalid Email Address')
-            }
-            if (checkIfNull(basicInfo.dateOfBirth)) nullFields.push('basicInfo.dateOfBirth')
-            if (checkIfNull(basicInfo.age)) nullFields.push('basicInfo.age')
+        //     if (checkIfNull(basicInfo.fullName.lastName)) nullFields.push('basicInfo.fullName.lastName')
+        //     if (!basicInfo.emailAddress) {
+        //         nullFields.push('basicInfo.emailAddress')
+        //     } else if (!emailRegex.test(basicInfo.emailAddress)) {
+        //         nullFields.push('Invalid Email Address')
+        //     }
+        //     if (checkIfNull(basicInfo.dateOfBirth)) nullFields.push('basicInfo.dateOfBirth')
+        //     if (checkIfNull(basicInfo.age)) nullFields.push('basicInfo.age')
 
-            if (checkIfNull(basicInfo.gender)) {
-                nullFields.push('basicInfo.gender')
-            } else if (!gender.includes(basicInfo.gender)) {
-                nullFields.push('Invalid gender input')
-            }
+        //     if (checkIfNull(basicInfo.gender)) {
+        //         nullFields.push('basicInfo.gender')
+        //     } else if (!gender.includes(basicInfo.gender)) {
+        //         nullFields.push('Invalid gender input')
+        //     }
 
-        }
+        // }
 
-        if (nullFields.length > 0) {
-            const errorResponse = {
-                successful: false,
-                message: `Empty or missing fields: ${nullFields.join(', ')}`,
-            }
-            return res.status(400).send(errorResponse)
-        }
+        // if (nullFields.length > 0) {
+        //     const errorResponse = {
+        //         successful: false,
+        //         message: `Empty or missing fields: ${nullFields.join(', ')}`,
+        //     }
+        //     return res.status(400).send(errorResponse)
+        // }
 
         if (category === 'students') {
             model = Student
