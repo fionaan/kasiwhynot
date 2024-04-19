@@ -440,15 +440,15 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
 {
     "basicInfo": {
         "fullName": {
-            "firstName": "Ohno",
-            "middleName": "sdfsdf",
-            "lastName": "Llllsdasdll"
+            "firstName": "Manila",
+            "middleName": "Sup",
+            "lastName": "Marius"
         },
-        "emailAddress": "eme.doe@example.com",
+        "emailAddress": "kendra.doe@example.com",
         "dateOfBirth": "1990-01-01",
         "age": 32,
         "gender": "Male",
-        "campus": "Main Campus",
+        "campus": "Manila",
         "homeAddress": "123 Main St, City",
         "contactNo": 1234567890,
         "nationality": "American",
@@ -520,16 +520,36 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
     },
     "vaccination": {
         "covidVaccination": {
-            "firstDose": "Pfizer",
-            "dateGiven": "2023-01-05"
+            "firstDose": {
+                "dose": "Pfizer",
+                "dateGiven": "2023-09-18"
+            },
+            "secondDose" :{
+                "dose": "Astra",
+                "dateGiven": "2024-01-18"
+            },
+            "thirdDose":{
+                "dose": "Pfizer",
+                "dateGiven": "2024-03-10"
+            }
         },
         "fluVaccination": {
             "firstDose": "Influvac",
             "dateGiven": "2023-01-08"
         },
         "hepatitisBVaccination": {
-            "firstDose": "Engerix-B",
-            "dateGiven": "2023-01-12"
+            "firstDose": {
+                "dose": "HepA",
+                "dateGiven": "2009-10-18"
+            },
+            "secondDose" :{
+                "dose": "HepB",
+                "dateGiven": "2020-08-04"
+            },
+            "thirdDose":{
+                "dose": "HebAvi",
+                "dateGiven": "2024-04-01"
+            }
         },
         "pneumoniaVaccination": {
             "firstDose": "Pneumovax",
@@ -827,11 +847,201 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
         ]
     },
     "exclusiveData": {
-        "studentNo": "789456",
-        "course": "Ohno",
-        "year": "2",
-        "section": "C"
+        "studentNo": "95463",
+        "course": "Computer Science",
+        "year": "1",
+        "section": "A"
     },
     "category": "students",
     "editedBy": "65eac8b708bb861743108ced"
 }
+
+
+UPDATE Complete Medical Record
+{
+    "role": "doctor",
+    "category": "students",
+    "patientId": "6618fa5af133b543ad8a47d0",
+    "editedBy": "65eac8b708bb861743108ced",
+    "updatedData": {
+        "basicInfo": {
+            "fullName": {
+                "firstName": "Sevy",
+                "middleName": "Isaac",
+                "lastName": "Hong"
+            },
+            "emailAddress": "kendra.doe@example.com",
+            "dateOfBirth": "1990-01-01",
+            "age": 32,
+            "gender": "Male",
+            "campus": "Manila",
+            "homeAddress": "123 Main St, City",
+            "contactNo": 1234567890,
+            "nationality": "American",
+            "religion": "Christian",
+            "bloodType": "A+",
+            "civilStatus": "Single",
+            "height": 175,
+            "weight": 70,
+            "bmi": 23,
+            "guardianName": "Jane Doe",
+            "guardianContactNo": 9876543210,
+            "guardianRelationship": "Parent",
+            "attachment": "attachment-url"
+        },
+        "laboratory": {
+            "chestXray": {
+                "findings": "Normal",
+                "date": "2023-01-15"
+            },
+            "cbc": {
+                "findings": "Normal",
+                "date": "2023-01-10"
+            },
+            "hepatitisProfile": {
+                "hbsag": "Negative",
+                "antiHbs": "Positive",
+                "antiHbcIgg": "Negative",
+                "antiHbcIgm": "Negative"
+            },
+            "drugTest": {
+                "methamphethamineResults": "Negative",
+                "methamphetamineRemarks": "No remarks",
+                "tetrahydrocannabinolResults": "Negative",
+                "tetrahydrocannabinolRemarks": "No remarks"
+            },
+            "urinalysis": {
+                "color": "Yellow",
+                "transparency": "Clear",
+                "blood": "Negative",
+                "bilirubin": "Normal",
+                "urobilinogen": "Normal",
+                "ketones": "Negative",
+                "glutones": "Negative",
+                "protein": "Negative",
+                "nitrite": "Negative",
+                "leukocyte": "Normal",
+                "phLevel": 7,
+                "spGravity": "Normal",
+                "wbc": "Normal",
+                "rbc": "Normal",
+                "bacteria": "Negative",
+                "epithelialCells": "Normal",
+                "amorphousUrates": "Normal",
+                "mucusThreads": "Normal"
+            },
+            "fecalysis": {
+                "color": "Brown",
+                "consistency": "Formed",
+                "wbc": "Normal",
+                "rbc": "Normal",
+                "fatGlobules": "Negative",
+                "muscleFibers": "Negative",
+                "results": "Normal"
+            },
+            "others": {
+                "pregnancyTest": "Negative"
+            },
+            "attachments": "attachments-url"
+        },
+        "vaccination": {
+            "covidVaccination": {
+                "firstDose": {
+                    "dose": "Pfizer",
+                    "dateGiven": "2023-09-18"
+                },
+                "secondDose": {
+                    "dose": "Astra",
+                    "dateGiven": "2024-01-18"
+                },
+                "thirdDose": {
+                    "dose": "Pfizer",
+                    "dateGiven": "2024-03-10"
+                }
+            },
+            "fluVaccination": {
+                "firstDose": "Influvac",
+                "dateGiven": "2023-01-08"
+            },
+            "hepatitisBVaccination": {
+                "firstDose": {
+                    "dose": "HepA",
+                    "dateGiven": "2009-10-18"
+                },
+                "secondDose": {
+                    "dose": "HepB",
+                    "dateGiven": "2020-08-04"
+                },
+                "thirdDose": {
+                    "dose": "HebAvi",
+                    "dateGiven": "2024-04-01"
+                }
+            },
+            "pneumoniaVaccination": {
+                "firstDose": "Pneumovax",
+                "dateGiven": "2023-01-15"
+            },
+            "attachments": "vaccination-attachments-url"
+        },
+        "medicalHistory": {
+            "tattoo": false,
+            "bloodPressure": {
+                "systolic": 120,
+                "diastolic": 80
+            },
+            "conditions": {
+                "anemia": false,
+                "asthma": false,
+                "blackJointProblem": false,
+                "heartDiseases": false,
+                "hepatitis": false,
+                "highBloodPressure": false,
+                "kidneyProblem": false,
+                "chronicDiseases": false,
+                "thyroidProblems": false,
+                "bloodDyscrasia": false,
+                "others": false
+            },
+            "q1": {
+                "yesOrNo": false,
+                "doctorName": "Abukar",
+                "phone": 0,
+                "homeAddress": "Iran",
+                "forWhatCondition": "Autism"
+            },
+            "q2": {
+                "yesOrNo": false,
+                "pastIllnessSurgery": "Tagos"
+            },
+            "q3": {
+                "yesOrNo": false,
+                "drugFoodAllergies": "Feather"
+            },
+            "q4": {
+                "yesOrNo": false,
+                "nameOfMedication": "Meth",
+                "type": "2",
+                "brand": "jajaka",
+                "others": "none"
+            },
+            "q5": {
+                "yesOrNo": false,
+                "physicalLearningDisability": "Lack of Choromosomes"
+            },
+            "attachments": "medical-history-attachments-url"
+        },
+        "studentNo": "5452412",
+        "course": "Computer Science",
+        "year": "1",
+        "section": "B"
+    }
+}
+
+ARCHIVE/UNARCHIVE Record
+{
+    "category" : "students",
+    "patientId": "6610ccfc72d7502b173c6a3b",
+    "editedBy": "65eac8b708bb861743108ced"
+}
+
+
