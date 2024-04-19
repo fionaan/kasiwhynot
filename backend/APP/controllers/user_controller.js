@@ -1,11 +1,13 @@
+const nodeMailer = require('nodemailer')
 const User = require('../models/user_model')
 const { nameRegex,
-        emailRegex,
-        userTypeList,
-        toProperCase,
-        checkObjNull,
-        checkIfNull,
-        generatePassword } = require('../../utils')
+    emailRegex,
+    userTypeList,
+    toProperCase,
+    checkObjNull,
+    checkIfNull,
+    generatePassword } = require('../../utils')
+const { emptyDirSync } = require('fs-extra')
 
 const viewProfileSetting = async (req, res, next) => {
     try {
@@ -51,8 +53,118 @@ const viewProfileSetting = async (req, res, next) => {
     }
 }
 
-const addUser = async (req, res, next)=>{
-    
+const getUser = async (req, res, next) => {
+    try {
+        const pageNumber = parseInt(req.params.pageNumber) || 1 // default to 1 if no param is set
+        const pageSize = 50 // limits of records to be fetched per page
+        const skip = (pageNumber - 1) * pageSize
+        let error
+
+        // CHECK IF pageNumber IS VALID BASED ON NUMBER OF AVAILABLE RECORDS
+        const totalCount = await User.countDocuments()
+
+        if (skip >= totalCount && totalCount !== 0) {
+            error = new Error('Invalid page number.')
+            error.status = 404
+            throw error
+        }
+
+        let users = await User.aggregate([
+            {
+                $project: {
+                    fullName: {
+                        $concat: [
+                            '$fullName.lastName',
+                            ', ',
+                            '$fullName.firstName',
+                            {
+                                $cond: {
+                                    if: {
+                                        $ne: [{ $type: '$fullName.middleName' }, 'missing']
+                                    },
+                                    then: {
+                                        $cond: {
+                                            if: {
+                                                $and: [
+                                                    { $ne: ['$fullName.middleName', null] },
+                                                    { $ne: ['$fullName.middleName', ''] },
+                                                    { $ne: ['$fullName.middleName', 'null'] },
+                                                    { $ne: [{ $trim: { input: '$fullName.middleName' } }, ''] },
+                                                    { $ne: [{ $trim: { input: '$fullName.middleName' } }, 'null'] }
+                                                ]
+                                            },
+                                            then: {
+                                                $concat: [
+                                                    ' ',
+                                                    { $substr: ['$fullName.middleName', 0, 1] },
+                                                    '.'
+                                                ]
+                                            },
+                                            else: ''
+                                        }
+                                    },
+                                    else: ''
+                                }
+                            }
+                        ]
+                    },
+                    emailAddress: 1,
+                   
+                    userType: 1,
+                    status: 1,
+                   
+                    createdAt: {
+                        $dateToString: {
+                            format: "%Y-%m-%d",
+                            date: { $toDate: "$createdAt" },
+                            timezone: "Asia/Manila"
+                        }
+                    },
+                    updatedAt: {
+                        $dateToString: {
+                            format: "%Y-%m-%d",
+                            date: { $toDate: "$updatedAt" },
+                            timezone: "Asia/Manila"
+                        }
+                    }
+                }
+            },
+            {
+                $sort: {
+                    'status': 1,
+                    'fullName.lastName': 1
+                }
+            },
+            {
+                $skip: skip // for pagination
+            },
+            {
+                $limit: pageSize // for pagination
+            }
+        ])
+
+        if (users.length === 0) {
+            error = new Error('No user accounts are created yet.')
+            error.status = 404
+            throw error
+        } else {
+            res.status(200).json({
+                successful: true,
+                message: "Retrieved all users.",
+                count: users.length,
+                data: users
+            })
+        }
+
+    } catch (error) {
+        res.status(error.status || 500).json({
+            successful: false,
+            message: error.message
+        }) 
+    }
+}
+const addUser = async (req, res, next) => {
+
     try {
         let { fullName, emailAddress, userType } = req.body
         password = generatePassword()
@@ -88,7 +200,7 @@ const addUser = async (req, res, next)=>{
             if (!checkIfNull(fullName.middleName)) fullName.middleName = fullName.middleName.trim()
 
             //CHECK FOR FIELDS W INVALID VALUES
-            const user = await User.findOne({emailAddress: emailAddress})
+            const user = await User.findOne({ emailAddress: emailAddress })
 
             const invalidFields = []
             if (!nameRegex.test(fullName.firstName)) invalidFields.push('first name')
@@ -121,13 +233,13 @@ const addUser = async (req, res, next)=>{
                 })
 
                 user.save()
-                .then((result) =>{
-                    res.status(200).send({
-                        successful: true,
-                        message: "Successfully added a new user.",
-                        added_user: result
+                    .then((result) => {
+                        res.status(200).send({
+                            successful: true,
+                            message: "Successfully added a new user.",
+                            added_user: result
+                        })
                     })
-                })
                     .catch((error) => {
                         res.status(500).send({
                             successful: false,
@@ -219,8 +331,51 @@ const unarchiveUser = async (req, res, next) => {
     }
 };
 
+const html = `
+    <h1>Hello World</h1>
+    <p>isn't NodeMailer useful?</p>
+    <img src="cid:unique@openjavascript.info" width="400'>
+`
+
+const sendEmail = async (req, res) => {
+    try {
+        const transporter = nodeMailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+                name: '',
+                user: '',
+                pass: 'NodeMailer123'
+            }
+        })
+
+        const info = await transporter.sendMail({
+            from: 'OpenJavaScript <test@openjavascript.info>',
+            to: 'test2@openjavascript.info',
+            subject: 'Testing, Testing, 123!',
+            text: "Test text content",
+            html: html,
+            attachments: [{
+                filename: 'file_name',
+                path: '../../../../../frontend/assets/img/teletubbies.jpg',
+                cid: 'unique@openjavascript.info'
+            }]
+        })
+
+        console.log("Message sent" + info.messageId)
+    }
+    catch (error) {
+        res.status(500).json({
+            successful: false,
+            message: error.message
+        })
+    }
+}
+
 module.exports = {
     addUser,
+    getUser,
     viewProfileSetting,
     archiveUser,
     unarchiveUser

@@ -33,7 +33,7 @@ const getAllLogs = async (req, res, next) => {
                 successful: false,
                 message: "Invalid page number."
             })
-        }
+        }  
 
         let logs = await historyLog.aggregate([
             {
@@ -46,34 +46,10 @@ const getAllLogs = async (req, res, next) => {
             },
             {
                 $lookup: {
-                    from: 'students',
+                    from: 'basepatients',
                     localField: 'patientName',
-                    foreignField: 'studentNo',
-                    as: 'studentPatients'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'employees',
-                    localField: 'patientName',
-                    foreignField: 'employeeNo',
-                    as: 'employeePatients'
-                }
-            },
-            {
-                $addFields: {
-                  combinedPatients: { $concatArrays: ['$studentPatients', '$employeePatients'] }
-                }
-            },
-            {
-                $unwind: '$combinedPatients'
-            },
-            {
-                $lookup: {
-                  from: 'basepatients', // Collection name for basepatients
-                  localField: 'combinedPatients.details', // Assuming 'details' field contains the ID referencing basepatients
-                  foreignField: '_id', // Assuming '_id' is the field in basepatients collection
-                  as: 'patients'
+                    foreignField: '_id',
+                    as: 'patients'
                 }
             },
             {
@@ -214,7 +190,7 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
 
         //CHECKS IF USER EXISTS
         if (!isObjIdValid(editedBy)) {
-            nullFields.push('edited by')
+            nullFields.push('edited by invalid object id')
         }
         else {
             let editor = await user.findOne({ _id: editedBy })
@@ -236,11 +212,7 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
         }
 
         if(nullFields.length > 0){
-            callback(404, false, `Missing data in the following fields: ${nullFields.join(', ')}`)
-            // res.status(404).send({
-            //     successful: false,
-            //     message: `Missing data in the following fields: ${nullFields.join(', ')}`
-            // })
+            callback(404, false, `Missing data in the following fields: ${nullFields.join(', ')}.`)
         } 
         else {
             historyType = historyType.trim().toUpperCase()
@@ -253,12 +225,7 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
             if (!recordClassList.includes(recordClass)) invalidFields.push('record class')
             
             if (invalidFields.length > 0){
-                callback(404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}`)
-                //return {404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}`}
-                // res.status(404).send({
-                //     successful: false,
-                //     message: `Invalid values detected for the following fields: ${invalidFields.join(', ')}`
-                // })
+                callback(404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}.`)
             }
             else {
                 const log = new historyLog({
@@ -271,29 +238,16 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
 
                 log.save()
                 .then((result)=>{
-                    callback(200, true, result)
-                    // res.status(200).send({
-                    //     successful: true,
-                    //     message: "Successfully added a new history log.",
-                    //     added_log: result
-                    // })
+                    callback(200, true, result)                    
                 })
                 .catch((error) => {
                     callback(500, false, error.message)
-                    // res.status(500).send({
-                    //     successful: false,
-                    //     message: error.message
-                    // })
                 })
             }
         }
     }
     catch(err){
         callback(500, false, err.message)
-        // res.status(500).send({
-        //     successful: false,
-        //     message: err.message
-        // })
     }
 
 }
