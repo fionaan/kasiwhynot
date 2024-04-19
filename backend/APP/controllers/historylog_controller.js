@@ -46,34 +46,10 @@ const getAllLogs = async (req, res, next) => {
             },
             {
                 $lookup: {
-                    from: 'students',
+                    from: 'basepatients',
                     localField: 'patientName',
-                    foreignField: 'studentNo',
-                    as: 'studentPatients'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'employees',
-                    localField: 'patientName',
-                    foreignField: 'employeeNo',
-                    as: 'employeePatients'
-                }
-            },
-            {
-                $addFields: {
-                  combinedPatients: { $concatArrays: ['$studentPatients', '$employeePatients'] }
-                }
-            },
-            {
-                $unwind: '$combinedPatients'
-            },
-            {
-                $lookup: {
-                  from: 'basepatients', // Collection name for basepatients
-                  localField: 'combinedPatients.details', // Assuming 'details' field contains the ID referencing basepatients
-                  foreignField: '_id', // Assuming '_id' is the field in basepatients collection
-                  as: 'patients'
+                    foreignField: '_id',
+                    as: 'patients'
                 }
             },
             {
