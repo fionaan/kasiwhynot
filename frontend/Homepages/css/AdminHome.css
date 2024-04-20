@@ -4,23 +4,19 @@
     height: 100vb;
 }
 
-.site-header {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 .site-header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
     margin: auto;
+    padding: 1rem;
+    border: none;
 }
 
 .site-header .site-logo {
     font-size: 2.5rem;
     font-weight: 600;
-    color: #333;
-    text-decoration: none;
+    color: black;
 }
 
 .site-header .profile-btn {
@@ -31,6 +27,7 @@
     font-weight: 600;
     color: #fff;
     padding: 10px;
+    width: 10vw;
 }
 
 .dropdown-menu {
@@ -70,6 +67,7 @@
     justify-content: space-around;
     flex-direction: row;
     padding: 20px;
+    color: #fff;
 }
 
 .site-footer {
