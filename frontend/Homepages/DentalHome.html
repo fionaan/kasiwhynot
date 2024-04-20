@@ -9,52 +9,46 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100">
-
-  <header class="site-header">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-      <a href="./DentalHome.html" class="site-logo">CEU Health</a>
-      <div class="relative">
-        <button class="profile-btn" id="profileBtn">
-          Profile
-        </button>
-        <ul class="dropdown-menu absolute right-0 mt-2 bg-white rounded-md shadow-lg py-2 w-48 hidden"
-          id="dropdownMenu">
-          <li><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</a></li>
-          <li><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Log Out</a></li>
-        </ul>
-      </div>
-    </div>
-  </header>
-
-  <section class="py-12">
-    <div class="container mx-auto">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h1 class="text-xl font-semibold mb-4">Add Dental Records</h1>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h1 class="text-xl font-semibold mb-4">View Patient Records</h1>
-        </div>
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h1 class="text-xl font-semibold mb-4">View History Logs</h1>
+<body>
+  <div class="site-body">
+    <header class="site-header">
+      <div class="container">
+        <a href="./DentalHome.html" class="site-logo">CEU Health</a>
+        <div class="relative">
+          <button class="profile-btn" id="profileBtn">Profile</button>
+          <ul class="dropdown-menu absolute right-0 mt-2 bg-white rounded-md shadow-lg py-2 w-48 hidden"
+            id="dropdownMenu">
+            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</a>
+            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Log Out</a>
+          </ul>
         </div>
       </div>
-    </div>
-  </section>
+    </header>
 
-  <footer class="site-footer">
-    <div class="container mx-auto flex justify-between">
-      <ul class="flex space-x-8">
-        <li><a href="#" class="hover:text-gray-400">Services</a></li>
-        <li><a href="#" class="hover:text-gray-400">About</a></li>
-        <li><a href="#" class="hover:text-gray-400">Contact Us</a></li>
-      </ul>
-      <p>&copy; 2024 CEU Health. All rights reserved.</p>
-    </div>
-  </footer>
+    <section class="welcome-banner">
+      <div class="container m-20 p-10 flex justify-around">
+        <h1 class="text-5xl flex justify-center font-semibold">Welcome, Dentist!</h1>
+      </div>
+    </section>
 
-  <script src="./js/DentalHome.js"></script>
+    <section class="site-buttons">
+      <div class="bg-white px-10 py-20 rounded-lg shadow-md">
+        <a href="#" class="hover:text-gray-400 text-xl font-semibold">Add Dental Records</a>
+      </div>
+      <div class="bg-white px-10 py-20 rounded-lg shadow-md">
+        <a href="#" class="hover:text-gray-400 text-xl font-semibold">View Patient Records</a>
+      </div>
+      <div class="bg-white px-10 py-20 rounded-lg shadow-md">
+        <a href="#" class="hover:text-gray-400 text-xl font-semibold">View History Logs</a>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="container m-auto p-auto">
+        <p>&copy; 2024 CEU Health. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="./js/DentalHome.js"></script>
 
 </body>
-</html>

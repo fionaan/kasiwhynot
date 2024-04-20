@@ -1,6 +1,10 @@
+.site-body {
+    background: #e2e2f2;
+    width: 100vw;
+    height: 100vb;
+}
+
 .site-header {
-    background-color: #1e40af;
-    color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -9,21 +13,24 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
+    margin: auto;
 }
 
 .site-header .site-logo {
-    font-size: 1.25rem;
+    font-size: 2.5rem;
     font-weight: 600;
-    color: #fff;
+    color: #333;
     text-decoration: none;
 }
 
 .site-header .profile-btn {
-    background-color: #1e40af;
-    border: none;
+    background-color: #001F54;
+    border-radius: 0.5rem;
     cursor: pointer;
     font-size: 1rem;
+    font-weight: 600;
     color: #fff;
+    padding: 10px;
 }
 
 .dropdown-menu {
@@ -48,7 +55,6 @@
     display: block;
     padding: 0.5rem 1rem;
     color: #333;
-    text-decoration: none;
 }
 
 .dropdown-menu a:hover {
@@ -59,16 +65,26 @@
     display: none;
 }
 
+.site-buttons {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    padding: 20px;
+}
+
 .site-footer {
-    background-color: #1e40af;
+    display: flex;
+    background-color: #001F54;
     color: #fff;
     padding: 2rem 0;
+    bottom: 0px;
+    position: absolute;
+    width: 100%;
 }
 
 .site-footer .container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;
 }
 
 .site-footer ul {
@@ -87,22 +103,4 @@
 
 .site-footer a:hover {
     color: #ccc;
-}
-
-@media (max-width: 639px) {
-    .site-header .container {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .site-header .profile-btn {
-        margin-top: 1rem;
-    }
-}
-
-/* For screens larger than 1024px */
-@media (min-width: 1025px) {
-    .site-header .container {
-        flex-direction: row;
-    }
 }
