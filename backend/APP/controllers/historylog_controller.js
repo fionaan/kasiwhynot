@@ -28,7 +28,7 @@ const getAllLogs = async (req, res, next) => {
         // CHECK IF pageNumber IS VALID BASED ON NUMBER OF AVAILABLE RECORDS
         const totalCount = await historyLog.countDocuments()
 
-        if (skip >= totalCount && totalCount !== 0) {
+        if (skip >= totalCount && totalCount !== 0) { // lagyan ng pagenumber sa condition
             return res.status(404).send({
                 successful: false,
                 message: "Invalid page number."
