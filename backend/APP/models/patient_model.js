@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
+const utils = require('../../utils')
 
 const Schema = mongoose.Schema
 
@@ -9,86 +10,87 @@ const baseSchema = new Schema({
         fullName: {
             firstName: {
                 type: String,
-                required: [true, "Firstname is required."],
-                maxlength: [255, "Firstname must be less than or equal to 255 characters."],
-                minlength: [1, "Firstname must be greater than or equal to 1 character."],
-                match: [/^[A-Za-z]+$/, 'First name can only contain letters.'] // -- regex
-
+                required: [true, "Firstname is required"],
+                trim: true,
+                minlength: [2, "Firstname must contain at least 2 characters"],
+                maxlength: [255, "Firstname must only contain 255 characters or fewer"],
+                match: [utils.nameRegex, "Firstname can only contain letters and a few common symbols"]
             },
             middleName: {
                 type: String,
                 required: false,
-                maxlength: [255, "Middlename must be less than or equal to 255 characters."], // -- TEST if works when null
-                minlength: [1, "Middlename must be greater than or equal to 1 character."], // -- TEST if works when null & if need match
+                trim: true,
+                minlength: [2, "Middlename must contain at least 2 characters"], // -- TEST if works when null & if need match
+                maxlength: [255, "Middlename must only contain 255 characters or fewer"], // -- TEST if works when null
+                match: [utils.nameRegex, "Middlename can only contain letters and a few common symbols"]
             },
             lastName: {
                 type: String,
-                required: [true, "Lastname is required."],
-                maxlength: [255, "Lastname must be less than or equal to 255 characters."],
-                minlength: [1, "Lastname must be greater than or equal to 1 character."],
-                match: [/^[A-Za-z]+$/, 'Lastname can only contain letters.'] // -- regex
+                required: [true, "Lastname is required"],
+                trim: true,
+                minlength: [2, "Lastname must contain at least 2 characters"],
+                maxlength: [255, "Lastname must only contain 255 characters or fewer"],
+                match: [utils.nameRegex, "Lastname can only contain letters and a few common symbols"]
             },
         },
         emailAddress: {
             type: String,
-            required: [true, 'Email address is required.'],
-            match: [/^\S+@\S+\.\S+$/, "Invalid email format."]
-        }, //match uses a regular expression to validate that the provided value follows a simple email format. This regular expression checks for the presence of @ and . in the email address.
+            required: [true, 'Email address is required'],
+            trim: true,
+            match: [utils.emailRegex, "Invalid email format"]
+        },
         dateOfBirth: {
             type: Date,
-            required: [true, "Birthdate is required."],
-            validate: {
-                validator: function (value) {
-                    return !isNaN(new Date(value))
-                },
-                message: 'Birthdate is not a valid date.'
-            }
+            required: [true, "Birthdate is required"],
+            min: [new Date('1969-12-31T00:00:00Z'), "Birthdate must be later than approximately (January 1, 1970)"],
+            max: [new Date().setFullYear(new Date().getFullYear() - 15), "Date of birth precedes expected range (Minimum of 15 year difference from current date)"] // Checks if bdate is > current date - 15 years
         },
         age: {
             type: Number,
-            required: [true, 'Age is required.'],
-            validate: {
-                validator: function (value) {
-                    return /^[0-9]+$/.test(value.toString()) // bakit di nalang isNan gamit?
-                },
-                message: 'Invalid age.'
-            }
+            required: [true, 'Age is required'],
+            min: [10, "Age must be at least 10 years or older"],
+            max: [99, "Age must be 99 yrs. or below only"]
         }, //should be automatic based on date of birth and current date next time
         gender: {
             type: String, 
-            required: [true, 'Gender is required.'],
+            required: [true, 'Gender is required'],
+            trim: true,
             enum: {
                 values: ['Male', 'Female'],
-                message: 'Invalid gender.'
+                message: 'Invalid gender'
             }
         },
         campus: {
             type: String, 
-            required: [true, 'Campus is required.'],
+            required: [true, 'Campus is required'],
+            trim: true,
             enum: {
                 values: ['LV', 'GP', 'LV/GP'],
-                message: 'Invalid campus.'
+                message: 'Invalid campus'
             }
         },
         homeAddress: { 
             type: String, 
-            required: [true, 'Home address is required.'], // -- need pa ba ng minlength & maxlength
-            maxlength: [255, "Home address must be less than or equal to 255 characters."],
-            minlength: [10, "Home address must be greater than or equal to 10 characters."]
+            required: [true, 'Home address is required'],
+            trim: true,
+            minlength: [20, "Home address must contain at least 20 characters"],
+            maxlength: [255, "Home address must only contain 255 characters or fewer"]
         },
         contactNo: {
             type: String,
-            required: [true, 'Contact number is required.'],
+            required: [true, 'Contact number is required'],
+            trim: true,
             validate: {
                 validator: function (value) {
-                    return /^09\d{9}$/.test(value.toString());
+                    return /^09\d{9}$/.test(value) || /^639\d{9}$/.test(value)
                 },
-                message: contactNo => `${contactNo.value} is not a valid contact number.` // Old variable name is props
+                message: "{VALUE} is an invalid contact number"
             }
         },
         nationality: {
             type: String,
-            required: [true, 'Nationality is required.'],
+            required: [true, 'Nationality is required'],
+            trim: true,
             enum: {
                 values: [
                     'Afghan', 'Albanian', 'Algerian', 'American', 'Andorran', 'Angolan', 'Anguillan', 'Argentine', 'Armenian', 'Australian',
@@ -115,310 +117,310 @@ const baseSchema = new Schema({
                     'Ugandan', 'Ukrainian', 'Uruguayan', 'Uzbek', 'Vatican citizen', 'Venezuelan', 'Vietnamese', 'Vincentian', 'Wallisian', 'Welsh', 'Yemeni', 'Zambian',
                     'Zimbabwean'
                 ],
-                message: 'Invalid nationality'
+                message: 'Nationality is not recognized'
             },
-
         },
         religion: {
             type: String,
-            required: [true, 'Religion is required.'],
-            match: [/^[A-Za-z]+$/, 'Religion can only contain letters.']
-
+            required: [true, 'Religion is required'],
+            trim: true,
+            match: [utils.nameRegex, 'Religion can only contain letters and a few common symbols']
         },
         bloodType: {
             type: String,
-            required: [true, 'Bloodtype is required.'],
+            required: [true, 'Bloodtype is required'],
+            trim: true,
             enum: {
                 values: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
-                message: ['Invalid bloodtype.']
+                message: "Invalid bloodtype"
             }
         },
         civilStatus: {
             type: String,
-            required: [true, 'Civil Status is required.'],
+            required: [true, 'Civil Status is required'],
+            trim: true,
             enum: {
                 values: ["Single", "Married", "Divorced", "Separated", "Widowed"],
-                message: ['Invalid civil status.']
+                message: "Invalid civil status"
             }
         },
-        height: { // Accepts kilogram -- latest changes
+        height: { // in centimeter (cm)
             type: Number,
-            required: [true, 'Height is required.'],
-            validate: {
-                validator: function (value) {
-                    return /^-?\d+(\.\d+)?$/.test(value.toString())
-                },
-                message: height => `${height.value} is not a valid float value for height!` // Old variable name is props
-            }
+            required: [true, 'Height is required'],
+            min: [0, "Invalid height value"],
+            max: [200, "Invalid height value"]
         },
-        weight: {
+        weight: { // in kilogram (kg)
             type: Number,
-            required: [true, 'Weight is required.'],
-            validate: {
-                validator: function (value) {
-                    return /^-?\d+(\.\d+)?$/.test(value.toString())
-                },
-                message: props => `${props.value} is not a valid float value for weight!`
-            }
+            required: [true, 'Weight is required'],
+            min: [0, "Invalid weight value"],
+            max: [499, "Invalid weight value"]
         },
         bmi: {
             type: Number,
-            required: [true, 'This field value is required!'],
-            validate: {
-                validator: function (value) {
-                    return /^-?\d+(\.\d+)?$/.test(value.toString())
-                },
-                message: props => `${props.value} is not a valid float for bmi!`
-            }
+            required: [true, 'BMI is required'],
+            min: [0, "Invalid BMI value"],
+            max: [50, "Invalid BMI value"]
         },
         guardianName: {
             type: String,
-            required: [true, 'This field value is required!'],
-            maxlength: [255, "Name must be less than 255 characters"],
-            minlength: [1, "Name must be greater than 1 character"],
-            match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
+            required: [true, 'Guardian name is required'],
+            trim: true,
+            minlength: [2, "Guardian name must contain at least 2 characters"],
+            maxlength: [255, "Guardian name must only contain 255 characters or fewer"],
+            match: [utils.nameRegex, "Guardian name can only contain letters and a few common symbols"]
         },
         guardianContactNo: {
             type: String,
-            required: [true, 'This field value is required!'],
+            required: [true, 'Guardian contact no. is required'],
+            trim: true,
             validate: {
                 validator: function (value) {
-                    return /^\d{11}$/.test(value.toString());
+                    return /^09\d{9}$/.test(value) || /^639\d{9}$/.test(value)
                 },
-                message: props => `${props.value} is not a valid contact number!`
+                message: "{VALUE} is an invalid contact number"
             }
         },
         guardianRelationship: {
-            type: String, required: [true, 'This field value is required!'],
-            match: [/^[A-Za-z]+$/, 'This field can only contain letters']
+            type: String, 
+            required: [true, 'Guardian relationship is required'],
+            trim: true,
+            match: [/^(?![\s'-])[a-zA-Z0-9\s'-]+$/, 'Guardian relationship can only contain alphanumeric and a few common symbols']
         },
-        attachment: { type: String, required: false } //temporarily a string
+        attachment: { // -- gawing array
+            type: String, 
+            required: false,
+            trim: true
+        } //temporarily a string
     },
 
     laboratory: {
         chestXray: {
             findings: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                minlength: [1, 'Entered text in field is too short'],
-                maxlength: [255, 'Maximum text entered reached']
+                required: [true, 'This field value is required'],
+                // minlength: [1, 'Entered text in field is too short'],
+                // maxlength: [255, 'Maximum text entered reached']
             },
             date: {
                 type: Date,
                 required: true,
-                validate: {
-                    validator: function (value) {
-                        return !isNaN(new Date(value))
-                    },
-                    message: 'Data input is not a valid date!'
-                }
+                // validate: {
+                //     validator: function (value) {
+                //         return !isNaN(new Date(value))
+                //     },
+                //     message: 'Data input is not a valid date!'
+                // }
             }
         },
         cbc: {
             findings: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                minlength: [1, 'Entered text in field is too short'],
-                maxlength: [255, 'Maximum text entered reached']
+                required: [true, 'This field value is required'],
+                // minlength: [1, 'Entered text in field is too short'],
+                // maxlength: [255, 'Maximum text entered reached']
             },
             date: {
                 type: Date,
                 required: true,
-                validate: {
-                    validator: function (value) {
-                        return !isNaN(new Date(value))
-                    },
-                    message: 'Data input is not a valid date!'
-                }
+                // validate: {
+                //     validator: function (value) {
+                //         return !isNaN(new Date(value))
+                //     },
+                //     message: 'Data input is not a valid date!'
+                // }
             }
         },
         hepatitisProfile: {
             hbsag: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                enum: {
-                    values: ["Normal", "High", "Low", "N?"],
-                    Message: "Invalid hbsag result"
-                }
+                required: [true, 'This field value is required'],
+                // enum: {
+                //     values: ["Normal", "High", "Low", "N?"],
+                //     Message: "Invalid hbsag result"
+                // }
             },
             antiHbs: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                enum: {
-                    values: ["Normal", "High", "Low", "N?"],
-                    Message: "Invalid anti Hbs result"
-                }
+                required: [true, 'This field value is required'],
+                // enum: {
+                //     values: ["Normal", "High", "Low", "N?"],
+                //     Message: "Invalid anti Hbs result"
+                // }
             },
             antiHbcIgg: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                enum: {
-                    values: ["Normal", "High", "Low", "N?"],
-                    Message: "Invalid anti Hbc Igg result"
-                }
+                required: [true, 'This field value is required'],
+                // enum: {
+                //     values: ["Normal", "High", "Low", "N?"],
+                //     Message: "Invalid anti Hbc Igg result"
+                // }
             },
             antiHbcIgm: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                enum: {
-                    values: ["Normal", "High", "Low", "N?"],
-                    Message: "Invalid anti Hbc Igm result"
-                }
+                required: [true, 'This field value is required'],
+                // enum: {
+                //     values: ["Normal", "High", "Low", "N?"],
+                //     Message: "Invalid anti Hbc Igm result"
+                // }
             }
         },
         drugTest: {
             methamphethamineResults: {
                 type: String,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: 'N/A',
-                enum: {
-                    values: ["Positive", "Negative"],
-                    message: "Invalid result!"
-                }
+                // enum: {
+                //     values: ["Positive", "Negative"],
+                //     message: "Invalid result!"
+                // }
             },
             methamphethamineRemarks: {
                 type: String,
                 required: false,
-                enum: {
-                    values: ["Passed", "Failed"],
-                    message: "Invalid remarks!"
-                }
+                // enum: {
+                //     values: ["Passed", "Failed"],
+                //     message: "Invalid remarks!"
+                // }
             },
             tetrahydrocannabinolResults: {
                 type: String,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: 'N/A',
-                enum: {
-                    values: ["Positive", "Negative"],
-                    message: "Invalid result!"
-                }
+                // enum: {
+                //     values: ["Positive", "Negative"],
+                //     message: "Invalid result!"
+                // }
             },
             tetrahydrocannabinolRemarks: {
                 type: String,
                 required: false,
-                enum: {
-                    values: ["Passed", "Failed"],
-                    message: "Invalid remarks!"
-                }
+                // enum: {
+                //     values: ["Passed", "Failed"],
+                //     message: "Invalid remarks!"
+                // }
             },
         },
         urinalysis: {
             color: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                match: [/^[A-Za-z]+$/, 'This field can only contain letters']
+                required: [true, 'This field value is required'],
+                // match: [/^[A-Za-z]+$/, 'This field can only contain letters']
             },
             transparency: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                match: [/^[A-Za-z]+$/, 'This field can only contain letters']
+                required: [true, 'This field value is required'],
+                // match: [/^[A-Za-z]+$/, 'This field can only contain letters']
             },
             blood: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                match: [/^[A-Za-z]+$/, 'This field can only contain letters']
+                required: [true, 'This field value is required'],
+                // match: [/^[A-Za-z]+$/, 'This field can only contain letters']
             },
             bilirubin: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             urobilinogen: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             ketones: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             glutones: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             protein: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             nitrite: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             leukocyte: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             phLevel: {
                 type: Number,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             spGravity: {
-                type: String, required: [true, 'This field value is required!']
+                type: String, required: [true, 'This field value is required']
             },
             wbc: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             rbc: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             bacteria: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             epithelialCells: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             amorphousUrates: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             mucusThreads: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             }
         },
         fecalysis: {
             color: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             consistency: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             wbc: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             rbc: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             fatGlobules: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             muscleFibers: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             },
             results: {
                 type: String,
-                required: [true, 'This field value is required!']
+                required: [true, 'This field value is required']
             }
         },
         others: {
             pregnancyTest: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                enum: {
-                    values: ["Positive", "Negative"],
-                    Message: "Invalid Pregnancy Results"
-                }
+                required: [true, 'This field value is required'],
+                // enum: {
+                //     values: ["Positive", "Negative"],
+                //     Message: "Invalid Pregnancy Results"
+                // }
             }
         },
-        attachments: { type: String, required: true }
+        attachments: { 
+            type: String, 
+            required: true 
+        }
     },
     vaccination: {
         covidVaccination: {
@@ -426,74 +428,74 @@ const baseSchema = new Schema({
                 dose: {
                     type: String,
                     required: [true, 'This field value is required'],
-                    minlength: [5, 'Entered text in field is too short'],
-                    maxlength: [50, 'Maximum text entered reached']
+                    // minlength: [5, 'Entered text in field is too short'],
+                    // maxlength: [50, 'Maximum text entered reached']
                 },
                 dateGiven: {
                     type: Date,
                     required: [true, 'This field value is required'],
-                    validate: {
-                        validator: function (value) {
-                            return !isNaN(new Date(value))
-                        },
-                        message: 'Data input is not a valid date!'
-                    }
+                    // validate: {
+                    //     validator: function (value) {
+                    //         return !isNaN(new Date(value))
+                    //     },
+                    //     message: 'Data input is not a valid date!'
+                    // }
                 }
             },
             secondDose: {
                 dose: {
                     type: String,
                     required: [true, 'This field value is require'],
-                    minlength: [5, 'Entered text in field is too short'],
-                    maxlength: [50, 'Maximum text entered reached']
+                    // minlength: [5, 'Entered text in field is too short'],
+                    // maxlength: [50, 'Maximum text entered reached']
                 },
                 dateGiven: {
                     type: Date,
-                    required: [true, 'This field value is required!'],
-                    validate: {
-                        validator: function (value) {
-                            return !isNaN(new Date(value))
-                        },
-                        message: 'Data input is not a valid date!'
-                    }
+                    required: [true, 'This field value is required'],
+                    // validate: {
+                    //     validator: function (value) {
+                    //         return !isNaN(new Date(value))
+                    //     },
+                    //     message: 'Data input is not a valid date!'
+                    // }
                 }
             },
             thirdDose: {
                 dose: {
                     type: String,
-                    required: [true, 'This field value is required!'],
-                    minlength: [5, 'Entered text in field is too short'],
-                    maxlength: [50, 'Maximum text entered reached']
+                    required: [true, 'This field value is required'],
+                    // minlength: [5, 'Entered text in field is too short'],
+                    // maxlength: [50, 'Maximum text entered reached']
                 },
                 dateGiven: {
                     type: Date,
-                    required: [true, 'This field value is required!'],
-                    validate: {
-                        validator: function (value) {
-                            return !isNaN(new Date(value))
-                        },
-                        message: 'Data input is not a valid date!'
-                    }
+                    required: [true, 'This field value is required'],
+                    // validate: {
+                    //     validator: function (value) {
+                    //         return !isNaN(new Date(value))
+                    //     },
+                    //     message: 'Data input is not a valid date!'
+                    // }
                 }
             }
         },
         fluVaccination: {
             firstDose: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                minlength: [5, 'Entered text in field is too short'],
-                maxlength: [50, 'Maximum text entered reached']
+                required: [true, 'This field value is required'],
+                // minlength: [5, 'Entered text in field is too short'],
+                // maxlength: [50, 'Maximum text entered reached']
 
             },
             dateGiven: {
                 type: Date,
-                required: [true, 'This field value is required!'],
-                validate: {
-                    validator: function (value) {
-                        return !isNaN(new Date(value))
-                    },
-                    message: 'Data input is not a valid date!'
-                }
+                required: [true, 'This field value is required'],
+                // validate: {
+                //     validator: function (value) {
+                //         return !isNaN(new Date(value))
+                //     },
+                //     message: 'Data input is not a valid date!'
+                // }
             }
         },
         hepatitisBVaccination: {
@@ -501,205 +503,219 @@ const baseSchema = new Schema({
                 dose: {
                     type: String,
                     required: [true, 'This field value is required'],
-                    minlength: [5, 'Entered text in field is too short'],
-                    maxlength: [50, 'Maximum text entered reached']
+                    // minlength: [5, 'Entered text in field is too short'],
+                    // maxlength: [50, 'Maximum text entered reached']
 
                 },
                 dateGiven: {
                     type: Date,
                     required: [true, 'This field value is required'],
-                    validate: {
-                        validator: function (value) {
-                            return !isNaN(new Date(value))
-                        },
-                        message: 'Data input is not a valid date!'
-                    }
+                    // validate: {
+                    //     validator: function (value) {
+                    //         return !isNaN(new Date(value))
+                    //     },
+                    //     message: 'Data input is not a valid date!'
+                    // }
                 }
             },
             secondDose: {
                 dose: {
                     type: String,
                     required: [true, 'This field value is require'],
-                    minlength: [5, 'Entered text in field is too short'],
-                    maxlength: [50, 'Maximum text entered reached']
+                    // minlength: [5, 'Entered text in field is too short'],
+                    // maxlength: [50, 'Maximum text entered reached']
                 },
                 dateGiven: {
                     type: Date,
-                    required: [true, 'This field value is required!'],
-                    validate: {
-                        validator: function (value) {
-                            return !isNaN(new Date(value))
-                        },
-                        message: 'Data input is not a valid date!'
-                    }
+                    required: [true, 'This field value is required'],
+                    // validate: {
+                    //     validator: function (value) {
+                    //         return !isNaN(new Date(value))
+                    //     },
+                    //     message: 'Data input is not a valid date!'
+                    // }
                 }
             },
             thirdDose: {
                 dose: {
                     type: String,
-                    required: [true, 'This field value is required!'],
-                    minlength: [5, 'Entered text in field is too short'],
-                    maxlength: [50, 'Maximum text entered reached']
+                    required: [true, 'This field value is required'],
+                    // minlength: [5, 'Entered text in field is too short'],
+                    // maxlength: [50, 'Maximum text entered reached']
                 },
                 dateGiven: {
                     type: Date,
-                    required: [true, 'This field value is required!'],
-                    validate: {
-                        validator: function (value) {
-                            return !isNaN(new Date(value))
-                        },
-                        message: 'Data input is not a valid date!'
-                    }
+                    required: [true, 'This field value is required'],
+                    // validate: {
+                    //     validator: function (value) {
+                    //         return !isNaN(new Date(value))
+                    //     },
+                    //     message: 'Data input is not a valid date!'
+                    // }
                 }
             }
         },
         pneumoniaVaccination: {
             firstDose: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                minlength: [5, 'Entered text in field is too short'],
-                maxlength: [50, 'Maximum text entered reached']
+                required: [true, 'This field value is required'],
+                // minlength: [5, 'Entered text in field is too short'],
+                // maxlength: [50, 'Maximum text entered reached']
             },
             dateGiven: {
                 type: Date,
-                required: [true, 'This field value is required!'],
-                validate: {
-                    validator: function (value) {
-                        return !isNaN(new Date(value))
-                    },
-                    message: 'Data input is not a valid date!'
-                }
+                required: [true, 'This field value is required'],
+                // validate: {
+                //     validator: function (value) {
+                //         return !isNaN(new Date(value))
+                //     },
+                //     message: 'Data input is not a valid date!'
+                // }
             }
         },
-        attachments: { type: String, required: true }
+        attachments: { 
+            type: String, 
+            required: true 
+        }
     },
     medicalHistory: {
         tattoo: {
             type: String,
-            required: [true, 'This field value is required!'],
+            required: [true, 'This field value is required'],
             default: false,
-            enum: {
-                values: ["Yes", "No"],
-                messages: ["Invalid input!"]
-            }
+            // enum: {
+            //     values: ["Yes", "No"],
+            //     messages: ["Invalid input!"]
+            // }
 
         },
         bloodPressure: {
             systolic: {
                 type: Number,
-                required: [true, 'This field value is required!'],
-                validate: {
-                    validator: function (value) {
-                        return /^-?\d+(\.\d+)?$/.test(value.toString())
-                    },
-                    message: props => `${props.value} is not a valid float for height!`
-                }
+                required: [true, 'This field value is required'],
+                // validate: {
+                //     validator: function (value) {
+                //         return /^-?\d+(\.\d+)?$/.test(value.toString())
+                //     },
+                //     message: props => `${props.value} is not a valid float for height!`
+                // }
             },
             diastolic: {
                 type: Number,
-                required: [true, 'This field value is required!'],
-                validate: {
-                    validator: function (value) {
-                        return /^-?\d+(\.\d+)?$/.test(value.toString())
-                    },
-                    message: props => `${props.value} is not a valid float for height!`
-                }
+                required: [true, 'This field value is required'],
+                // validate: {
+                //     validator: function (value) {
+                //         return /^-?\d+(\.\d+)?$/.test(value.toString())
+                //     },
+                //     message: props => `${props.value} is not a valid float for height!`
+                // }
             }
         },
         conditions: {
             anemia: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
             },
             asthma: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
 
             },
             blackJointProblem: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
             },
             heartDiseases: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
             },
             hepatitis: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
             },
             highBloodPressure: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
             },
             kidneyProblem: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
             },
             chronicDiseases: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
             },
             thyroidProblems: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
             },
             bloodDyscrasia: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
             },
-            others: { type: Boolean, required: true, default: false }
+            others: { 
+                type: Boolean, 
+                required: true, 
+                default: false 
+            }
         },
         q1: {
             yesOrNo: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false,
             },
             doctorName: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                maxlength: [255, "Name must be less than 255 characters"],
-                minlength: [1, "Name must be greater than 1 character"],
-                match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
+                required: [true, 'This field value is required'],
+                // maxlength: [255, "Name must be less than 255 characters"],
+                // minlength: [1, "Name must be greater than 1 character"],
+                // match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
 
             },
             phone: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                validate: {
-                    validator: function (value) {
-                        return /^\d{11}$/.test(value.toString());
-                    },
-                    message: props => `${props.value} is not a valid contact number!`
-                }
+                required: [true, 'This field value is required'],
+                // validate: {
+                //     validator: function (value) {
+                //         return /^\d{11}$/.test(value.toString());
+                //     },
+                //     message: props => `${props.value} is not a valid contact number!`
+                // }
             },
-            homeAddress: { type: String, required: true },
-            forWhatCondition: { type: String, required: true }
+            homeAddress: { 
+                type: String, 
+                required: true },
+            forWhatCondition: { 
+                type: String, 
+                required: true }
         },
         q2: {
             yesOrNo: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
 
             },
-            pastIllnessSurgery: { type: String, required: true }
+            pastIllnessSurgery: { 
+                type: String, 
+                required: true 
+            }
         },
         q3: {
             yesOrNo: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
             },
 
@@ -711,41 +727,50 @@ const baseSchema = new Schema({
         q4: {
             yesOrNo: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
             },
             nameOfMedication: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                maxlength: [50, "Name must be less than 255 characters"],
-                minlength: [5, "Name must be greater than 1 character"],
-                match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
+                required: [true, 'This field value is required'],
+                // maxlength: [50, "Name must be less than 255 characters"],
+                // minlength: [5, "Name must be greater than 1 character"],
+                // match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
             },
             type: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                maxlength: [50, "type must be less than 255 characters"],
-                minlength: [5, "type must be greater than 1 character"],
-                match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
+                required: [true, 'This field value is required'],
+                // maxlength: [50, "type must be less than 255 characters"],
+                // minlength: [5, "type must be greater than 1 character"],
+                // match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
             },
-            brand: { type: String, required: true },
-            others: { type: String, required: true },
+            brand: { 
+                type: String, 
+                required: true 
+            },
+            others: { 
+                type: String, 
+                required: true 
+            },
         },
         q5: {
             yesOrNo: {
                 type: Boolean,
-                required: [true, 'This field value is required!'],
+                required: [true, 'This field value is required'],
                 default: false
             },
             physicalLearningDisability: {
                 type: String,
-                required: [true, 'This field value is required!'],
-                maxlength: [50, "Name must be less than 255 characters"],
-                minlength: [1, "Name must be greater than 1 character"],
-                match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
+                required: [true, 'This field value is required'],
+                // maxlength: [50, "Name must be less than 255 characters"],
+                // minlength: [1, "Name must be greater than 1 character"],
+                // match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
             },
         },
-        attachments: { type: String, required: true }
+        attachments: { 
+            type: String, 
+            required: true 
+        }
     },
     dentalRecord: {
         isFilledOut: { type: Boolean, required: true, default: false },

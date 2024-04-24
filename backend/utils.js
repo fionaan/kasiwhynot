@@ -9,10 +9,10 @@ const dateNone = new Date("9999-12-31T23:59:59.999Z")
 const dateTimeRegex = /^(?:\d{4})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2][0-9]|3[0-1])T(?:[0-1][0-9]|2[0-3]):(?:[0-5][0-9]):(?:[0-5][0-9])$/
 
 //CHECKS IF DATA CONTAINS DATE ONLY
-const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$/
+const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{3}Z$/
 
 //CHECKS IF STRING ONLY CONTAINS LETTERS, PERIOD, APOSTROPHE, HYPHEN, OR SPACE - MUST START W LETTER
-const nameRegex = /^[a-zA-Z][a-zA-Z.,'\s-]*$/
+const nameRegex = /^[a-zA-Z]+(?:[\s-]*[a-zA-Z]+)*$/ // /^[a-zA-Z][a-zA-Z.,'\s-]*$/
 
 //CHECKS IF EMAIL IS VALID
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
