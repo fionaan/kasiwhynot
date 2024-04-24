@@ -9,8 +9,16 @@ module.exports = {
       "overButton": "ABC8FF",
       "darkBlutton": "001F44",
       "popupColor": "BFD9FF"
-    }
-  },
+      },
+
+      borderRadius: {
+      'login': '0.75rem',
+      },
+
+      height: {
+        'login': '22rem'
+      }
+    },
 
   },
   plugins: [],
