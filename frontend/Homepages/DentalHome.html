@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CEU Health - Homepage</title>
-  <link rel="stylesheet" href="./css/DentalHome.css">
+  <link rel="stylesheet" href="./css/HomePage.css">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
@@ -16,7 +16,7 @@
         <a href="./DentalHome.html" class="site-logo">CEU Health</a>
         <div class="relative">
           <button class="profile-btn" id="profileBtn">Profile</button>
-          <ul class="dropdown-menu absolute right-0 mt-2 bg-gradient-to-b from-blue-900 to-black rounded-md shadow-lg py-2 w-48 hidden"
+          <ul class="dropdown-menu absolute right-0 mt-2 bg-white rounded-md shadow-lg py-2 w-48 hidden"
             id="dropdownMenu">
             <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</a>
             <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Log Out</a>
@@ -32,14 +32,26 @@
     </section>
 
     <section class="site-buttons">
-      <div class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md">
-        <a href="#" class="hover:text-gray-400 text-xl font-semibold">Add Dental Records</a>
+      <div
+        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
+          <img src="./Icons/add-dental-records-icon.png" alt="Dental.png" class="mb-2">
+          <span class="button-text">Add Dental Records</span>
+        </a>
       </div>
-      <div class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md">
-        <a href="#" class="hover:text-gray-400 text-xl font-semibold">View Patient Records</a>
+      <div
+        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
+          <img src="./Icons/view-patient-records-icon.png" alt="Records.png" class="mb-2">
+          <span class="button-text">View Patient Records</span>
+        </a>
       </div>
-      <div class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md">
-        <a href="#" class="hover:text-gray-400 text-xl font-semibold">View History Logs</a>
+      <div
+        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
+          <img src="./Icons/view-logs-icon.png" alt="Logs.png" class="mb-2">
+          <span class="button-text">View History Logs</span>
+        </a>
       </div>
     </section>
 
@@ -49,6 +61,6 @@
       </div>
     </footer>
 
-    <script src="./js/DentalHome.js"></script>
+    <script src="./js/DropDown.js"></script>
 
 </body>

@@ -5,14 +5,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CEU Health - Homepage</title>
-  <link rel="stylesheet" href="./css/AdminHome.css">
+  <link rel="stylesheet" href="./css/HomePage.css">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
 <body>
   <div class="site-body">
     <header class="site-header">
-      <div class="container">
+      <div class="container flex justify-between items-center">
         <a href="./AdminHome.html" class="site-logo">CEU Health</a>
         <div class="relative">
           <button class="profile-btn" id="profileBtn">Profile</button>
@@ -26,26 +26,46 @@
     </header>
 
     <section class="welcome-banner">
-      <div class="container m-20 p-10 flex justify-around">
+      <div class="container m-20 p-10">
         <h1 class="text-5xl flex justify-center font-semibold">Welcome, Admin!</h1>
       </div>
     </section>
 
     <section class="site-buttons">
-      <div class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md">
-        <a href="#" class="hover:text-gray-400 text-xl font-semibold">Add Medical Records</a>
+      <div
+        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
+          <img src="./Icons/add-medical-records-icon.png" alt="Medical.png" class="mb-2">
+          <span class="button-text">Add Medical Records</span>
+        </a>
       </div>
-      <div class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md">
-        <a href="#" class="hover:text-gray-400 text-xl font-semibold">Add Dental Records</a>
+      <div
+        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
+          <img src="./Icons/add-dental-records-icon.png" alt="Dental.png" class="mb-2">
+          <span class="button-text">Add Dental Records</span>
+        </a>
       </div>
-      <div class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md">
-        <a href="#" class="hover:text-gray-400 text-xl font-semibold">View Patient Records</a>
+      <div
+        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
+          <img src="./Icons/view-patient-records-icon.png" alt="Records.png" class="mb-2">
+          <span class="button-text">View Patient Records</span>
+        </a>
       </div>
-      <div class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md">
-        <a href="#" class="hover:text-gray-400 text-xl font-semibold">View History Logs</a>
+      <div
+        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
+          <img src="./Icons/view-logs-icon.png" alt="Logs.png" class="mb-2">
+          <span class="button-text">View History Logs</span>
+        </a>
       </div>
-      <div class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md ">
-        <a href="#" class="hover:text-gray-400 text-xl font-semibold">Add / View Users</a>
+      <div
+        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
+          <img src="./Icons/view-users-icon.png" alt="Users.png" class="mb-2">
+          <span class="button-text">View / Add Users</span>
+        </a>
       </div>
     </section>
 
@@ -55,6 +75,7 @@
       </div>
     </footer>
 
-    <script src="./js/AdminHome.js"></script>
-
+    <script src="./js/DropDown.js"></script>
 </body>
+
+</html>

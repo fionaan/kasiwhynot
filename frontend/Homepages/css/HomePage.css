@@ -62,12 +62,33 @@
     display: none;
 }
 
+.welcome-banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .site-buttons {
     display: flex;
     justify-content: space-around;
     flex-direction: row;
-    padding: 20px;
+    align-items: center;
+    padding: 10px;
     color: #fff;
+}
+
+.site-buttons a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.button-text {
+    margin-top: 2rem;
+}
+
+.button-container {
+    height: 300px;
 }
 
 .site-footer {
