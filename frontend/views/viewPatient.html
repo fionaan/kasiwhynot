@@ -5,20 +5,64 @@
         <link rel="stylesheet" href="../assets/css/styles.css">
     </head>
     <body>
-        <div>
-            <special-header></special-header> <!-- header -->
-            <div class="flex px-8 align-middle"> <!-- title -->
-                <button class="mx-5 mr-4 pl-3 relative w-12 h-12">
-                    <img src="../assets/img/realBack.png" class="w-6 h-6">
-                    <span class="absolute inset-0 flex items-center justify-center rounded-full bg-transparent hover:bg-black hover:bg-opacity-25 transition-all">
-                    </span>
-                  </button>
-                <h1 class="px-4 pt-1 text-3xl align-middle">View Patient List</h1>
+        <div class="relative">
+            <div class="bg-bgColor w-screen h-screen">
+                <special-header></special-header> <!-- header -->
+                <div class="flex px-8 align-middle"> <!-- title -->
+                    <button class="mx-5 mr-4 pl-3 relative w-12 h-12">
+                        <img src="../assets/img/realBack.png" class="w-6 h-6">
+                        <span class="absolute inset-0 flex items-center justify-center rounded-full bg-transparent hover:bg-black hover:bg-opacity-25 transition-all">
+                        </span>
+                    </button>
+                    <h1 class="px-4 pt-1 text-3xl align-middle">View Patient List</h1>
+                </div>
+                <div class="flex flex-col items-center"> <!-- content -->
+                    <div class="px-20 my-5 mx-8 flex items-center justify-between w-screen"> <!-- utility bar -->
+                        <div class="bg-white rounded-lg px-3 w-96 h-8 flex justify-left items-center"> <!-- search bar -->
+                            <p class="text-search font-semibold">Search: </p>
+                            <input class="px-2 text-search focus:outline-none flex-grow-3" type="text" placeholder="Search ID or name here...">
+                            <button class=""><img class="h-4 w-4 min-h-4 min-w-4" src="../assets/img/tempSearch.png"></button>
+                        </div>
+                        <div class="mx-5 flex items-center flex-grow-3"> <!-- filters -->
+                            <span class="mx-2 text-search font-semibold">Filters: </span>
+                            <span class="flex items-center w-fit h-fit p-1 mx-1 bg-white rounded-lg"> <!-- course -->
+                                <button class="font-semibold hover:underline">Course</button>
+                                <button class="ml-2 mt-1 items-center"><img class="h-2 w-2 min-h-2 min-w-2" src="../assets/img/tempPlus.png" /></button>
+                            </span>
+                            <span class="flex items-center w-fit h-fit p-1 mx-1 bg-white rounded-lg"> <!-- year -->
+                                <button class="font-semibold hover:underline">Year</button>
+                                <button class="ml-2 mt-1 items-center"><img class="h-2 w-2 min-h-2 min-w-2" src="../assets/img/tempPlus.png" /></button>
+                            </span>
+                            <span class="flex items-center w-fit h-fit p-1 mx-1 bg-white rounded-lg"> <!-- campus -->
+                                <button class="font-semibold hover:underline">Campus</button>
+                                <button class="ml-2 mt-1 items-center"><img class="h-2 w-2 min-h-2 min-w-2" src="../assets/img/tempPlus.png" /></button>
+                            </span>
+                            <span class="flex items-center w-fit h-fit p-1 mx-1 bg-white rounded-lg"> <!-- status -->
+                                <button class="font-semibold hover:underline">Status</button>
+                                <button class="ml-2 mt-1 items-center"><img class="h-2 w-2 min-h-2 min-w-2" src="../assets/img/tempPlus.png" /></button>
+                            </span>
+                        </div>
+                        <div class="flex items-center"> <!-- button commands -->
+                            <button class="py-1 px-2 mx-1 bg-overlay rounded-lg text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Bulk Update</button>
+                            <button class="py-1 px-2 mx-1 bg-overlay rounded-lg text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Archive</button>
+                        </div>
+                    </div>
+                    <div class="bg-white h-96 w-4/5 max-h-fit mx-20 mt-10 mb-4 p-5 rounded-login flex items-center"> <!-- table -->
+                        <p class="text-7xl text-center">BROTHA BROTHA BROTHAAA~ HOW U DO-DOOOINNN~ OH-OW-OH</p>
+                        <table>
+                            
+                        </table>
+                    </div>
+                    <div class="flex"> <!-- pagination -->
+                        <button class="mx-1">1</button>
+                        <button class="mx-1">2</button>
+                        <button class="mx-1">3</button>
+                        <button class="mx-1">4</button>
+                        <button class="mx-1">5</button>
+                    </div>
+                </div>
             </div>
-            <div>
-                <!-- ENTER YOUR CODE HERE!!! -->
-            </div>
-            
+        </div>    
         <special-footer></special-footer> <!-- footer -->
         <script src="./templateManager.js"></script>
     </body>
