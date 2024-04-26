@@ -17,6 +17,14 @@ module.exports = {
 
       height: {
         'login': '22rem'
+      },
+
+      fontSize: {
+        'search': '1.025rem'
+      },
+
+      flexGrow: {
+        '3': 3
       }
     },
 
