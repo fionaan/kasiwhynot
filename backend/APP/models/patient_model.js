@@ -193,7 +193,7 @@ const baseSchema = new Schema({
                     type: String,
                     required: [true, "(Basic Info) Filename is required"],
                     trim: true,
-                    minlength: [5, "(Basic Info) Filename must contain at least 5 characters or more (5)"],
+                    minlength: [5, "(Basic Info) Filename must contain at least 5 characters or more"],
                     maxlength: [255, "(Basic Info) Filename exceeded 255 character limit (255)"],
                     default: "N/A"
                 },
@@ -201,7 +201,7 @@ const baseSchema = new Schema({
                     type: String,
                     required: [true, "(Basic Info) URL Link is required"],
                     trim: true,
-                    minlength: [5, "(Basic Info) URL Link must contain at least 5 characters or more (5)"],
+                    minlength: [5, "(Basic Info) URL Link must contain at least 5 characters or more"],
                     default: "N/A"
                 }
             }
@@ -318,7 +318,7 @@ const baseSchema = new Schema({
                 }
             },
         },
-        urinalysis: {
+        urinalysis: { // single
             color: {
                 type: String,
                 required: [true, '(Urinalysis) Color is required'],
@@ -450,7 +450,7 @@ const baseSchema = new Schema({
                 maxlength: [255, 'Maximum text entered for (Urinalysis) Mucus threads reached (255)']
             }
         },
-        fecalysis: {
+        fecalysis: { // single
             color: {
                 type: String,
                 required: [true, '(Fecalysis) Color is required'],
@@ -522,7 +522,7 @@ const baseSchema = new Schema({
                     type: String,
                     required: [true, "(Laboratory) Filename is required"],
                     trim: true,
-                    minlength: [5, "(Laboratory) Filename must contain at least 5 characters or more (5)"],
+                    minlength: [5, "(Laboratory) Filename must contain at least 5 characters or more"],
                     maxlength: [255, "(Laboratory) Filename exceeded 255 character limit (255)"],
                     default: "N/A"
                 },
@@ -530,20 +530,20 @@ const baseSchema = new Schema({
                     type: String,
                     required: [true, "(Laboratory) URL Link is required"],
                     trim: true,
-                    minlength: [5, "(Laboratory) URL Link must contain at least 5 characters or more (5)"],
+                    minlength: [5, "(Laboratory) URL Link must contain at least 5 characters or more"],
                     default: "N/A"
                 }
             }
         ]
     },
     vaccination: {
-        covidVaccination: [
+        covidVaccination: [ // multiple
             { // requires 1st-3rd dose
                 dose: {
                     type: String,
                     required: [true, "(Covid Vaccination) Dose is required"],
                     trim: true,
-                    minlength: [5, "(Covid Vaccination) Dose must contain at least 5 characters or more (5)"],
+                    minlength: [2, "(Covid Vaccination) Dose must contain at least 2 characters or more"],
                     maxlength: [255, "Maximum text entered for (Covid Vaccination) Dose reached (255)"]
                 },
                 dateGiven: {
@@ -554,13 +554,13 @@ const baseSchema = new Schema({
                 }
             }
         ],
-        fluVaccination: [
+        fluVaccination: [ // multiple
             { // requires at least the latest record
                 dose: {
                     type: String,
                     required: [true, "(Flu Vaccination) Dose is required"],
                     trim: true,
-                    minlength: [5, "(Flu Vaccination) Dose must contain at least 5 characters or more (5)"],
+                    minlength: [2, "(Flu Vaccination) Dose must contain at least 2 characters or more"],
                     maxlength: [255, "Maximum text entered for (Flu Vaccination) Dose reached (255)"]
                 },
                 dateGiven: {
@@ -571,13 +571,13 @@ const baseSchema = new Schema({
                 }
             }
         ],
-        hepatitisBVaccination: [
+        hepatitisBVaccination: [ // multiple
             { // requires 1st-3rd dose
                 dose: {
                     type: String,
                     required: [true, "(Hepa-B Vaccination) Dose is required"],
                     trim: true,
-                    minlength: [5, "(Hepa-B Vaccination) Dose must contain at least 5 characters or more (5)"],
+                    minlength: [2, "(Hepa-B Vaccination) Dose must contain at least 2 characters or more"],
                     maxlength: [255, "Maximum text entered for (Hepa-B Vaccination) Dose reached (255)"]
                 },
                 dateGiven: {
@@ -588,13 +588,13 @@ const baseSchema = new Schema({
                 }
             }
         ],
-        pneumoniaVaccination: [
+        pneumoniaVaccination: [ // multiple
             { // requires at least the latest record
                 dose: {
                     type: String,
                     required: [true, "(Pneumonia Vaccination) Dose is required"],
                     trim: true,
-                    minlength: [5, "(Pneumonia Vaccination) Dose must contain at least 5 characters or more (5)"],
+                    minlength: [2, "(Pneumonia Vaccination) Dose must contain at least 2 characters or more"],
                     maxlength: [255, "Maximum text entered for (Pneumonia Vaccination) Dose reached (255)"]
                 },
                 dateGiven: {
@@ -611,7 +611,7 @@ const baseSchema = new Schema({
                     type: String,
                     required: [true, "(Vaccination) Filename is required"],
                     trim: true,
-                    minlength: [5, "(Vaccination) Filename must contain at least 5 characters or more (5)"],
+                    minlength: [5, "(Vaccination) Filename must contain at least 5 characters or more"],
                     maxlength: [255, "(Vaccination) Filename exceeded 255 character limit (255)"],
                     default: "N/A"
                 },
@@ -619,14 +619,14 @@ const baseSchema = new Schema({
                     type: String,
                     required: [true, "(Vaccination) URL Link is required"],
                     trim: true,
-                    minlength: [5, "(Vaccination) URL Link must contain at least 5 characters or more (5)"],
+                    minlength: [5, "(Vaccination) URL Link must contain at least 5 characters or more"],
                     default: "N/A"
                 }
             }
         ]
     },
     medicalHistory: {
-        tattoo: {
+        tattoo: { // single
             type: Boolean,
             required: [true, '(Medical History) Tattoo is required'],
             default: false
@@ -707,10 +707,10 @@ const baseSchema = new Schema({
         q1: {
             yesOrNo: {
                 type: Boolean,
-                required: [true, '(Medical History) Yes/No value is required'],
-                default: false,
+                required: [true, '(Medical History) Q1 Yes/No value is required'],
+                default: false
             },
-            details: [
+            doctorDetails: [ // multiple
                 {
                     doctorName: {
                         type: String,
@@ -724,7 +724,9 @@ const baseSchema = new Schema({
                     },
                     phone: {
                         type: String,
-                        required: [true, '(Medical History) Phone/fax number is required'],
+                        required: function () {
+                            return [this.yesOrNo, "(Medical History) Phone/fax number is required"]
+                        },
                         trim: true,
                         minlength: [5, "(Medical History) Phone/fax number must be at least 5 digits or more"],
                         maxlength: [20, "(Medical History) Phone/fax number exceeds 20 digit limit"],
@@ -732,11 +734,21 @@ const baseSchema = new Schema({
                     },
                     homeAddress: {
                         type: String,
-                        required: true
+                        required: function () {
+                            return [this.yesOrNo, "(Medical History) Home address is required"]
+                        },
+                        trim: true,
+                        minlength: [20, "(Medical History) Home address must contain at least 20 characters"],
+                        maxlength: [255, "(Medical History) Home address must only contain 255 characters or fewer"]
                     },
                     forWhatCondition: {
                         type: String,
-                        required: true
+                        required: function () {
+                            return [this.yesOrNo, "(Medical History) Condition/s is required"]
+                        },
+                        minlength: [1, "(Medical History) Condition/s must contain at least 1 character"],
+                        maxlength: [255, "(Medical History) Condition/s must only contain 255 characters or fewer"],
+                        default: ""
                     }
                 }
             ]
@@ -744,74 +756,139 @@ const baseSchema = new Schema({
         q2: {
             yesOrNo: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Q2 Yes/No value is required'],
                 default: false
-
             },
-            pastIllnessSurgery: {
-                type: String,
-                required: true
+            pastIllnessSurgery: { // multiple
+                type: [String],
+                required: function () {
+                    return [this.yesOrNo, "(Medical History) Past Illness Surgery/ies is required"]
+                },
+                validate: [ // validator for array of strings [min max length]
+                    {
+                        validator: function(arr) {
+                            return arr.every(str => str.length >= 5)
+                        },
+                        message: '(Medical History) Physical Learning Disability must contain at least 5 characters or more'
+                    },
+                    {
+                        validator: function(arr) {
+                            return arr.every(str => str.length <= 255)
+                        },
+                        message: "Maximum text entered for (Medical History) Physical Learning Disability reached (255)"
+                    }
+                ]
             }
         },
         q3: {
             yesOrNo: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Q3 Yes/No value is required'],
                 default: false
             },
-
-            drugFoodAllergies: {
-                type: String,
-                required: true
+            drugFoodAllergy: { // multiple
+                type: [String],
+                required: function () {
+                    return [this.yesOrNo, "(Medical History) Drug Food Allergy/ies is required"]
+                },
+                validate: [ // validator for array of strings [min max length]
+                    {
+                        validator: function(arr) {
+                            return arr.every(str => str.length >= 5)
+                        },
+                        message: '(Medical History) Physical Learning Disability must contain at least 5 characters or more'
+                    },
+                    {
+                        validator: function(arr) {
+                            return arr.every(str => str.length <= 255)
+                        },
+                        message: "Maximum text entered for (Medical History) Physical Learning Disability reached (255)"
+                    }
+                ]
             }
         },
         q4: {
             yesOrNo: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Q4 Yes/No is required'],
                 default: false
             },
-            nameOfMedication: {
-                type: String,
-                required: [true, 'This field value is required'],
-                // maxlength: [50, "Name must be less than 255 characters"],
-                // minlength: [5, "Name must be greater than 1 character"],
-                // match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
-            },
-            type: {
-                type: String,
-                required: [true, 'This field value is required'],
-                // maxlength: [50, "type must be less than 255 characters"],
-                // minlength: [5, "type must be greater than 1 character"],
-                // match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
-            },
-            brand: {
-                type: String,
-                required: true
-            },
-            others: {
-                type: String,
-                required: true
-            },
+            medicationDetails: [ // multiple
+                {
+                    nameOfMedication: {
+                        type: String,
+                        required: function () {
+                            return [this.yesOrNo, "(Medical History) Name of Medication is required"]
+                        },
+                        trim: true,
+                        minlength: [2, "(Medical History) Name of Medication must contain at least 2 characters or more"],
+                        maxlength: [255, "Maximum text entered for (Medical History) Name of Medication reached (255)"]
+                    },
+                    type: {
+                        type: String,
+                        required: function () {
+                            return [this.yesOrNo, "(Medical History) Medication Type is required"]
+                        },
+                        trim: true,
+                        minlength: [5, "(Medical History) Medication Type must contain at least 5 characters or more"],
+                        maxlength: [255, "Maximum text entered for (Medical History) Medication Type reached (255)"],
+                    },
+                    brand: {
+                        type: String,
+                        required: function () {
+                            return [this.yesOrNo, "(Medical History) Medication Brand is required"]
+                        },
+                        trim: true,
+                        minlength: [5, "(Medical History) Medication Brand must contain at least 5 characters or more"],
+                        maxlength: [255, "Maximum text entered for (Medical History) Medication Brand reached (255)"],
+                    }
+                }
+            ]
         },
         q5: {
             yesOrNo: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, "(Medical History) Q5 Yes/No is required"],
                 default: false
             },
             physicalLearningDisability: {
-                type: String,
-                required: [true, 'This field value is required'],
-                // maxlength: [50, "Name must be less than 255 characters"],
-                // minlength: [1, "Name must be greater than 1 character"],
-                // match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
+                type: [String],
+                required: [true, "(Medical History) Physical Learning Disability value is required"],
+                validate: [ // validator for array of strings [min max length]
+                    {
+                        validator: function(arr) {
+                            return arr.every(str => str.length >= 5)
+                        },
+                        message: '(Medical History) Physical Learning Disability must contain at least 5 characters or more'
+                    },
+                    {
+                        validator: function(arr) {
+                            return arr.every(str => str.length <= 255)
+                        },
+                        message: "Maximum text entered for (Medical History) Physical Learning Disability reached (255)"
+                    }
+                ]
             },
         },
-        attachments: {
-            type: String,
-            required: true
-        }
+        attachments: [ // PROB: Need index here
+            {
+                filename: {
+                    type: String,
+                    required: [true, "(Medical History) Filename is required"],
+                    trim: true,
+                    minlength: [5, "(Medical History) Filename must contain at least 5 characters or more"],
+                    maxlength: [255, "(Medical History) Filename exceeded 255 character limit (255)"],
+                    default: "N/A"
+                },
+                urlLink: {
+                    type: String,
+                    required: [true, "(Medical History) URL Link is required"],
+                    trim: true,
+                    minlength: [5, "(Medical History) URL Link must contain at least 5 characters or more"],
+                    default: "N/A"
+                }
+            }
+        ]
     },
     dentalRecord: {
         isFilledOut: { type: Boolean, required: true, default: false },
