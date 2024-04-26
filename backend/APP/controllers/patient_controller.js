@@ -130,6 +130,63 @@ const addLogPromise = (editedBy, type, record, id) => {
     })
 }
 
+const addBulkExcel = async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' })
+    }
+
+    const filePath = `uploads/${req.file.filename}`
+
+    try {
+        const excelData = convertExcelToJson({
+            sourceFile: filePath,
+            header: { rows: 1 },
+            columnToKey: { '*': '{{columnHeader}}' },
+            sheets: ['medicalRecords', 'student'] // Add the new sheet name here
+        })
+
+        if (!excelData || typeof excelData !== 'object') {
+            throw new Error('Invalid data format returned from convertExcelToJson');
+        }
+
+        let savedBaseModelId
+        // Process medical records
+        for (const row of excelData.medicalRecords) {
+            const instance = new BaseModel(row);
+            await instance.save();
+
+            savedBaseModelId = instance._id
+        }
+
+        for (const row of excelData.student) {
+
+
+            // Assign BaseModel _id to student details field
+            const studentInstance = new Student({ ...row, details: savedBaseModelId });
+            await studentInstance.save()
+        }
+
+        await fs.unlink(filePath) // Clean up the file after processing
+        res.json({
+            successful: true,
+            message: 'Bulk data added successfully',
+        });
+    } catch (error) {
+        console.error('Error:', error)
+        res.status(500).json({
+            successful: false,
+            message: 'Error adding bulk data',
+            error: error.message,
+        })
+        try {
+            await fs.unlink(filePath); // Attempt to clean up the file in case of errors
+        } catch (cleanupError) {
+            console.error('Error deleting file:', cleanupError)
+        }
+    }
+}
+
+
 // addBulk using CSV
 
 const addBulk = async (req, res) => {
@@ -1621,5 +1678,6 @@ module.exports = {
     testSb,
     addBulk,
     bulkArchivePatients,
-    bulkUnarchivePatients
+    bulkUnarchivePatients,
+    addBulkExcel
 }
