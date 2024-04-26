@@ -52,7 +52,7 @@ const baseSchema = new Schema({
             max: [99, "Age must be 99 yrs. or below only"]
         }, //should be automatic based on date of birth and current date next time
         gender: {
-            type: String, 
+            type: String,
             required: [true, 'Gender is required'],
             trim: true,
             enum: {
@@ -61,7 +61,7 @@ const baseSchema = new Schema({
             }
         },
         campus: {
-            type: String, 
+            type: String,
             required: [true, 'Campus is required'],
             trim: true,
             enum: {
@@ -69,8 +69,8 @@ const baseSchema = new Schema({
                 message: 'Invalid campus'
             }
         },
-        homeAddress: { 
-            type: String, 
+        homeAddress: {
+            type: String,
             required: [true, 'Home address is required'],
             trim: true,
             minlength: [20, "Home address must contain at least 20 characters"],
@@ -147,20 +147,20 @@ const baseSchema = new Schema({
         height: { // in centimeter (cm)
             type: Number,
             required: [true, 'Height is required'],
-            min: [0, "Invalid height value"],
-            max: [200, "Invalid height value"]
+            min: [1, "Height value must be at least 1 centimeter or above"],
+            max: [200, "Height value must not exceed 200 centimeters (cm)"]
         },
         weight: { // in kilogram (kg)
             type: Number,
             required: [true, 'Weight is required'],
-            min: [0, "Invalid weight value"],
-            max: [499, "Invalid weight value"]
+            min: [1, "Weight value must be at least 1 kilogram or above"],
+            max: [499, "Weight value must not exceed 499 kilograms (kg)"]
         },
         bmi: {
             type: Number,
             required: [true, 'BMI is required'],
-            min: [0, "Invalid BMI value"],
-            max: [50, "Invalid BMI value"]
+            min: [1, "BMI value must be at least 1 or above"],
+            max: [50, "BMI value must not exceed 50"]
         },
         guardianName: {
             type: String,
@@ -178,527 +178,568 @@ const baseSchema = new Schema({
                 validator: function (value) {
                     return /^09\d{9}$/.test(value) || /^639\d{9}$/.test(value)
                 },
-                message: "{VALUE} is an invalid contact number"
+                message: "{VALUE} is an invalid contact number (use 639- or 09XXXXXXXXX format)"
             }
         },
         guardianRelationship: {
-            type: String, 
+            type: String,
             required: [true, 'Guardian relationship is required'],
             trim: true,
             match: [/^(?![\s'-])[a-zA-Z0-9\s'-]+$/, 'Guardian relationship can only contain alphanumeric and a few common symbols']
         },
-        attachment: { // -- gawing array
-            type: String, 
-            required: false,
-            trim: true
-        } //temporarily a string
+        attachments: [ // PROB: Need index here
+            {
+                filename: {
+                    type: String,
+                    required: [true, "(Basic Info) Filename is required"],
+                    trim: true,
+                    minlength: [5, "(Basic Info) Filename must contain at least 5 characters or more (5)"],
+                    maxlength: [255, "(Basic Info) Filename exceeded 255 character limit (255)"],
+                    default: "N/A"
+                },
+                urlLink: {
+                    type: String,
+                    required: [true, "(Basic Info) URL Link is required"],
+                    trim: true,
+                    minlength: [5, "(Basic Info) URL Link must contain at least 5 characters or more (5)"],
+                    default: "N/A"
+                }
+            }
+        ]
     },
 
     laboratory: {
-        chestXray: {
+        chestXray: { // single
             findings: {
                 type: String,
-                required: [true, 'This field value is required'],
-                // minlength: [1, 'Entered text in field is too short'],
-                // maxlength: [255, 'Maximum text entered reached']
+                required: [true, '(Chest Xray) Findings is required'],
+                trim: true,
+                minlength: [5, 'Entered text for (Chest Xray) Findings is too short (5)'],
+                maxlength: [255, 'Maximum text entered for (Chest Xray) Findings reached (255)']
             },
             date: {
                 type: Date,
-                required: true,
-                // validate: {
-                //     validator: function (value) {
-                //         return !isNaN(new Date(value))
-                //     },
-                //     message: 'Data input is not a valid date!'
-                // }
+                required: [true, "(Chest Xray) Date is required"],
+                min: [new Date('1969-12-31T00:00:00Z'), "(Chest Xray) Date must be later than approximately (January 1, 1970)"],
+                max: [new Date(), "(Chest Xray) Date exceeds the current date"]
             }
+
         },
-        cbc: {
+        cbc: { // single 
             findings: {
                 type: String,
-                required: [true, 'This field value is required'],
-                // minlength: [1, 'Entered text in field is too short'],
-                // maxlength: [255, 'Maximum text entered reached']
+                required: [true, '(CBC) Findings is required'],
+                trim: true,
+                minlength: [5, 'Entered text for (CBC) Findings is too short (5)'],
+                maxlength: [255, 'Maximum text entered for (CBC) Findings reached (255)']
             },
             date: {
                 type: Date,
-                required: true,
-                // validate: {
-                //     validator: function (value) {
-                //         return !isNaN(new Date(value))
-                //     },
-                //     message: 'Data input is not a valid date!'
-                // }
+                required: [true, "(CBC) Date is required"],
+                min: [new Date('1969-12-31T00:00:00Z'), "(CBC) Date must be later than approximately (January 1, 1970)"],
+                max: [new Date(), "(CBC) Date exceeds the current date"]
             }
         },
-        hepatitisProfile: {
+        hepatitisProfile: { // single
             hbsag: {
                 type: String,
-                required: [true, 'This field value is required'],
-                // enum: {
-                //     values: ["Normal", "High", "Low", "N?"],
-                //     Message: "Invalid hbsag result"
-                // }
+                required: [true, 'HBsAg is required'],
+                trim: true,
+                enum: {
+                    values: ["Normal", "High", "Low", "N?"],
+                    message: "Invalid HBsAg result"
+                }
             },
             antiHbs: {
                 type: String,
-                required: [true, 'This field value is required'],
-                // enum: {
-                //     values: ["Normal", "High", "Low", "N?"],
-                //     Message: "Invalid anti Hbs result"
-                // }
+                required: [true, 'Anti-HBs is required'],
+                trim: true,
+                enum: {
+                    values: ["Normal", "High", "Low", "N?"],
+                    message: "Invalid Anti-HBs result"
+                }
             },
             antiHbcIgg: {
                 type: String,
-                required: [true, 'This field value is required'],
-                // enum: {
-                //     values: ["Normal", "High", "Low", "N?"],
-                //     Message: "Invalid anti Hbc Igg result"
-                // }
+                required: [true, 'Anti-HBc(IgG) is required'],
+                trim: true,
+                enum: {
+                    values: ["Normal", "High", "Low", "N?"],
+                    message: "Invalid Anti-HBc(IgG) result"
+                }
             },
             antiHbcIgm: {
                 type: String,
-                required: [true, 'This field value is required'],
-                // enum: {
-                //     values: ["Normal", "High", "Low", "N?"],
-                //     Message: "Invalid anti Hbc Igm result"
-                // }
+                required: [true, 'Anti-HBc(IgM) is required'],
+                trim: true,
+                enum: {
+                    values: ["Normal", "High", "Low", "N?"],
+                    message: "Invalid Anti-HBc(IgM) result"
+                }
             }
         },
-        drugTest: {
-            methamphethamineResults: {
+        drugTest: { // single
+            methamphethamineResult: {
                 type: String,
-                required: [true, 'This field value is required'],
-                default: 'N/A',
-                // enum: {
-                //     values: ["Positive", "Negative"],
-                //     message: "Invalid result!"
-                // }
+                required: [true, '(Methamphetamine) Result is required'],
+                trim: true,
+                enum: {
+                    values: ["Positive", "Negative"],
+                    message: "Invalid (Methamphetamine) Result"
+                },
+                default: 'N/A'
             },
             methamphethamineRemarks: {
                 type: String,
-                required: false,
-                // enum: {
-                //     values: ["Passed", "Failed"],
-                //     message: "Invalid remarks!"
-                // }
+                required: [true, "(Methamphetamine) Remarks"],
+                trim: true,
+                enum: {
+                    values: ["Passed", "Failed"],
+                    message: "Invalid (Methamphetamine) Remarks"
+                }
             },
-            tetrahydrocannabinolResults: {
+            tetrahydrocannabinolResult: {
                 type: String,
-                required: [true, 'This field value is required'],
-                default: 'N/A',
-                // enum: {
-                //     values: ["Positive", "Negative"],
-                //     message: "Invalid result!"
-                // }
+                required: [true, '(Tetrahydrocannabinol) Result is required'],
+                trim: true,
+                enum: {
+                    values: ["Positive", "Negative"],
+                    message: "Invalid (Tetrahydrocannabinol) Result"
+                },
+                default: 'N/A'
             },
             tetrahydrocannabinolRemarks: {
                 type: String,
-                required: false,
-                // enum: {
-                //     values: ["Passed", "Failed"],
-                //     message: "Invalid remarks!"
-                // }
+                required: [true, "(Tetrahydrocannabinol) Remarks is required"],
+                trim: true,
+                enum: {
+                    values: ["Passed", "Failed"],
+                    message: "Invalid (Tetrahydrocannabinol) Remarks"
+                }
             },
         },
         urinalysis: {
             color: {
                 type: String,
-                required: [true, 'This field value is required'],
-                // match: [/^[A-Za-z]+$/, 'This field can only contain letters']
+                required: [true, '(Urinalysis) Color is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Urinalysis) Color is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Color reached (255)'],
+                match: [utils.nameRegex, '(Urinalysis) Color can only contain letters and a few common symbols']
             },
             transparency: {
                 type: String,
-                required: [true, 'This field value is required'],
-                // match: [/^[A-Za-z]+$/, 'This field can only contain letters']
+                required: [true, '(Urinalysis) Transparency is required'],
+                trim: true,
+                minlength: [5, 'Entered text for (Urinalysis) Transparency is too short (5)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Transparency reached (255)'],
+                match: [utils.nameRegex, '(Urinalysis) Transparency can only contain letters and a few common symbols']
             },
             blood: {
                 type: String,
-                required: [true, 'This field value is required'],
-                // match: [/^[A-Za-z]+$/, 'This field can only contain letters']
+                required: [true, '(Urinalysis) Blood is required'],
+                trim: true,
+                minlength: [5, 'Entered text for (Urinalysis) Blood is too short (5)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Blood reached (255)'],
+                match: [utils.nameRegex, '(Urinalysis) Blood can only contain letters and a few common symbols']
             },
             bilirubin: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) Bilirubin is required'],
+                trim: true,
+                minlength: [5, 'Entered text for (Urinalysis) Bilirubin is too short (5)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Bilirubin reached (255)'],
+                match: [utils.nameRegex, '(Urinalysis) Bilirubin can only contain letters and a few common symbols']
             },
             urobilinogen: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) Urobilinogen is required'],
+                trim: true,
+                minlength: [5, 'Entered text for (Urinalysis) Urobilinogen is too short (5)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Urobilinogen reached (255)'],
+                match: [utils.nameRegex, '(Urinalysis) Urobilinogen can only contain letters and a few common symbols']
             },
             ketones: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) Ketones is required'],
+                trim: true,
+                minlength: [5, 'Entered text for (Urinalysis) Ketones is too short (5)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Ketones reached (255)'],
+                match: [utils.nameRegex, '(Urinalysis) Ketones can only contain letters and a few common symbols']
             },
             glutones: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) Glutones is required'],
+                trim: true,
+                minlength: [5, 'Entered text for (Urinalysis) Glutones is too short (5)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Glutones reached (255)'],
+                match: [utils.nameRegex, '(Urinalysis) Glutones can only contain letters and a few common symbols']
             },
             protein: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) Protein is required'],
+                trim: true,
+                minlength: [5, 'Entered text for (Urinalysis) Protein is too short (5)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Protein reached (255)'],
+                match: [utils.nameRegex, '(Urinalysis) Protein can only contain letters and a few common symbols']
             },
             nitrite: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) Nitrite is required'],
+                trim: true,
+                minlength: [5, 'Entered text for (Urinalysis) Nitrite is too short (5)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Nitrite reached (255)'],
+                match: [utils.nameRegex, '(Urinalysis) Nitrite can only contain letters and a few common symbols']
             },
             leukocyte: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) Leukocyte is required'],
+                trim: true,
+                minlength: [5, 'Entered text for (Urinalysis) Leukocyte is too short (5)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Leukocyte reached (255)'],
+                match: [utils.nameRegex, '(Urinalysis) Leukocyte can only contain letters and a few common symbols']
             },
             phLevel: {
                 type: Number,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) phLevel is required']
             },
             spGravity: {
-                type: String, required: [true, 'This field value is required']
+                type: Number,
+                required: [true, '(Urinalysis) Sp. Gravity is required']
             },
             wbc: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) WBC is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Urinalysis) WBC is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) WBC reached (255)']
             },
             rbc: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) RBC is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Urinalysis) RBC is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) RBC reached (255)']
             },
             bacteria: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) Bacteria is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Urinalysis) Bacteria is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Bacteria reached (255)']
             },
             epithelialCells: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) Epithelial cell/s is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Urinalysis) Epithelial cell/s is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Epithelial cell/s reached (255)']
             },
             amorphousUrates: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) Amorphous Urates is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Urinalysis) Amorphous Urates is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Amorphous Urates reached (255)']
             },
             mucusThreads: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Urinalysis) Mucus threads is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Urinalysis) Mucus threads is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Urinalysis) Mucus threads reached (255)']
             }
         },
         fecalysis: {
             color: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Fecalysis) Color is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Fecalysis) Color is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Fecalysis) Color reached (255)'],
+                match: [utils.nameRegex, '(Fecalysis) Color can only contain letters and a few common symbols']
             },
             consistency: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Fecalysis) Consistency is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Fecalysis) Consistency is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Fecalysis) Consistency reached (255)'],
+                match: [utils.nameRegex, '(Fecalysis) Consistency can only contain letters and a few common symbols']
             },
             wbc: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Fecalysis) WBC is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Fecalysis) WBC is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Fecalysis) WBC reached (255)']
             },
             rbc: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Fecalysis) RBC is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Fecalysis) RBC is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Fecalysis) RBC reached (255)']
             },
             fatGlobules: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Fecalysis) Fat Globule/s is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Fecalysis) Fat Globule/s is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Fecalysis) Fat Globule/s reached (255)'],
+                match: [utils.nameRegex, '(Fecalysis) Fat Globule/s can only contain letters and a few common symbols']
             },
             muscleFibers: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Fecalysis) Muscle Fiber/s is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Fecalysis) Muscle Fiber/s is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Fecalysis) Muscle Fiber/s reached (255)'],
+                match: [utils.nameRegex, '(Fecalysis) Muscle Fiber/s can only contain letters and a few common symbols']
             },
             results: {
                 type: String,
-                required: [true, 'This field value is required']
+                required: [true, '(Fecalysis) Result/s is required'],
+                trim: true,
+                minlength: [1, 'Entered text for (Fecalysis) Result/s is too short (1)'],
+                maxlength: [255, 'Maximum text entered for (Fecalysis) Result/s reached (255)']
             }
         },
         others: {
             pregnancyTest: {
                 type: String,
-                required: [true, 'This field value is required'],
-                // enum: {
-                //     values: ["Positive", "Negative"],
-                //     Message: "Invalid Pregnancy Results"
-                // }
+                required: [true, 'Pregnancy Test result is required'],
+                trim: true,
+                enum: {
+                    values: ["Positive", "Negative"],
+                    message: "Invalid Pregnancy Test result"
+                }
             }
         },
-        attachments: { 
-            type: String, 
-            required: true 
-        }
+        attachments: [ // PROB: Need index here
+            {
+                filename: {
+                    type: String,
+                    required: [true, "(Laboratory) Filename is required"],
+                    trim: true,
+                    minlength: [5, "(Laboratory) Filename must contain at least 5 characters or more (5)"],
+                    maxlength: [255, "(Laboratory) Filename exceeded 255 character limit (255)"],
+                    default: "N/A"
+                },
+                urlLink: {
+                    type: String,
+                    required: [true, "(Laboratory) URL Link is required"],
+                    trim: true,
+                    minlength: [5, "(Laboratory) URL Link must contain at least 5 characters or more (5)"],
+                    default: "N/A"
+                }
+            }
+        ]
     },
     vaccination: {
-        covidVaccination: {
-            firstDose: {
+        covidVaccination: [
+            { // requires 1st-3rd dose
                 dose: {
                     type: String,
-                    required: [true, 'This field value is required'],
-                    // minlength: [5, 'Entered text in field is too short'],
-                    // maxlength: [50, 'Maximum text entered reached']
+                    required: [true, "(Covid Vaccination) Dose is required"],
+                    trim: true,
+                    minlength: [5, "(Covid Vaccination) Dose must contain at least 5 characters or more (5)"],
+                    maxlength: [255, "Maximum text entered for (Covid Vaccination) Dose reached (255)"]
                 },
                 dateGiven: {
                     type: Date,
-                    required: [true, 'This field value is required'],
-                    // validate: {
-                    //     validator: function (value) {
-                    //         return !isNaN(new Date(value))
-                    //     },
-                    //     message: 'Data input is not a valid date!'
-                    // }
-                }
-            },
-            secondDose: {
-                dose: {
-                    type: String,
-                    required: [true, 'This field value is require'],
-                    // minlength: [5, 'Entered text in field is too short'],
-                    // maxlength: [50, 'Maximum text entered reached']
-                },
-                dateGiven: {
-                    type: Date,
-                    required: [true, 'This field value is required'],
-                    // validate: {
-                    //     validator: function (value) {
-                    //         return !isNaN(new Date(value))
-                    //     },
-                    //     message: 'Data input is not a valid date!'
-                    // }
-                }
-            },
-            thirdDose: {
-                dose: {
-                    type: String,
-                    required: [true, 'This field value is required'],
-                    // minlength: [5, 'Entered text in field is too short'],
-                    // maxlength: [50, 'Maximum text entered reached']
-                },
-                dateGiven: {
-                    type: Date,
-                    required: [true, 'This field value is required'],
-                    // validate: {
-                    //     validator: function (value) {
-                    //         return !isNaN(new Date(value))
-                    //     },
-                    //     message: 'Data input is not a valid date!'
-                    // }
+                    required: [true, '(Covid Vaccination) Date is required'],
+                    min: [new Date('1969-12-31T00:00:00Z'), "(Covid Vaccination) Date must be later than approximately (January 1, 1970)"],
+                    max: [new Date(), "(Covid Vaccination) Date exceeds the current date"]
                 }
             }
-        },
-        fluVaccination: {
-            firstDose: {
-                type: String,
-                required: [true, 'This field value is required'],
-                // minlength: [5, 'Entered text in field is too short'],
-                // maxlength: [50, 'Maximum text entered reached']
-
-            },
-            dateGiven: {
-                type: Date,
-                required: [true, 'This field value is required'],
-                // validate: {
-                //     validator: function (value) {
-                //         return !isNaN(new Date(value))
-                //     },
-                //     message: 'Data input is not a valid date!'
-                // }
-            }
-        },
-        hepatitisBVaccination: {
-            firstDose: {
+        ],
+        fluVaccination: [
+            { // requires at least the latest record
                 dose: {
                     type: String,
-                    required: [true, 'This field value is required'],
-                    // minlength: [5, 'Entered text in field is too short'],
-                    // maxlength: [50, 'Maximum text entered reached']
-
+                    required: [true, "(Flu Vaccination) Dose is required"],
+                    trim: true,
+                    minlength: [5, "(Flu Vaccination) Dose must contain at least 5 characters or more (5)"],
+                    maxlength: [255, "Maximum text entered for (Flu Vaccination) Dose reached (255)"]
                 },
                 dateGiven: {
                     type: Date,
-                    required: [true, 'This field value is required'],
-                    // validate: {
-                    //     validator: function (value) {
-                    //         return !isNaN(new Date(value))
-                    //     },
-                    //     message: 'Data input is not a valid date!'
-                    // }
+                    required: [true, '(Flu Vaccination) Date is required'],
+                    min: [new Date('1969-12-31T00:00:00Z'), "(Flu Vaccination) Date must be later than approximately (January 1, 1970)"],
+                    max: [new Date(), "(Flu Vaccination) Date exceeds the current date"]
                 }
-            },
-            secondDose: {
+            }
+        ],
+        hepatitisBVaccination: [
+            { // requires 1st-3rd dose
                 dose: {
                     type: String,
-                    required: [true, 'This field value is require'],
-                    // minlength: [5, 'Entered text in field is too short'],
-                    // maxlength: [50, 'Maximum text entered reached']
+                    required: [true, "(Hepa-B Vaccination) Dose is required"],
+                    trim: true,
+                    minlength: [5, "(Hepa-B Vaccination) Dose must contain at least 5 characters or more (5)"],
+                    maxlength: [255, "Maximum text entered for (Hepa-B Vaccination) Dose reached (255)"]
                 },
                 dateGiven: {
                     type: Date,
-                    required: [true, 'This field value is required'],
-                    // validate: {
-                    //     validator: function (value) {
-                    //         return !isNaN(new Date(value))
-                    //     },
-                    //     message: 'Data input is not a valid date!'
-                    // }
+                    required: [true, '(Hepa-B Vaccination) Date is required'],
+                    min: [new Date('1969-12-31T00:00:00Z'), "(Hepa-B Vaccination) Date must be later than approximately (January 1, 1970)"],
+                    max: [new Date(), "(Hepa-B Vaccination) Date exceeds the current date"]
                 }
-            },
-            thirdDose: {
+            }
+        ],
+        pneumoniaVaccination: [
+            { // requires at least the latest record
                 dose: {
                     type: String,
-                    required: [true, 'This field value is required'],
-                    // minlength: [5, 'Entered text in field is too short'],
-                    // maxlength: [50, 'Maximum text entered reached']
+                    required: [true, "(Pneumonia Vaccination) Dose is required"],
+                    trim: true,
+                    minlength: [5, "(Pneumonia Vaccination) Dose must contain at least 5 characters or more (5)"],
+                    maxlength: [255, "Maximum text entered for (Pneumonia Vaccination) Dose reached (255)"]
                 },
                 dateGiven: {
                     type: Date,
-                    required: [true, 'This field value is required'],
-                    // validate: {
-                    //     validator: function (value) {
-                    //         return !isNaN(new Date(value))
-                    //     },
-                    //     message: 'Data input is not a valid date!'
-                    // }
+                    required: [true, '(Pneumonia Vaccination) Date is required'],
+                    min: [new Date('1969-12-31T00:00:00Z'), "(Pneumonia Vaccination) Date must be later than approximately (January 1, 1970)"],
+                    max: [new Date(), "(Pneumonia Vaccination) Date exceeds the current date"]
                 }
             }
-        },
-        pneumoniaVaccination: {
-            firstDose: {
-                type: String,
-                required: [true, 'This field value is required'],
-                // minlength: [5, 'Entered text in field is too short'],
-                // maxlength: [50, 'Maximum text entered reached']
-            },
-            dateGiven: {
-                type: Date,
-                required: [true, 'This field value is required'],
-                // validate: {
-                //     validator: function (value) {
-                //         return !isNaN(new Date(value))
-                //     },
-                //     message: 'Data input is not a valid date!'
-                // }
+        ],
+        attachments: [ // PROB: Need index here
+            {
+                filename: {
+                    type: String,
+                    required: [true, "(Vaccination) Filename is required"],
+                    trim: true,
+                    minlength: [5, "(Vaccination) Filename must contain at least 5 characters or more (5)"],
+                    maxlength: [255, "(Vaccination) Filename exceeded 255 character limit (255)"],
+                    default: "N/A"
+                },
+                urlLink: {
+                    type: String,
+                    required: [true, "(Vaccination) URL Link is required"],
+                    trim: true,
+                    minlength: [5, "(Vaccination) URL Link must contain at least 5 characters or more (5)"],
+                    default: "N/A"
+                }
             }
-        },
-        attachments: { 
-            type: String, 
-            required: true 
-        }
+        ]
     },
     medicalHistory: {
         tattoo: {
-            type: String,
-            required: [true, 'This field value is required'],
-            default: false,
-            // enum: {
-            //     values: ["Yes", "No"],
-            //     messages: ["Invalid input!"]
-            // }
-
+            type: Boolean,
+            required: [true, '(Medical History) Tattoo is required'],
+            default: false
         },
-        bloodPressure: {
+        bloodPressure: { // single
             systolic: {
                 type: Number,
-                required: [true, 'This field value is required'],
-                // validate: {
-                //     validator: function (value) {
-                //         return /^-?\d+(\.\d+)?$/.test(value.toString())
-                //     },
-                //     message: props => `${props.value} is not a valid float for height!`
-                // }
+                required: [true, '(Medical History) Systolic value is required'],
+                min: [1, "(Medical History) Systolic value must be at least 1 or above"],
+                max: [500, "(Medical History) Systolic value exceeds limit of 500"],
+                match: [/^[1-9]\d*$/, "Invalid (Medical History) Systolic value"]
             },
             diastolic: {
                 type: Number,
-                required: [true, 'This field value is required'],
-                // validate: {
-                //     validator: function (value) {
-                //         return /^-?\d+(\.\d+)?$/.test(value.toString())
-                //     },
-                //     message: props => `${props.value} is not a valid float for height!`
-                // }
+                required: [true, '(Medical History) Diastolic value is required'],
+                min: [1, "(Medical History) Diastolic value must be at least 1 or above"],
+                max: [500, "(Medical History) Diastolic value exceeds limit of 500"],
+                match: [/^[1-9]\d*$/, "Invalid (Medical History) Diastolic value"]
             }
         },
-        conditions: {
+        conditions: { // single
             anemia: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Anemia value is required'],
                 default: false
             },
             asthma: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Asthma value is required'],
                 default: false
-
             },
             blackJointProblem: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Black Joint Problem value is required'],
                 default: false
             },
             heartDiseases: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Heart Disease/s value is required'],
                 default: false
             },
             hepatitis: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Hepatitis value is required'],
                 default: false
             },
             highBloodPressure: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) High Blood Pressure value is required'],
                 default: false
             },
             kidneyProblem: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Kidney Problem value is required'],
                 default: false
             },
             chronicDiseases: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Chronic Disease/s value is required'],
                 default: false
             },
             thyroidProblems: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Thyroid Problem/s value is required'],
                 default: false
             },
             bloodDyscrasia: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Blood Dyscrasia value is required'],
                 default: false
             },
-            others: { 
-                type: Boolean, 
-                required: true, 
-                default: false 
+            others: {
+                type: String,
+                required: [true, "(Medical History) Others value is required"],
+                default: ""
             }
         },
         q1: {
             yesOrNo: {
                 type: Boolean,
-                required: [true, 'This field value is required'],
+                required: [true, '(Medical History) Yes/No value is required'],
                 default: false,
             },
-            doctorName: {
-                type: String,
-                required: [true, 'This field value is required'],
-                // maxlength: [255, "Name must be less than 255 characters"],
-                // minlength: [1, "Name must be greater than 1 character"],
-                // match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
-
-            },
-            phone: {
-                type: String,
-                required: [true, 'This field value is required'],
-                // validate: {
-                //     validator: function (value) {
-                //         return /^\d{11}$/.test(value.toString());
-                //     },
-                //     message: props => `${props.value} is not a valid contact number!`
-                // }
-            },
-            homeAddress: { 
-                type: String, 
-                required: true },
-            forWhatCondition: { 
-                type: String, 
-                required: true }
+            details: [
+                {
+                    doctorName: {
+                        type: String,
+                        required: function () {
+                            return [this.yesOrNo, "(Medical History) Doctor Name is required"]
+                        },
+                        trim: true,
+                        minlength: [2, "(Medical History) Doctor Name must contain at least 2 characters"],
+                        maxlength: [255, "(Medical History) Doctor Name must only contain 255 characters or fewer"],
+                        match: [utils.nameRegex, '(Medical History) Doctor Name can only contain letters and a few common symbols']
+                    },
+                    phone: {
+                        type: String,
+                        required: [true, '(Medical History) Phone/fax number is required'],
+                        trim: true,
+                        minlength: [5, "(Medical History) Phone/fax number must be at least 5 digits or more"],
+                        maxlength: [20, "(Medical History) Phone/fax number exceeds 20 digit limit"],
+                        match: [/^[\d-]+$/, "(Medical History) Phone/fax number is invalid"]
+                    },
+                    homeAddress: {
+                        type: String,
+                        required: true
+                    },
+                    forWhatCondition: {
+                        type: String,
+                        required: true
+                    }
+                }
+            ]
         },
         q2: {
             yesOrNo: {
@@ -707,9 +748,9 @@ const baseSchema = new Schema({
                 default: false
 
             },
-            pastIllnessSurgery: { 
-                type: String, 
-                required: true 
+            pastIllnessSurgery: {
+                type: String,
+                required: true
             }
         },
         q3: {
@@ -744,13 +785,13 @@ const baseSchema = new Schema({
                 // minlength: [5, "type must be greater than 1 character"],
                 // match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
             },
-            brand: { 
-                type: String, 
-                required: true 
+            brand: {
+                type: String,
+                required: true
             },
-            others: { 
-                type: String, 
-                required: true 
+            others: {
+                type: String,
+                required: true
             },
         },
         q5: {
@@ -767,9 +808,9 @@ const baseSchema = new Schema({
                 // match: [/^[A-Za-z\s]+$/, 'Name can only contain letters']
             },
         },
-        attachments: { 
-            type: String, 
-            required: true 
+        attachments: {
+            type: String,
+            required: true
         }
     },
     dentalRecord: {
