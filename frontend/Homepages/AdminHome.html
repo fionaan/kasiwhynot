@@ -5,25 +5,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CEU Health - Homepage</title>
+  <link rel="stylesheet" href="./css/styles.css">
   <link rel="stylesheet" href="./css/HomePage.css">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
 <body>
   <div class="site-body">
-    <header class="site-header">
-      <div class="container flex justify-between items-center">
-        <a href="./AdminHome.html" class="site-logo">CEU Health</a>
-        <div class="relative">
-          <button class="profile-btn" id="profileBtn">Profile</button>
-          <ul class="dropdown-menu absolute right-0 mt-2 bg-white rounded-md shadow-lg py-2 w-48 hidden"
-            id="dropdownMenu">
-            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Settings</a>
-            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Log Out</a>
-          </ul>
-        </div>
-      </div>
-    </header>
+    <special-header></special-header>
 
     <section class="welcome-banner">
       <div class="container m-20 p-10">
@@ -33,49 +22,46 @@
 
     <section class="site-buttons">
       <div
-        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
-        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
-          <img src="./Icons/add-medical-records-icon.png" alt="Medical.png" class="mb-2">
+        class="bg-gradient-to-b from-blue-900 to-black px-8 py-16 rounded-3xl shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-3xl font-semibold flex flex-col">
+          <img src="./Icons/add-medical-records-icon.png" alt="Medical.png" class="h-16 w-14 mb-2">
           <span class="button-text">Add Medical Records</span>
         </a>
       </div>
       <div
-        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
-        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
-          <img src="./Icons/add-dental-records-icon.png" alt="Dental.png" class="mb-2">
+        class="bg-gradient-to-b from-blue-900 to-black px-8 py-16 rounded-3xl shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-3xl font-semibold flex flex-col">
+          <img src="./Icons/add-dental-records-icon.png" alt="Dental.png" class="h-16 w-16 mb-2">
           <span class="button-text">Add Dental Records</span>
         </a>
       </div>
       <div
-        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
-        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
-          <img src="./Icons/view-patient-records-icon.png" alt="Records.png" class="mb-2">
+        class="bg-gradient-to-b from-blue-900 to-black px-8 py-16 rounded-3xl shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-3xl font-semibold flex flex-col">
+          <img src="./Icons/view-patient-records-icon.png" alt="Records.png" class="h-14 w-20 mb-2">
           <span class="button-text">View Patient Records</span>
         </a>
       </div>
       <div
-        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
-        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
-          <img src="./Icons/view-logs-icon.png" alt="Logs.png" class="mb-2">
-          <span class="button-text">View History Logs</span>
+        class="bg-gradient-to-b from-blue-900 to-black px-8 py-16 rounded-3xl shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-3xl font-semibold flex flex-col">
+          <img src="./Icons/view-logs-icon.png" alt="Logs.png" class="h-14 w-16 mb-2">
+          <span class="button-text">View Patient History Logs</span>
         </a>
       </div>
       <div
-        class="bg-gradient-to-b from-blue-900 to-black px-10 py-20 rounded-lg shadow-md flex flex-col items-center button-container">
-        <a href="./Categories.html" class="hover:text-gray-400 text-xl font-semibold flex flex-col items-center">
-          <img src="./Icons/view-users-icon.png" alt="Users.png" class="mb-2">
+        class="bg-gradient-to-b from-blue-900 to-black px-8 py-16 rounded-3xl shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-3xl font-semibold flex flex-col">
+          <img src="./Icons/view-users-icon.png" alt="Users.png" class="h-14 w-16 mb-2">
           <span class="button-text">View / Add Users</span>
         </a>
       </div>
     </section>
-
-    <footer class="site-footer">
-      <div class="container m-auto p-auto">
-        <p>&copy; 2024 CEU Health. All rights reserved.</p>
-      </div>
-    </footer>
+    <special-footer></special-footer>
 
     <script src="./js/DropDown.js"></script>
+    <script src="./js/Template.js"></script>
+  </div>
 </body>
 
 </html>
