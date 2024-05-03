@@ -12,7 +12,14 @@ const dateTimeRegex = /^(?:\d{4})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2][0-9]|3[0-1])
 const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{3}Z$/
 
 //CHECKS IF STRING ONLY CONTAINS LETTERS, APOSTROPHE, HYPHEN, OR SPACE - MUST START AND END W LETTER
-const nameRegex = /^[a-zA-Z]+(?:[\s-]*[a-zA-Z]+)*$/ // /^[a-zA-Z][a-zA-Z.,'\s-]*$/
+const textRegex = /^[a-zA-Z]+(?:[\s-]*[a-zA-Z]+)*$/ // /^[a-zA-Z][a-zA-Z.,'\s-]*$/
+
+// CHECKS IF STRING ONLY CONTAINS LETTERS, APOSTROPHE, HYPHEN, OR SPACE - MUST START AND END W LETTER
+// ALSO ALLOWS N/A INPUT (FOR OPTIONAL FIELDS)
+const textOpRegex = /^(?:N\/A|[a-zA-Z]+(?:[\s-']*[a-zA-Z]+)*)$/ 
+
+// CHECKS IF STRING CONTAINS AT LEAST 1 LETTER. WON'T ALLOW NUMBERS/SYMBOLS ONLY
+const aNSRegex = /^(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%^&*()-_=+`~[\]{}|;:'",.<>/?]*$/
 
 //CHECKS IF EMAIL IS VALID
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -157,7 +164,9 @@ const q6Values = ["/", "C", "X", "Rf", "M", "Tf", "Co", "Gf", "JC", "S", "Im", "
 module.exports = {
     dateTimeRegex,
     dateRegex,
-    nameRegex,
+    textRegex,
+    textOpRegex,
+    aNSRegex,
     emailRegex,
     userTypeList,
     historyTypeList,

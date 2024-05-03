@@ -8,50 +8,51 @@ const Schema = mongoose.Schema
 const baseSchema = new Schema({
     basicInfo: {
         fullName: {
-            firstName: {
+            firstName: { // *
                 type: String,
                 required: [true, "Firstname is required"],
                 trim: true,
-                minlength: [2, "Firstname must contain at least 2 characters"],
+                // minlength: [2, "Firstname must contain at least 2 characters"],
                 maxlength: [255, "Firstname must only contain 255 characters or fewer"],
-                match: [utils.nameRegex, "Firstname can only contain letters and a few common symbols"]
+                match: [utils.textRegex, "Firstname can only contain letters and a few common symbols"]
             },
-            middleName: {
+            middleName: { // optional
                 type: String,
-                required: false,
+                required: [true, "Middlename is still required"],
                 trim: true,
-                minlength: [2, "Middlename must contain at least 2 characters"], // -- TEST if works when null & if need match
-                maxlength: [255, "Middlename must only contain 255 characters or fewer"], // -- TEST if works when null
-                match: [utils.nameRegex, "Middlename can only contain letters and a few common symbols"]
+                // minlength: [2, "Middlename must contain at least 2 characters"], // -- TEST if works when null & if need match
+                maxlength: [255, "Middlename must only contain 255 characters or fewer"],
+                match: [utils.textOpRegex, "Middlename can only contain letters and a few common symbols"],
+                default: "N/A"
             },
-            lastName: {
+            lastName: { // *
                 type: String,
                 required: [true, "Lastname is required"],
                 trim: true,
-                minlength: [2, "Lastname must contain at least 2 characters"],
+                // minlength: [2, "Lastname must contain at least 2 characters"],
                 maxlength: [255, "Lastname must only contain 255 characters or fewer"],
-                match: [utils.nameRegex, "Lastname can only contain letters and a few common symbols"]
+                match: [utils.textRegex, "Lastname can only contain letters and a few common symbols"]
             },
         },
-        emailAddress: {
+        emailAddress: { // *
             type: String,
             required: [true, 'Email address is required'],
             trim: true,
             match: [utils.emailRegex, "Invalid email format"]
         },
-        dateOfBirth: {
+        dateOfBirth: { // *
             type: Date,
             required: [true, "Birthdate is required"],
             min: [new Date('1969-12-31T00:00:00Z'), "Birthdate must be later than approximately (January 1, 1970)"],
             max: [new Date().setFullYear(new Date().getFullYear() - 15), "Date of birth precedes expected range (Minimum of 15 year difference from current date)"] // Checks if bdate is > current date - 15 years
         },
-        age: {
+        age: { // *
             type: Number,
             required: [true, 'Age is required'],
             min: [10, "Age must be at least 10 years or older"],
             max: [99, "Age must be 99 yrs. or below only"]
         }, //should be automatic based on date of birth and current date next time
-        gender: {
+        gender: { // *
             type: String,
             required: [true, 'Gender is required'],
             trim: true,
@@ -60,7 +61,7 @@ const baseSchema = new Schema({
                 message: 'Invalid gender'
             }
         },
-        campus: {
+        campus: { // *
             type: String,
             required: [true, 'Campus is required'],
             trim: true,
@@ -69,14 +70,15 @@ const baseSchema = new Schema({
                 message: 'Invalid campus'
             }
         },
-        homeAddress: {
+        homeAddress: { // *
             type: String,
             required: [true, 'Home address is required'],
             trim: true,
             minlength: [20, "Home address must contain at least 20 characters"],
-            maxlength: [255, "Home address must only contain 255 characters or fewer"]
+            maxlength: [255, "Home address must only contain 255 characters or fewer"],
+            // match: [utils.aNSRegex, "Home address must contain letters"]
         },
-        contactNo: {
+        contactNo: { // *
             type: String,
             required: [true, 'Contact number is required'],
             trim: true,
@@ -87,7 +89,7 @@ const baseSchema = new Schema({
                 message: "{VALUE} is an invalid contact number"
             }
         },
-        nationality: {
+        nationality: { // *
             type: String,
             required: [true, 'Nationality is required'],
             trim: true,
@@ -120,13 +122,13 @@ const baseSchema = new Schema({
                 message: 'Nationality is not recognized'
             },
         },
-        religion: {
+        religion: { // *
             type: String,
             required: [true, 'Religion is required'],
             trim: true,
-            match: [utils.nameRegex, 'Religion can only contain letters and a few common symbols']
+            match: [utils.textRegex, 'Religion can only contain letters and a few common symbols']
         },
-        bloodType: {
+        bloodType: { // *
             type: String,
             required: [true, 'Bloodtype is required'],
             trim: true,
@@ -135,7 +137,7 @@ const baseSchema = new Schema({
                 message: "Invalid bloodtype"
             }
         },
-        civilStatus: {
+        civilStatus: { // *
             type: String,
             required: [true, 'Civil Status is required'],
             trim: true,
@@ -144,33 +146,33 @@ const baseSchema = new Schema({
                 message: "Invalid civil status"
             }
         },
-        height: { // in centimeter (cm)
+        height: { // in centimeter (cm) *
             type: Number,
             required: [true, 'Height is required'],
             min: [1, "Height value must be at least 1 centimeter or above"],
             max: [200, "Height value must not exceed 200 centimeters (cm)"]
         },
-        weight: { // in kilogram (kg)
+        weight: { // in kilogram (kg) *
             type: Number,
             required: [true, 'Weight is required'],
             min: [1, "Weight value must be at least 1 kilogram or above"],
             max: [499, "Weight value must not exceed 499 kilograms (kg)"]
         },
-        bmi: {
+        bmi: { // *
             type: Number,
             required: [true, 'BMI is required'],
             min: [1, "BMI value must be at least 1 or above"],
             max: [50, "BMI value must not exceed 50"]
         },
-        guardianName: {
+        guardianName: { // *
             type: String,
             required: [true, 'Guardian name is required'],
             trim: true,
-            minlength: [2, "Guardian name must contain at least 2 characters"],
+            // minlength: [2, "Guardian name must contain at least 2 characters"],
             maxlength: [255, "Guardian name must only contain 255 characters or fewer"],
-            match: [utils.nameRegex, "Guardian name can only contain letters and a few common symbols"]
+            match: [utils.textRegex, "Guardian name can only contain letters and a few common symbols"]
         },
-        guardianContactNo: {
+        guardianContactNo: { // *
             type: String,
             required: [true, 'Guardian contact no. is required'],
             trim: true,
@@ -181,59 +183,61 @@ const baseSchema = new Schema({
                 message: "{VALUE} is an invalid contact number (use 639- or 09XXXXXXXXX format)"
             }
         },
-        guardianRelationship: {
+        guardianRelationship: { // *
             type: String,
             required: [true, 'Guardian relationship is required'],
             trim: true,
             match: [/^(?![\s'-])[a-zA-Z0-9\s'-]+$/, 'Guardian relationship can only contain alphanumeric and a few common symbols']
         },
-        attachments: [ // PROB: Need index here
-            {
-                filename: {
-                    type: String,
-                    required: [true, "(Basic Info) Filename is required"],
-                    trim: true,
-                    minlength: [5, "(Basic Info) Filename must contain at least 5 characters or more"],
-                    maxlength: [255, "(Basic Info) Filename exceeded 255 character limit (255)"],
-                    default: "N/A"
-                },
-                urlLink: {
-                    type: String,
-                    required: [true, "(Basic Info) URL Link is required"],
-                    trim: true,
-                    minlength: [5, "(Basic Info) URL Link must contain at least 5 characters or more"],
-                    default: "N/A"
+        attachments: { // optional -- multiple
+            required: [true, "(Basic Info) Attachments field is required"],
+            default: undefined,
+            type: [ // PROB: Need index here
+                {
+                    filename: {  // *
+                        type: String,
+                        required: [true, "(Basic Info) Filename is required"],
+                        trim: true,
+                        unique: [true, "(Basic Info) Filename already exists"],
+                        // minlength: [5, "(Basic Info) Filename must contain at least 5 characters or more"],
+                        maxlength: [255, "(Basic Info) Filename exceeded 255 character limit (255)"]
+                    },
+                    urlLink: { // *
+                        type: String,
+                        required: [true, "(Basic Info) URL Link is required"],
+                        trim: true,
+                        minlength: [5, "(Basic Info) URL Link must contain at least 5 characters or more"],
+                    }
                 }
-            }
-        ]
+            ]
+        }
     },
 
     laboratory: {
         chestXray: { // single
-            findings: {
+            findings: { // *
                 type: String,
                 required: [true, '(Chest Xray) Findings is required'],
                 trim: true,
-                minlength: [5, 'Entered text for (Chest Xray) Findings is too short (5)'],
+                // minlength: [5, 'Entered text for (Chest Xray) Findings is too short (5)'],
                 maxlength: [255, 'Maximum text entered for (Chest Xray) Findings reached (255)']
             },
-            date: {
+            date: { // *
                 type: Date,
                 required: [true, "(Chest Xray) Date is required"],
                 min: [new Date('1969-12-31T00:00:00Z'), "(Chest Xray) Date must be later than approximately (January 1, 1970)"],
                 max: [new Date(), "(Chest Xray) Date exceeds the current date"]
             }
-
         },
         cbc: { // single 
-            findings: {
+            findings: { // *
                 type: String,
                 required: [true, '(CBC) Findings is required'],
                 trim: true,
-                minlength: [5, 'Entered text for (CBC) Findings is too short (5)'],
+                // minlength: [5, 'Entered text for (CBC) Findings is too short (5)'],
                 maxlength: [255, 'Maximum text entered for (CBC) Findings reached (255)']
             },
-            date: {
+            date: { // *
                 type: Date,
                 required: [true, "(CBC) Date is required"],
                 min: [new Date('1969-12-31T00:00:00Z'), "(CBC) Date must be later than approximately (January 1, 1970)"],
@@ -241,7 +245,7 @@ const baseSchema = new Schema({
             }
         },
         hepatitisProfile: { // single
-            hbsag: {
+            hbsag: { // *
                 type: String,
                 required: [true, 'HBsAg is required'],
                 trim: true,
@@ -250,7 +254,7 @@ const baseSchema = new Schema({
                     message: "Invalid HBsAg result"
                 }
             },
-            antiHbs: {
+            antiHbs: { // *
                 type: String,
                 required: [true, 'Anti-HBs is required'],
                 trim: true,
@@ -259,7 +263,7 @@ const baseSchema = new Schema({
                     message: "Invalid Anti-HBs result"
                 }
             },
-            antiHbcIgg: {
+            antiHbcIgg: { // *
                 type: String,
                 required: [true, 'Anti-HBc(IgG) is required'],
                 trim: true,
@@ -268,7 +272,7 @@ const baseSchema = new Schema({
                     message: "Invalid Anti-HBc(IgG) result"
                 }
             },
-            antiHbcIgm: {
+            antiHbcIgm: { // *
                 type: String,
                 required: [true, 'Anti-HBc(IgM) is required'],
                 trim: true,
@@ -278,136 +282,134 @@ const baseSchema = new Schema({
                 }
             }
         },
-        drugTest: { // single
-            methamphetamineResult: {
+        drugTest: { // single -- optional
+            methamphetamineResult: { // optional
                 type: String,
                 required: [true, '(Methamphetamine) Result is required'],
                 trim: true,
                 enum: {
-                    values: ["Positive", "Negative"],
+                    values: ["Positive", "Negative", "N/A"],
                     message: "Invalid (Methamphetamine) Result"
-                },
-                default: 'N/A'
+                }
             },
-            methamphetamineRemarks: {
+            methamphetamineRemarks: { // optional
                 type: String,
                 required: [true, "(Methamphetamine) Remarks is required"],
                 trim: true,
                 enum: {
-                    values: ["Passed", "Failed"],
+                    values: ["Passed", "Failed", "N/A"],
                     message: "Invalid (Methamphetamine) Remarks"
                 }
             },
-            tetrahydrocannabinolResult: {
+            tetrahydrocannabinolResult: { // optional
                 type: String,
                 required: [true, '(Tetrahydrocannabinol) Result is required'],
                 trim: true,
                 enum: {
-                    values: ["Positive", "Negative"],
+                    values: ["Positive", "Negative", "N/A"],
                     message: "Invalid (Tetrahydrocannabinol) Result"
-                },
-                default: 'N/A'
+                }
             },
-            tetrahydrocannabinolRemarks: {
+            tetrahydrocannabinolRemarks: { // optional
                 type: String,
                 required: [true, "(Tetrahydrocannabinol) Remarks is required"],
                 trim: true,
                 enum: {
-                    values: ["Passed", "Failed"],
+                    values: ["Passed", "Failed", "N/A"],
                     message: "Invalid (Tetrahydrocannabinol) Remarks"
                 }
             },
         },
-        urinalysis: { // single
-            color: {
+        urinalysis: { // single -- optional
+            color: { // optional
                 type: String,
                 required: [true, '(Urinalysis) Color is required'],
                 trim: true,
-                minlength: [1, 'Entered text for (Urinalysis) Color is too short (1)'],
+                // minlength: [1, 'Entered text for (Urinalysis) Color is too short (1)'],
                 maxlength: [255, 'Maximum text entered for (Urinalysis) Color reached (255)'],
-                match: [utils.nameRegex, '(Urinalysis) Color can only contain letters and a few common symbols']
+                match: [utils.textOpRegex, '(Urinalysis) Color can only contain letters and a few common symbols']
             },
-            transparency: {
+            transparency: { // optional
                 type: String,
                 required: [true, '(Urinalysis) Transparency is required'],
                 trim: true,
-                minlength: [5, 'Entered text for (Urinalysis) Transparency is too short (5)'],
+                // minlength: [5, 'Entered text for (Urinalysis) Transparency is too short (5)'],
                 maxlength: [255, 'Maximum text entered for (Urinalysis) Transparency reached (255)'],
-                match: [utils.nameRegex, '(Urinalysis) Transparency can only contain letters and a few common symbols']
+                match: [utils.textOpRegex, '(Urinalysis) Transparency can only contain letters and a few common symbols']
             },
-            blood: {
+            blood: { // optional
                 type: String,
                 required: [true, '(Urinalysis) Blood is required'],
                 trim: true,
-                minlength: [5, 'Entered text for (Urinalysis) Blood is too short (5)'],
+                // minlength: [5, 'Entered text for (Urinalysis) Blood is too short (5)'],
                 maxlength: [255, 'Maximum text entered for (Urinalysis) Blood reached (255)'],
-                match: [utils.nameRegex, '(Urinalysis) Blood can only contain letters and a few common symbols']
+                match: [utils.textOpRegex, '(Urinalysis) Blood can only contain letters and a few common symbols']
             },
-            bilirubin: {
+            bilirubin: { // optional
                 type: String,
                 required: [true, '(Urinalysis) Bilirubin is required'],
                 trim: true,
-                minlength: [5, 'Entered text for (Urinalysis) Bilirubin is too short (5)'],
+                // minlength: [5, 'Entered text for (Urinalysis) Bilirubin is too short (5)'],
                 maxlength: [255, 'Maximum text entered for (Urinalysis) Bilirubin reached (255)'],
-                match: [utils.nameRegex, '(Urinalysis) Bilirubin can only contain letters and a few common symbols']
+                match: [utils.textOpRegex, '(Urinalysis) Bilirubin can only contain letters and a few common symbols']
             },
-            urobilinogen: {
+            urobilinogen: { // optional
                 type: String,
                 required: [true, '(Urinalysis) Urobilinogen is required'],
                 trim: true,
-                minlength: [5, 'Entered text for (Urinalysis) Urobilinogen is too short (5)'],
+                // minlength: [5, 'Entered text for (Urinalysis) Urobilinogen is too short (5)'],
                 maxlength: [255, 'Maximum text entered for (Urinalysis) Urobilinogen reached (255)'],
-                match: [utils.nameRegex, '(Urinalysis) Urobilinogen can only contain letters and a few common symbols']
+                match: [utils.textOpRegex, '(Urinalysis) Urobilinogen can only contain letters and a few common symbols']
             },
-            ketones: {
+            ketones: { // optional
                 type: String,
                 required: [true, '(Urinalysis) Ketones is required'],
                 trim: true,
-                minlength: [5, 'Entered text for (Urinalysis) Ketones is too short (5)'],
+                // minlength: [5, 'Entered text for (Urinalysis) Ketones is too short (5)'],
                 maxlength: [255, 'Maximum text entered for (Urinalysis) Ketones reached (255)'],
-                match: [utils.nameRegex, '(Urinalysis) Ketones can only contain letters and a few common symbols']
+                match: [utils.textOpRegex, '(Urinalysis) Ketones can only contain letters and a few common symbols']
             },
-            glutones: {
+            glutones: { // optional
                 type: String,
                 required: [true, '(Urinalysis) Glutones is required'],
                 trim: true,
-                minlength: [5, 'Entered text for (Urinalysis) Glutones is too short (5)'],
+                // minlength: [5, 'Entered text for (Urinalysis) Glutones is too short (5)'],
                 maxlength: [255, 'Maximum text entered for (Urinalysis) Glutones reached (255)'],
-                match: [utils.nameRegex, '(Urinalysis) Glutones can only contain letters and a few common symbols']
+                match: [utils.textOpRegex, '(Urinalysis) Glutones can only contain letters and a few common symbols']
             },
-            protein: {
+            protein: { // optional
                 type: String,
                 required: [true, '(Urinalysis) Protein is required'],
                 trim: true,
-                minlength: [5, 'Entered text for (Urinalysis) Protein is too short (5)'],
+                // minlength: [5, 'Entered text for (Urinalysis) Protein is too short (5)'],
                 maxlength: [255, 'Maximum text entered for (Urinalysis) Protein reached (255)'],
-                match: [utils.nameRegex, '(Urinalysis) Protein can only contain letters and a few common symbols']
+                match: [utils.textOpRegex, '(Urinalysis) Protein can only contain letters and a few common symbols']
             },
-            nitrite: {
+            nitrite: { // optional
                 type: String,
                 required: [true, '(Urinalysis) Nitrite is required'],
                 trim: true,
-                minlength: [5, 'Entered text for (Urinalysis) Nitrite is too short (5)'],
+                // minlength: [5, 'Entered text for (Urinalysis) Nitrite is too short (5)'],
                 maxlength: [255, 'Maximum text entered for (Urinalysis) Nitrite reached (255)'],
-                match: [utils.nameRegex, '(Urinalysis) Nitrite can only contain letters and a few common symbols']
+                match: [utils.textOpRegex, '(Urinalysis) Nitrite can only contain letters and a few common symbols']
             },
-            leukocyte: {
+            leukocyte: { // optional
                 type: String,
                 required: [true, '(Urinalysis) Leukocyte is required'],
                 trim: true,
-                minlength: [5, 'Entered text for (Urinalysis) Leukocyte is too short (5)'],
+                // minlength: [5, 'Entered text for (Urinalysis) Leukocyte is too short (5)'],
                 maxlength: [255, 'Maximum text entered for (Urinalysis) Leukocyte reached (255)'],
-                match: [utils.nameRegex, '(Urinalysis) Leukocyte can only contain letters and a few common symbols']
+                match: [utils.textOpRegex, '(Urinalysis) Leukocyte can only contain letters and a few common symbols']
             },
-            phLevel: {
+            phLevel: { // optional
                 type: Number,
                 required: [true, '(Urinalysis) phLevel is required']
             },
-            spGravity: {
+            spGravity: { // optional
                 type: Number,
                 required: [true, '(Urinalysis) Sp. Gravity is required']
             },
-            wbc: {
+            wbc: { // optional
                 type: String,
                 required: [true, '(Urinalysis) WBC is required'],
                 trim: true,
@@ -457,7 +459,7 @@ const baseSchema = new Schema({
                 trim: true,
                 minlength: [1, 'Entered text for (Fecalysis) Color is too short (1)'],
                 maxlength: [255, 'Maximum text entered for (Fecalysis) Color reached (255)'],
-                match: [utils.nameRegex, '(Fecalysis) Color can only contain letters and a few common symbols']
+                match: [utils.textRegex, '(Fecalysis) Color can only contain letters and a few common symbols']
             },
             consistency: {
                 type: String,
@@ -465,7 +467,7 @@ const baseSchema = new Schema({
                 trim: true,
                 minlength: [1, 'Entered text for (Fecalysis) Consistency is too short (1)'],
                 maxlength: [255, 'Maximum text entered for (Fecalysis) Consistency reached (255)'],
-                match: [utils.nameRegex, '(Fecalysis) Consistency can only contain letters and a few common symbols']
+                match: [utils.textRegex, '(Fecalysis) Consistency can only contain letters and a few common symbols']
             },
             wbc: {
                 type: String,
@@ -487,7 +489,7 @@ const baseSchema = new Schema({
                 trim: true,
                 minlength: [1, 'Entered text for (Fecalysis) Fat Globule/s is too short (1)'],
                 maxlength: [255, 'Maximum text entered for (Fecalysis) Fat Globule/s reached (255)'],
-                match: [utils.nameRegex, '(Fecalysis) Fat Globule/s can only contain letters and a few common symbols']
+                match: [utils.textRegex, '(Fecalysis) Fat Globule/s can only contain letters and a few common symbols']
             },
             muscleFibers: {
                 type: String,
@@ -495,7 +497,7 @@ const baseSchema = new Schema({
                 trim: true,
                 minlength: [1, 'Entered text for (Fecalysis) Muscle Fiber/s is too short (1)'],
                 maxlength: [255, 'Maximum text entered for (Fecalysis) Muscle Fiber/s reached (255)'],
-                match: [utils.nameRegex, '(Fecalysis) Muscle Fiber/s can only contain letters and a few common symbols']
+                match: [utils.textRegex, '(Fecalysis) Muscle Fiber/s can only contain letters and a few common symbols']
             },
             results: {
                 type: String,
@@ -516,32 +518,34 @@ const baseSchema = new Schema({
                 }
             }
         },
-        attachments: [ // PROB: Need index here
-            {
-                filename: {
-                    type: String,
-                    required: [true, "(Laboratory) Filename is required"],
-                    trim: true,
-                    minlength: [5, "(Laboratory) Filename must contain at least 5 characters or more"],
-                    maxlength: [255, "(Laboratory) Filename exceeded 255 character limit (255)"],
-                    default: "N/A"
-                },
-                urlLink: {
-                    type: String,
-                    required: [true, "(Laboratory) URL Link is required"],
-                    trim: true,
-                    minlength: [5, "(Laboratory) URL Link must contain at least 5 characters or more"],
-                    default: "N/A"
+        attachments: { // optional -- multiple
+            required: [true, "(Laboratory) Attachments field is required"],
+            default: undefined,
+            type: [ // PROB: Need index here
+                {
+                    filename: {  // *
+                        type: String,
+                        required: [true, "(Laboratory) Filename is required"],
+                        trim: true,
+                        unique: [true, "(Laboratory) Filename already exists"],
+                        // minlength: [5, "(Laboratory) Filename must contain at least 5 characters or more"],
+                        maxlength: [255, "(Laboratory) Filename exceeded 255 character limit (255)"]
+                    },
+                    urlLink: { // *
+                        type: String,
+                        required: [true, "(Laboratory) URL Link is required"],
+                        trim: true,
+                        minlength: [5, "(Laboratory) URL Link must contain at least 5 characters or more"],
+                    }
                 }
-            }
-        ]
+            ]
+        }
     },
     vaccination: {
         covidVaccination: { // multiple
             required: [true, "Covid Vaccination field is required"],
-            default: [],
-            type: [ 
-                { // requires 1st-3rd dose
+            type: [
+                { // requires at least 1 record
                     dose: {
                         type: String,
                         required: [true, "(Covid Vaccination) Dose is required"],
@@ -558,83 +562,112 @@ const baseSchema = new Schema({
                 }
             ],
             validate: {
-                validator: {
-                    // insert number of  elements in array validation -- same for all vaccines
-                    // that needs at least 1 or more element
-                }, 
-                message: ""
-            }
-    },
-        fluVaccination: [ // multiple
-            { // requires at least the latest record
-                dose: {
-                    type: String,
-                    required: [true, "(Flu Vaccination) Dose is required"],
-                    trim: true,
-                    minlength: [2, "(Flu Vaccination) Dose must contain at least 2 characters or more"],
-                    maxlength: [255, "Maximum text entered for (Flu Vaccination) Dose reached (255)"]
+                validator: function (arr) {
+                    return (arr.length !== 0)
                 },
-                dateGiven: {
-                    type: Date,
-                    required: [true, '(Flu Vaccination) Date is required'],
-                    min: [new Date('1969-12-31T00:00:00Z'), "(Flu Vaccination) Date must be later than approximately (January 1, 1970)"],
-                    max: [new Date(), "(Flu Vaccination) Date exceeds the current date"]
-                }
+                message: "At least 1 Covid Vaccine record is required"
             }
-        ],
-        hepatitisBVaccination: [ // multiple
-            { // requires 1st-3rd dose
-                dose: {
-                    type: String,
-                    required: [true, "(Hepa-B Vaccination) Dose is required"],
-                    trim: true,
-                    minlength: [2, "(Hepa-B Vaccination) Dose must contain at least 2 characters or more"],
-                    maxlength: [255, "Maximum text entered for (Hepa-B Vaccination) Dose reached (255)"]
+        },
+        fluVaccination: { // multiple
+            required: [true, "Flu Vaccination field is required"],
+            type: [
+                { // requires at least 1 record
+                    dose: {
+                        type: String,
+                        required: [true, "(Flu Vaccination) Dose is required"],
+                        trim: true,
+                        minlength: [2, "(Flu Vaccination) Dose must contain at least 2 characters or more"],
+                        maxlength: [255, "Maximum text entered for (Flu Vaccination) Dose reached (255)"]
+                    },
+                    dateGiven: {
+                        type: Date,
+                        required: [true, '(Flu Vaccination) Date is required'],
+                        min: [new Date('1969-12-31T00:00:00Z'), "(Flu Vaccination) Date must be later than approximately (January 1, 1970)"],
+                        max: [new Date(), "(Flu Vaccination) Date exceeds the current date"]
+                    }
+                }
+            ],
+            validate: {
+                validator: function (arr) {
+                    return (arr.length !== 0)
                 },
-                dateGiven: {
-                    type: Date,
-                    required: [true, '(Hepa-B Vaccination) Date is required'],
-                    min: [new Date('1969-12-31T00:00:00Z'), "(Hepa-B Vaccination) Date must be later than approximately (January 1, 1970)"],
-                    max: [new Date(), "(Hepa-B Vaccination) Date exceeds the current date"]
-                }
+                message: "At least 1 Flu Vaccine record is required"
             }
-        ],
-        pneumoniaVaccination: [ // multiple
-            { // requires at least the latest record
-                dose: {
-                    type: String,
-                    required: [true, "(Pneumonia Vaccination) Dose is required"],
-                    trim: true,
-                    minlength: [2, "(Pneumonia Vaccination) Dose must contain at least 2 characters or more"],
-                    maxlength: [255, "Maximum text entered for (Pneumonia Vaccination) Dose reached (255)"]
+        },
+        hepatitisBVaccination: { // multiple
+            required: [true, "Hepatitis-B Vaccination field is required"],
+            type: [
+                { // requires at least 1 record
+                    dose: {
+                        type: String,
+                        required: [true, "(Hepa-B Vaccination) Dose is required"],
+                        trim: true,
+                        minlength: [2, "(Hepa-B Vaccination) Dose must contain at least 2 characters or more"],
+                        maxlength: [255, "Maximum text entered for (Hepa-B Vaccination) Dose reached (255)"]
+                    },
+                    dateGiven: {
+                        type: Date,
+                        required: [true, '(Hepa-B Vaccination) Date is required'],
+                        min: [new Date('1969-12-31T00:00:00Z'), "(Hepa-B Vaccination) Date must be later than approximately (January 1, 1970)"],
+                        max: [new Date(), "(Hepa-B Vaccination) Date exceeds the current date"]
+                    }
+                }
+            ],
+            validate: {
+                validator: function (arr) {
+                    return (arr.length !== 0)
                 },
-                dateGiven: {
-                    type: Date,
-                    required: [true, '(Pneumonia Vaccination) Date is required'],
-                    min: [new Date('1969-12-31T00:00:00Z'), "(Pneumonia Vaccination) Date must be later than approximately (January 1, 1970)"],
-                    max: [new Date(), "(Pneumonia Vaccination) Date exceeds the current date"]
-                }
+                message: "At least 1 Hepa-B Vaccine record is required"
             }
-        ],
-        attachments: [ // PROB: Need index here
-            {
-                filename: {
-                    type: String,
-                    required: [true, "(Vaccination) Filename is required"],
-                    trim: true,
-                    minlength: [5, "(Vaccination) Filename must contain at least 5 characters or more"],
-                    maxlength: [255, "(Vaccination) Filename exceeded 255 character limit (255)"],
-                    default: "N/A"
+        },
+        pneumoniaVaccination: { // multiple
+            required: [true, "Pneumonia Vaccination field is required"],
+            type: [
+                { // requires at least the latest record
+                    dose: {
+                        type: String,
+                        required: [true, "(Pneumonia Vaccination) Dose is required"],
+                        trim: true,
+                        minlength: [2, "(Pneumonia Vaccination) Dose must contain at least 2 characters or more"],
+                        maxlength: [255, "Maximum text entered for (Pneumonia Vaccination) Dose reached (255)"]
+                    },
+                    dateGiven: {
+                        type: Date,
+                        required: [true, '(Pneumonia Vaccination) Date is required'],
+                        min: [new Date('1969-12-31T00:00:00Z'), "(Pneumonia Vaccination) Date must be later than approximately (January 1, 1970)"],
+                        max: [new Date(), "(Pneumonia Vaccination) Date exceeds the current date"]
+                    }
+                }
+            ],
+            validate: {
+                validator: function (arr) {
+                    return (arr.length !== 0)
                 },
-                urlLink: {
-                    type: String,
-                    required: [true, "(Vaccination) URL Link is required"],
-                    trim: true,
-                    minlength: [5, "(Vaccination) URL Link must contain at least 5 characters or more"],
-                    default: "N/A"
-                }
+                message: "At least 1 Pneumonia Vaccine record is required"
             }
-        ]
+        },
+        attachments: { // optional -- multiple
+            required: [true, "(Vaccination) Attachments field is required"],
+            default: undefined,
+            type: [ // PROB: Need index here
+                {
+                    filename: {  // *
+                        type: String,
+                        required: [true, "(Vaccination) Filename is required"],
+                        trim: true,
+                        unique: [true, "(Vaccination) Filename already exists"],
+                        // minlength: [5, "(Vaccination) Filename must contain at least 5 characters or more"],
+                        maxlength: [255, "(Vaccination) Filename exceeded 255 character limit (255)"]
+                    },
+                    urlLink: { // *
+                        type: String,
+                        required: [true, "(Vaccination) URL Link is required"],
+                        trim: true,
+                        minlength: [5, "(Vaccination) URL Link must contain at least 5 characters or more"],
+                    }
+                }
+            ]
+        }
     },
     medicalHistory: {
         tattoo: { // single
@@ -717,7 +750,6 @@ const baseSchema = new Schema({
         },
         q1DoctorDetails: { // has YesOrNo -- multiple
             required: [true, "(Medical History) Doctor Details field is required"],
-            default: [],
             type: [
                 {
                     doctorName: {
@@ -726,7 +758,7 @@ const baseSchema = new Schema({
                         trim: true,
                         minlength: [2, "(Medical History) Doctor Name must contain at least 2 characters"],
                         maxlength: [255, "(Medical History) Doctor Name must only contain 255 characters or fewer"],
-                        match: [utils.nameRegex, '(Medical History) Doctor Name can only contain letters and a few common symbols']
+                        match: [utils.textRegex, '(Medical History) Doctor Name can only contain letters and a few common symbols']
                     },
                     phone: {
                         type: String,
@@ -741,18 +773,24 @@ const baseSchema = new Schema({
                         required: [true, "(Medical History) Home address is required"],
                         trim: true,
                         minlength: [20, "(Medical History) Home address must contain at least 20 characters"],
-                        maxlength: [255, "(Medical History) Home address must only contain 255 characters or fewer"]
+                        maxlength: [255, "(Medical History) Home address must only contain 255 characters or fewer"],
+                        match: [utils.aNSRegex, "(Medical History) Home address must contain letter/s"]
                     },
                     forWhatCondition: {
                         type: String,
                         required: [true, "(Medical History) Condition/s is required"],
                         trim: true,
                         minlength: [1, "(Medical History) Condition/s must contain at least 1 character"],
-                        maxlength: [255, "(Medical History) Condition/s must only contain 255 characters or fewer"]
+                        maxlength: [255, "(Medical History) Condition/s must only contain 255 characters or fewer"],
+                        match: [utils.aNSRegex, "(Medical History) Condition/s must contain letter/s"]
                     }
                 }
-            ]
-
+            ],
+            // validate: {
+            //     validator: function() {
+            //         return (q1DoctorDetails)
+            //     }
+            // }
         },
         q2PastIllnessSurgery: { // has YesOrNo -- multiple
             type: [String],
@@ -840,25 +878,24 @@ const baseSchema = new Schema({
                 }
             ]
         },
-        attachments: {
-            required: [true, "(Medical History) Attachment/s is required"],
-            default: [],
+        attachments: { // optional -- multiple
+            required: [true, "(Medical History) Attachments field is required"],
+            default: undefined,
             type: [ // PROB: Need index here
                 {
-                    filename: {
+                    filename: {  // *
                         type: String,
                         required: [true, "(Medical History) Filename is required"],
                         trim: true,
-                        minlength: [5, "(Medical History) Filename must contain at least 5 characters or more"],
-                        maxlength: [255, "(Medical History) Filename exceeded 255 character limit (255)"],
-                        default: "N/A"
+                        unique: [true, "(Medical History) Filename already exists"],
+                        // minlength: [5, "(Medical History) Filename must contain at least 5 characters or more"],
+                        maxlength: [255, "(Medical History) Filename exceeded 255 character limit (255)"]
                     },
-                    urlLink: {
+                    urlLink: { // *
                         type: String,
                         required: [true, "(Medical History) URL Link is required"],
                         trim: true,
                         minlength: [5, "(Medical History) URL Link must contain at least 5 characters or more"],
-                        default: "N/A"
                     }
                 }
             ]
@@ -990,12 +1027,28 @@ const baseSchema = new Schema({
             needLowerDenture: { type: Number, required: true, default: 0 }
         },
         notes: { type: String, required: false, default: "" },
-        attachments: [
-            {
-                filename: { type: String, required: false, default: "" },
-                urlLink: { type: String, required: false, default: "" }
-            }
-        ]
+        attachments: { // optional -- multiple
+            required: [true, "(Dental Record) Attachments field is required"],
+            default: undefined,
+            type: [ // PROB: Need index here
+                {
+                    filename: {  // *
+                        type: String,
+                        required: [true, "(Dental Record) Filename is required"],
+                        trim: true,
+                        unique: [true, "(Dental Record) Filename already exists"],
+                        // minlength: [5, "(Dental Record) Filename must contain at least 5 characters or more"],
+                        maxlength: [255, "(Dental Record) Filename exceeded 255 character limit (255)"]
+                    },
+                    urlLink: { // *
+                        type: String,
+                        required: [true, "(Dental Record) URL Link is required"],
+                        trim: true,
+                        minlength: [5, "(Dental Record) URL Link must contain at least 5 characters or more"],
+                    }
+                }
+            ]
+        }
     },
     archived: { type: Boolean, default: false },
     archivedDate: { type: Date, default: null }
