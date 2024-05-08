@@ -7,7 +7,7 @@ module.exports = {
       "bgColor": "#E2E2F2",
       "overlay": "001F54",
       "overButton": "ABC8FF",
-      "darkBlutton": "001F44",
+      "darkButton": "001F44",
       "popupColor": "BFD9FF"
       },
 

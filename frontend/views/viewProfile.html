@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>View Profile</title>
+        <link rel="stylesheet" href="../assets/css/styles.css">
+    </head>
+    <body>
+        <special-header></special-header> <!-- header -->
+
+        <div class="flex px-8 align-middle"> <!-- title -->
+            <button class="mx-5 mr-4 pl-3 relative w-12 h-12">
+                <img src="../assets/img/realBack.png" class="w-6 h-6">
+                <span
+                    class="absolute inset-0 flex items-center justify-center rounded-full bg-transparent hover:bg-black hover:bg-opacity-25 transition-all">
+                </span>
+            </button>
+            <h1 class="px-4 pt-1 text-3xl align-middle">Profile
+                Settings</h1>
+        </div>
+
+        <div class="h-screen w-screen flex flex-col p-11 sm:self-center sm:flex-row sm:items-center sm:justify-center sm:gap-x-20">
+            <div class="justify-center pb-6 pl-20 pr-20 sm:p-0">
+                <!--pb-20 pl-20 pr-20-->
+                <img src="../assets/img/profile-img.png"
+                    class="rounded-full w-15 shadow-lg shadow-slate-500">
+            </div>
+
+            <div>
+                <div class="flex flex-col pt-2 gap-y-3.5"> <!-- profile info -->
+                    <div>
+                        <h1
+                            class="text-darkButton font-bold text-xl md:text-2xl">Name</h1>
+                        <h1 class="text-darkButton text-lg md:text-xl">Undo
+                            Lumayad</h1>
+                    </div>
+                    <div>
+                        <h1
+                            class="text-darkButton font-bold text-xl md:text-2xl">User
+                            Type</h1>
+                        <h1
+                            class="text-darkButton text-lg md:text-xl">Doctor</h1>
+                    </div>
+                    <div>
+                        <h1
+                            class="text-darkButton font-bold text-xl md:text-2xl">Email
+                            Address</h1>
+                        <h1
+                            class="text-darkButton text-lg md:text-xl">hantulumayad@gmail.com</h1>
+                    </div>
+                    <div>
+                        <h1
+                            class="mb-2 text-darkButton font-bold text-xl md:text-2xl md:mb-3">Password</h1>
+                        <button
+                            class="px-4 py-2 bg-darkButton rounded-md text-white font-semibold">Change
+                            Password</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <special-footer></special-footer> <!-- footer -->
+
+        <script src="./templateManager.js"></script>
+    </body>
+</html>
