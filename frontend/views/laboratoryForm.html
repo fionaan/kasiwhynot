@@ -1,0 +1,369 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Single Record(Student)</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <div>
+        <special-header></special-header>
+        <div class="flex px-8 align-middle"> 
+            <button class="mx-5 mr-4 pl-3 relative w-12 h-12">
+                <img src="../assets/img/realBack.png" class="w-6 h-6">
+                <span class="absolute inset-0 flex items-center justify-center rounded-full bg-transparent hover:bg-black hover:bg-opacity-25 transition-all">
+                </span>
+              </button>
+            <h1 class="px-4 pt-1 text-3xl align-middle font-bold">Add Medical Record (Student)</h1>
+        </div>
+        <div class="mt-6 order-b border-gray-200 dark:border-neutral-700 shadow-xl">
+            <nav class="-mb-0.5  flex justify-evenly shadow-xl space-x-40" aria-label="Tabs" role="tablist">
+                <button id="personalInformation" type="button" class="hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500 active" id="horizontal-alignment-item-1" data-hs-tab="#horizontal-alignment-1" aria-controls="horizontal-alignment-1" role="tab">
+                  Personal Information
+                </button>
+                <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500" id="horizontal-alignment-item-2" data-hs-tab="#horizontal-alignment-2" aria-controls="horizontal-alignment-2" role="tab">
+                  Laboratory
+                </button>
+                <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500" id="horizontal-alignment-item-3" data-hs-tab="#horizontal-alignment-3" aria-controls="horizontal-alignment-3" role="tab">
+                  Vaccination
+                </button>
+                <button type="button" class="hs-tab-active:font-semibold hs-tab-active:border-blue-600 hs-tab-active:text-blue-600 py-4 px-1 inline-flex items-center gap-x-2 border-b-2 border-transparent text-sm whitespace-nowrap text-gray-500 hover:text-blue-600 focus:outline-none focus:text-blue-600 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:hover:text-blue-500" id="horizontal-alignment-item-3" data-hs-tab="#horizontal-alignment-3" aria-controls="horizontal-alignment-3" role="tab">
+                  Medical History
+                </button>
+                
+              </nav>        
+        </div>
+              <div class=" justify-self-center mt-4 mr-10 ml-10 w-auto h-auto px-4 py-6 bg-white rounded-lg border-2 border-gray-400">
+                <div class=" px-10 py-5 flex justify-between">
+                    <h4 class="text-gray-800 text-3xl font-bold mb-4">Laboratory</h4>
+                    <button type="submit" class="bg-blue-600 text-white py-min px-4 rounded-md hover:bg-blue-700 transition-colors">Reset</button>
+                </div>
+
+                
+
+                <div class="flex flex-wrap mx-8 space-x-2 mb-2">
+                  <div class="w-full lg:w-96 mr-4 px-2">
+                    <div class="mb-4">
+                        <label for="message1" class="block text-gray-700 text-base font-medium mb-2">Chest X-ray (latest)</label>
+                        <textarea id="message1" rows="4" class="block w-full md:w-96 h-24 text-sm text-blue-950 bg-blue-300 rounded-lg border focus:border-blue-500 dark:placeholder-blue-950 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 resize-none" placeholder="Findings/Impressions:" style="color: #0e227d;"></textarea>
+                    </div>
+                    <div class="border bg-blue-300 w-full md:w-96 rounded-lg p-4 h-16">
+                        <label for="dob1" class="block text-gray-700 text-xs font-medium">Date (X-ray Taken)</label>
+                        <input name="dob1" type="date" id="dob1" class="block w-full  text-sm  bg-blue-300 border border-blue-300 rounded-md focus:outline-none focus:border-blue-500" placeholder="Select Date">
+                    </div>
+                  </div>
+                
+                <div class="w-full lg:w-96 mr-4 px-2">
+                    <div class="mb-4">
+                        <label for="message2" class="block text-gray-700 text-base font-medium mb-2">Complete Blood Count (CBC)</label>
+                        <textarea id="message2" rows="4" class="block w-full md:w-96 h-24 text-sm text-blue-950 bg-blue-300 rounded-lg border focus:border-blue-500 dark:placeholder-blue-950 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 resize-none" placeholder="Findings/Impressions:" style="color: #0e227d;"></textarea>
+                    </div>
+                    <div class="border bg-blue-300 w-full md:w-96 rounded-lg p-4 h-16">
+                        <label for="dob2" class="block text-gray-700 text-xs font-medium">Date (CBC)</label>
+                        <input name="dob2" type="date" id="dob2" class="block w-full  text-sm bg-blue-300 border border-blue-300 rounded-md focus:outline-none focus:border-blue-500" placeholder="Select Date">
+                    </div>
+                </div>
+              
+                  <div class="*w-full lg:w-60 mr-4 px-2">
+                    <div class="mb-4">
+                      <label for="hepatitis" class="block text-gray-700 text-base font-medium mb-2">Hepatitis Profile</label>
+                      <div class="w-full md:w-60 h-20 px-2 mb-4 border border-blue-900 rounded-md">
+                        <label for="HBsAg" class="block text-gray-700 text-sm font-medium ml-2 mt-2">HBsAg</label>
+                        <select name="HBsAg" id="HBsAg" class="block w-full h-10 ml-1  border-gray-300 rounded-md ">
+                            <option >Select</option>
+                            <option value="LV">LV</option>
+                            <option value="GP">GP</option>
+                            
+                        </select>
+                        
+
+                    </div>
+                    
+                      
+                      </div>
+                      <div class="mb-4">
+                        <div class="w-full md:w-60 h-20 px-2 mb-4 border border-blue-900 rounded-md">
+                          <label for="HBsAg" class="block text-gray-700 text-sm font-medium ml-2 mt-2">HBsAg</label>
+                          <select name="HBsAg" id="HBsAg" class="block w-full h-10 ml-1  border-gray-300 rounded-md ">
+                              <option >Select</option>
+                              <option value="LV">LV</option>
+                              <option value="GP">GP</option>
+                              
+                          </select>
+                          
+  
+                      </div>
+                      
+                        
+                        </div>
+                      
+                  </div>
+                  <div class="*w-full lg:w-60  px-2 pt-8  ">
+                    <div class="w-full md:w-60 h-20 px-2 mb-4 border border-blue-900 rounded-md">
+                        <label for="HBsAg" class="block text-gray-700 text-sm font-medium ml-2 mt-2">HBsAg</label>
+                        <select name="HBsAg" id="HBsAg" class="block w-full h-10 ml-1  border-gray-300 rounded-md ">
+                            <option >Select</option>
+                            <option value="LV">LV</option>
+                            <option value="GP">GP</option>
+                            
+                        </select>
+                    </div>
+                      
+                        <div class="w-full md:w-60 h-20 px-2 mb-4 border border-blue-900 rounded-md">
+                          <label for="HBsAg" class="block text-gray-700 text-sm font-medium ml-2 mt-2">HBsAg</label>
+                          <select name="HBsAg" id="HBsAg" class="block w-full h-10 ml-1  border-gray-300 rounded-md ">
+                              <option >Select</option>
+                              <option value="LV">LV</option>
+                              <option value="GP">GP</option>
+                              
+                          </select>
+                          
+  
+                      
+                        
+                        </div>
+                      
+                  </div>
+              </div>
+
+
+<!-- Drug test -->
+              <div class="flex flex-wrap mx-8 space-x-2 mb-2">
+                <div class="w-full mr-4 px-2 ">
+                  <label for="" class="block text-gray-700 text-base font-medium mb-2">Drug Test</label>
+                  <div class="overflow-hidden  rounded-r-lg">
+                    <table class="table-auto  border-black">
+                      <thead>
+                        <tr>
+                          <th class="border border-black bg-blue-100 text-left px-4 py-2 w-96 ">Drug/Metabolite</th>
+                          <th  class="border border-slate-600 bg-blue-100 text-left px-4 py-2 w-52">Results</th>
+                          <th class=" border border-black bg-blue-100 text-left px-4 py-2 w-52  rounded-tr-lg">Remarks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="border  border-black font-bold px-2 py-2 ">METHAMPHETAMINE</td>
+                          <td class="border  border-black  px-2 py-2 ">
+                            <select name="methaphetamineResults" id="campus" class="block w-full   border-gray-300 rounded-md ">
+                              <option class="text" >Select</option>
+                              <option value="Positive">Positive</option>
+                              <option value="Negative">Negative</option>
+                              
+                            </select>
+                          </td>
+                          <td class="border  border-black">
+                            <input name="methamphetamineRemarks" type="text" id="lastName" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="">
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="border  border-black font-bold px-2 py-2 ">TETRAHYDROCANNABINOL</td>
+                          <td class="border  border-black  px-2 py-2 ">
+                            <select name="tetrahydrocannabinolResults" id="campus" class="block w-full   border-gray-300 rounded-md ">
+                              <option class="text" >Select</option>
+                              <option value="Positive">Positive</option>
+                              <option value="Negative">Negative</option>
+                              
+                              
+                            </select>
+                          </td>
+                          <td class="border  border-black">
+                            <input name="tetrahydrocannabinolRemarks" type="text" id="lastName" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="">
+                          </td>
+                        </tr>
+          
+                    </table>
+                  </div>
+                  
+                </div>
+
+                
+
+              </div>
+
+              <!-- Urinalysis -->
+
+              <label class="block text-gray-700 text-base mx-8 font-medium mb-2 mt-4" >Urinalysis</label>
+              <div class="flex flex-wrap gap-6 mx-8 mb-2">
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                    <label for="color" class="block text-gray-700 text-sm font-medium mt-2 ml-2">Color</label>
+                    <input name="color" type="text" id="color" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Color">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                    <label for="transparency" class="block text-gray-700 text-sm font-medium  ml-2 mt-2">Transparency</label>
+                    <input name="transparency" type="text" id="transparency" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Transparency">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                    <label for="blood" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Blood</label>
+                    <input name="blood" type="text" id="blood" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Blood">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                  <label for="bilirubin" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Bilirubin</label>
+                  <input name="bilirubin" type="text" id="bilirubin" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Blood">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                  <label for="urobilinogen" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Urobilinogen</label>
+                  <input name="urobilinogen" type="text" id="urobilinogen" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Urobilinogen">
+                </div>
+              </div>
+
+
+              <div class="flex flex-wrap gap-6 mx-8 mb-2">
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                    <label for="color" class="block text-gray-700 text-sm font-medium mt-2 ml-2">Ketones</label>
+                    <input name="color" type="text" id="color" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Color">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                    <label for="transparency" class="block text-gray-700 text-sm font-medium  ml-2 mt-2">Glucose</label>
+                    <input name="transparency" type="text" id="transparency" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Transparency">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                    <label for="blood" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Protein</label>
+                    <input name="blood" type="text" id="blood" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Blood">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                  <label for="bilirubin" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Nitrite</label>
+                  <input name="bilirubin" type="text" id="bilirubin" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Blood">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                  <label for="urobilinogen" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Leukocyte</label>
+                  <input name="urobilinogen" type="text" id="urobilinogen" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Urobilinogen">
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-6 mx-8 mb-2">
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                    <label for="color" class="block text-gray-700 text-sm font-medium mt-2 ml-2">pH Level</label>
+                    <input name="color" type="number" step="0.1" id="color" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter pH Level">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                    <label for="transparency" class="block text-gray-700 text-sm font-medium  ml-2 mt-2">Sp. Gravity</label>
+                    <input name="transparency" type="number" step="0.1" id="transparency" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Sp. Gravity">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                    <label for="blood" class="block text-gray-700 text-sm font-medium ml-2 mt-2">WBC</label>
+                    <input name="blood" type="text" id="blood" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter WBC">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                  <label for="bilirubin" class="block text-gray-700 text-sm font-medium ml-2 mt-2">RBC</label>
+                  <input name="bilirubin" type="text" id="bilirubin" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter RBC">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                  <label for="urobilinogen" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Bacteria</label>
+                  <input name="urobilinogen" type="text" id="urobilinogen" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Bacteria">
+                </div>
+
+              </div>
+              <div class="flex flex-wrap gap-6 mx-8 mb-2">
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                    <label for="color" class="block text-gray-700 text-sm font-medium mt-2 ml-2">Epithelial Cells</label>
+                    <input name="color" type="number" step="0.1" id="color" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Epithelial Cells">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                    <label for="transparency" class="block text-gray-700 text-sm font-medium  ml-2 mt-2">Amorphous Urates</label>
+                    <input name="transparency" type="number" step="0.1" id="transparency" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Amorphous Urates">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                    <label for="blood" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Mucus Threads</label>
+                    <input name="blood" type="text" id="blood" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Mucus Threads">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                  <label for="bilirubin" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Others: </label>
+                  <input name="bilirubin" type="text" id="bilirubin" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Specify">
+                </div>
+                
+              </div>
+
+
+              <label class="block text-gray-700 text-base mx-8 font-medium mb-2 mt-4" >Fecalysis</label>
+              <div class="flex flex-wrap gap-6 mx-8 mb-2">
+                <div class="w-full md:w-60 px-2 mb-2 border border-blue-900 rounded-md">
+                    <label for="color" class="block text-gray-700 text-sm font-medium mt-2 ml-2">Color</label>
+                    <input name="color" type="number" step="0.1" id="color" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Color">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-2 border border-blue-900 rounded-md">
+                    <label for="transparency" class="block text-gray-700 text-sm font-medium  ml-2 mt-2">Consistency</label>
+                    <input name="transparency" type="number" step="0.1" id="transparency" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Consistency">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-2 border border-blue-900 rounded-md">
+                    <label for="blood" class="block text-gray-700 text-sm font-medium ml-2 mt-2">WBC</label>
+                    <input name="blood" type="text" id="blood" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Mucus Threads">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-2 border border-blue-900 rounded-md">
+                  <label for="bilirubin" class="block text-gray-700 text-sm font-medium ml-2 mt-2">RBC</label>
+                  <input name="bilirubin" type="text" id="bilirubin" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter RBC">
+                </div>
+                <div class="w-full md:w-60 px-2 mb-2 border border-blue-900 rounded-md">
+                  <label for="bilirubin" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Fat Globules</label>
+                  <input name="bilirubin" type="text" id="bilirubin" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Fat Globlules">
+                </div>
+                
+
+                <div class="w-full md:w-60 px-2 mb-4 border border-blue-900 rounded-md">
+                  <label for="bilirubin" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Muscles Fibers</label>
+                  <input name="bilirubin" type="text" id="bilirubin" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Muscle Fibers">
+                </div>
+                <div class="w-full md:w-1/3 px-2 mb-4 border border-blue-900 rounded-md">
+                  <label for="bilirubin" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Results:</label>
+                  <input name="bilirubin" type="text" id="bilirubin" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Results">
+                </div>
+              </div>
+
+              <!-- OTHERS -->
+              
+              <h1 class="block text-gray-700 text-lg mx-8 font-medium mb-2 mt-4">OTHERS: </h1>
+              <h2 class="block text-gray-700 text-base mx-8 font-medium mb-2 mt-2"> Pregnancy Test</h2>
+              <div class="flex flex-wrap gap-6 mx-8 mb-2">
+                <div class="w-full md:w-96 px-4  mb-4 border  border-blue-900 rounded-md">
+                  <label for="result" class="block text-gray-700 text-sm font-medium mt-2">Results</label>
+                  <select name="result" id="result" class="block w-full h-10 border-gray-300 rounded-md ">
+                      <option value="">Select</option>
+                      <option value="Positive">Positive</option>
+                      <option value="Negative">Negative</option>
+                      
+                  </select>
+                </div>
+
+              </div>
+
+              <!-- Upload -->
+
+              <h2 class="block text-gray-700 text-base mx-8 font-medium mb-2 mt-2">Upload Laboratory Attachment/s</h2>
+              <div class="flex flex-wrap gap-6 mx-8 mb-2">
+                
+                <button id="addFiles" class="w-64 bg-blue-950 text-white px-4 py-4 rounded-2xl flex items-center space-x-2">
+                  <img src="../assets/img/plus-symbol-button.png" alt="addbutton" class=" w-6 h-6">
+                  <span>Add Files</span>
+                </button>
+
+                
+              </div>
+              
+
+
+              
+
+                
+                  
+                  
+                  
+              </div>
+
+               
+                
+              </div>
+                
+
+              </div>
+
+
+        
+    </div>
+    <!-- <special-footer></special-footer> -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    
+    <script src="./templateManager.js"></script>
+    <script src="./scripts.js"></script>
+    
+</body>
+</html>
