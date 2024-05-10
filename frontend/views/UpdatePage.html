@@ -4,36 +4,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Page</title>
-    <link rel="stylesheet" href="../assets/css/HomePage.css">
+    <title>View Patient</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/UpdatePage.css">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
-    <div class="site-body">
-        <special-header></special-header>
-        <div class="content">
-            <div class="table-container">
-                <div class="bg-white h-auto w-4/5 max-w-xl mx-auto mt-10 mb-4 p-5 rounded-login flex items-center">
-                    <table>
-                        <p class="text-7xl text-center">BROTHA BROTHA BROTHAAA~ HOW U DO-DOOOINNN~ OH-OW-OH</p>
-                    </table>
-                </div>
-            </div>
-            <section id="buttons-column" style="display: flex; flex-direction: column; align-items: start;">
-                <button class="button" onclick="scrollToSection('basic-info')">Basic Info</button>
-                <button class="button" onclick="scrollToSection('laboratory')">Laboratory</button>
-                <button class="button" onclick="scrollToSection('vaccination')">Vaccination</button>
-                <button class="button" onclick="scrollToSection('medical-history')">Medical History</button>
-                <button class="button" onclick="scrollToSection('dental')">Dental</button>
-            </section>
-        </div>
+<body class="flex flex-col justify-between bg-gray-100">
+    <special-header></special-header>
 
-        <special-footer></special-footer>
-        <script src="../assets/js/Template.js"></script>
+    <div id="title" class="my-1"></div>
+    <div class="flex justify-between items-center mt-20">
+        <section id="buttons-column" class="flex flex-col items-start font-semibold text-3xl m-10">
+            <button class="button flex items-center mb-20"><img src="../assets/img/basic-info-icon.png" alt="Info Icon"
+                    class="mr-2"> Basic Info</button>
+            <button class="button flex items-center mb-20"><img src="../assets/img/laboratory-icon.png" alt="Flask Icon"
+                    class="mr-2"> Laboratory</button>
+            <button class="button flex items-center mb-20"><img src="../assets/img/vaccination-icon.png"
+                    alt="Syringe Icon" class="mr-2"> Vaccination</button>
+            <button class="button flex items-center mb-20"><img src="../assets/img/medical-history-icon.png"
+                    alt="Medical File Icon" class="mr-2"> Medical History</button>
+            <button class="button flex items-center mb-20"><img src="../assets/img/dental-icon.png" alt="Tooth Icon"
+                    class="mr-2"> Dental</button>
+        </section>
     </div>
+    <div class="flex justify-center items-center h-screen">
+        <table class="border-collapse border-2 border-gray-600 bg-blue-900">
+            <thead>
+                <tr>
+                    <th class="border border-gray-600 px-4 py-2">Header 1</th>
+                    <th class="border border-gray-600 px-4 py-2">Header 2</th>
+                    <th class="border border-gray-600 px-4 py-2">Header 3</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="border border-gray-600 px-4 py-2">Data 1</td>
+                    <td class="border border-gray-600 px-4 py-2">Data 2</td>
+                    <td class="border border-gray-600 px-4 py-2">Data 3</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <special-footer></special-footer>
+
+    <script src="../assets/js/Template.js"></script>
+    <script>
+        updateTitle('View Patient')
+    </script>
 </body>
 
 </html>
