@@ -19,7 +19,6 @@ module.exports = {
         'login': '22rem'
       }
     },
-
   },
   plugins: [],
 }
