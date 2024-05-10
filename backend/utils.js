@@ -29,7 +29,7 @@ const userTypeList = ['Dentist', 'Nurse', 'Doctor']
 const historyTypeList = ['ADD', 'UPDATE', 'ARCHIVE', 'UNARCHIVE']
 
 //LIST REFERENCE FOR RECORD CLASS
-const recordClassList = ['Medical', 'Dental']
+const recordClassList = ['Medical', 'Dental', 'All']
 
 //CHECKS IF THE GIVEN VALUE IS A VALID MONGOOSE OBJ ID
 const isObjIdValid = (id) => {
@@ -110,7 +110,7 @@ const checkMandatoryFields = (arrs) => {
 }
 
 String.prototype.toProperCase = function () {
-    return this.toLowerCase().replace(/^(.)|\s(.)/g, function ($1) { return $1.toUpperCase(); })
+    return input.toLowerCase().replace(/^(.)|\s(.)/g, function ($1) { return $1.toUpperCase(); })
 }
 
 //GENERATES RANDOM PASSWORD
@@ -141,6 +141,13 @@ String.prototype.toProperCase = function () {
     return this.toLowerCase().replace(/^(.)|\s(.)/g, function ($1) { return $1.toUpperCase(); })
 }
 
+// THROW SIMPLE CUSTOM ERROR
+const throwError = (errMessage, errStatus) => {
+    let error = new Error(errMessage)
+    error.status = errStatus
+    throw error
+}
+
 // DENTAL RECORD FIELDS WITH FIXED VALUES (LIST)
 
 const q4Values = ["2x a day", "3x a day", "every after meal", "before going to bed"] 
@@ -165,6 +172,7 @@ module.exports = {
     checkFullArr,
     checkMandatoryFields,
     generatePassword,
+    throwError,
     toProperCase: String.prototype.toProperCase,
     isValidCampus,
     gender

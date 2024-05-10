@@ -25,12 +25,13 @@ const login = async (req, res, next) => {
                 let accessToken = generateAccessToken({ userId: user._id })
                 let refreshToken = jwt.sign({userId: user._id}, process.env.REFRESH_TOKEN_SECRET)
 
-                res.cookie('refreshToken', refreshToken, {httpOnly: false})
+                res.cookie('accessToken', accessToken, {httpOnly: true})
+                res.cookie('refreshToken', refreshToken, {httpOnly: true})
                 console.log(accessToken)
-                // return res.status(200).send({
-                //     successful: true,
-                //     message: "Login successful."
-                // })
+                return res.status(200).send({
+                    successful: true,
+                    message: "Login successful."
+                })
             }
             else if (user.passChangeable === true) {
                 return res.redirect('/change-password')
@@ -49,7 +50,7 @@ const login = async (req, res, next) => {
     }
 }
 
-const changePassword = async (req, res, next) => {
+const setNewPassword = async (req, res, next) => { //for setting new password after account creation or forgetting password, no "old password" validation
     const { email, newPassword, confirmNewPassword } = req.body
     console.log(newPassword)
 
@@ -91,12 +92,13 @@ const changePassword = async (req, res, next) => {
     }
 }
 
-const forgetPassword = async (req, res, next) => {
-    const email = req.body.email
+const changeOldPassword = async (req, res, next) => { //for changing old password
+    const { email, oldPassword, newPassword, confirmNewPassword } = req.body
+    console.log(newPassword)
 
     //check for missing fields
-    if (utilFunc.checkIfNull(email)) {
-        return res.status(400).send("No user selected.")
+    if (utilFunc.checkIfNull(email) || utilFunc.checkIfNull(oldPassword) || utilFunc.checkIfNull(newPassword) || utilFunc.checkIfNull(confirmNewPassword)) {
+        return res.status(400).send("Please fill in the missing fields.")
     }
 
     try {
@@ -106,13 +108,24 @@ const forgetPassword = async (req, res, next) => {
         if (user == null) {
             return res.status(400).send("The specified user does not exist in the database.")
         }
-        else {
-            user.password = utilFunc.generatePassword()
+
+        if (user.password != oldPassword) {
+            return res.status(400).send("The old password is incorrect")
+        }
+
+        //check if New Password and Confirm New Password match each other
+        if (newPassword != confirmNewPassword) {
+            return res.status(400).send("The new passwords in the fields don't match with each other.")
+        }
+        else if (newPassword === confirmNewPassword) {
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            user.password = hashedPassword;
+            user.passChangeable = false;
             await user.save()
-            console.log(user.password)
+
             return res.status(200).send({
                 successful: true,
-                message: "Password reset successful. New password sent to user's email."
+                message: "Password has been successfully changed."
             })
         }
     }
@@ -133,7 +146,7 @@ const logout = (req, res, next) => {
 
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const token = req.cookies.accessToken
     const refreshToken = req.cookies.refreshToken;
 
     if (!authHeader) {
@@ -152,10 +165,11 @@ function authenticateToken(req, res, next) {
                         if (err) {
                             return res.sendStatus(403);
                         } else {
-                            let accessToken = generateAccessToken({ userId: user._id });
-                            req.user = user;
-                            console.log("AT: " + accessToken);
-                            console.log("RT: " + refreshToken);
+                            let accessToken = generateAccessToken({ userId: user._id })
+                            res.cookie('accessToken', accessToken, {httpOnly: true})
+                            req.user = user
+                            console.log("AT: " + accessToken)
+                            console.log("RT: " + refreshToken)
                             next();
                         }
                     });
@@ -179,8 +193,8 @@ function generateAccessToken (user) {
 
 module.exports = {
     login,
-    changePassword,
-    forgetPassword,
+    setNewPassword,
+    changeOldPassword,
     generateAccessToken,
     authenticateToken,
     logout

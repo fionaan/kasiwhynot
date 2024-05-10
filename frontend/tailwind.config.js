@@ -2,10 +2,21 @@
 module.exports = {
   content: ["./views/**/*.{html,js}"],
   theme: {
-    extend: {
+    extend: { 
       colors: {
-        "bgcolor": "E2E2F2",
-        "overlay": "001F54"
+      "bgColor": "#E2E2F2",
+      "overlay": "001F54",
+      "overButton": "ABC8FF",
+      "darkBlutton": "001F44",
+      "popupColor": "BFD9FF"
+      },
+
+      borderRadius: {
+      'login': '0.75rem',
+      },
+
+      height: {
+        'login': '22rem'
       }
     },
   },
