@@ -4,8 +4,9 @@ module.exports = {
   theme: {
     extend: { 
       colors: {
-      "bgColor": "EEEEFF",
+      "bgColor": "F2F7FF",
       "bgColorWh": "FDFDFD",
+      "bgColorWh2": "F0F2F5",
       "overlay": "001F54",
       "overButton": "ABC8FF",
       "darkButton": "001F44",

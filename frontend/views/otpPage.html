@@ -1,0 +1,68 @@
+<html>
+
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>View Profile</title>
+        <link rel="stylesheet" href="../assets/css/styles.css">
+    </head>
+
+    <body class="bg-bgColor">
+        <div class="flex flex-col h-screen">
+            <header class="flex basis-auto items-center justify-between px-9 py-7 sm:px-12 sm:py-4"> <!-- header -->
+                <h1 class="text-overlay text-2xl font-bold">CEU Health</h1>
+            </header>
+
+            <div class="flex grow justify-center items-center"> <!-- email confirmation card -->
+
+                <div class="flex flex-col w-10/12 md:justify-center md:h-fit md:w-1/3 gap-y-7 bg-white rounded-lg p-7 md:p-8 shadow sm:max-w-fit mb-6">
+                    <div class="flex flex-col gap-y-0.5"> <!-- confirm title -->
+                        <h1 class="text-sm font-bold text-darkButton md:text-xl">OTP Verification</h1>
+                        <h2 class="text-xs text-gray-800 md:text-sm">Please enter the 6-digit authentication code sent to your email address.</h2>
+                    </div>
+
+                    <div class="flex w-full justify-around">
+                        <input type="text" class="border-2 border-gray-400 w-11 h-11 rounded-xl mx-auto text-xl text-center focus:border-2 focus:border-darkBlue" maxlength="1"/>
+                        <input type="text" class="border-2 border-gray-400 w-11 h-11 rounded-xl mx-auto text-xl text-center focus:border-2 focus:border-darkBlue" maxlength="1"/>
+                        <input type="text" class="border-2 border-gray-400 w-11 h-11 rounded-xl mx-auto text-xl text-center focus:border-2 focus:border-darkBlue" maxlength="1"/>
+                        <input type="text" class="border-2 border-gray-400 w-11 h-11 rounded-xl mx-auto text-xl text-center focus:border-2 focus:border-darkBlue" maxlength="1"/>
+                        <input type="text" class="border-2 border-gray-400 w-11 h-11 rounded-xl mx-auto text-xl text-center focus:border-2 focus:border-darkBlue" maxlength="1"/>
+                        <input type="text" class="border-2 border-gray-400 w-11 h-11 rounded-xl mx-auto text-xl text-center focus:border-2 focus:border-darkBlue" maxlength="1"/>
+                    </div>
+
+                    <div class="flex flex-col gap-y-1.5">
+                        <button class="bg-darkButton border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-10 md:rounded-full p-1.5 mb-0.5 font-medium text-white text-sm hover:bg-hoverDarkBlue active:bg-activeDarkBlue focus:outline-none focus:ring-2 focus: focus:ring-offset-1 transition-all">Verify</button>
+
+                        <button class="bg-white border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-10 md:rounded-full p-1.5 mb-0.5 font-medium text-darkButton text-sm border-2 hover:bg-gray-200 active:bg-activeDarkBlue active:text-white focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all">Back</button>
+                    </div>    
+                </div>
+            </div>
+
+            <footer class="bg-blue-950 text-white py-2 px-8 bottom-0 w-full">
+                <!-- footer -->
+                <div class="container mx-auto">
+                    <p class="text-center text-xs">Copyright 2023 CEU Healthy</p>
+                </div>
+            </footer>
+        </div>
+        <script>
+            function toggleSelectBorder(element) {
+                element.classList.toggle('border-blue-500'); // Toggle the border color class
+                element.classList.toggle('border-2');
+              }
+
+              document.addEventListener('click', function(event) {
+                const target = event.target;
+            
+                if (!target.closest('.w-full')) {
+                  const divsWithBorders = document.querySelectorAll('.w-full');
+            
+                  divsWithBorders.forEach((div) => {
+                    div.classList.remove('border-blue-500');
+                  })
+                }
+              })
+        </script>
+        <script src="./templateManager.js"></script>
+    </body>
+
+</html>
