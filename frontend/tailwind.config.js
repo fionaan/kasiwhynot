@@ -17,7 +17,21 @@ module.exports = {
 
       height: {
         'login': '22rem'
-      }
+      },
+
+      fontSize: {
+        'search': '1.025rem'
+      },
+
+      flexGrow: {
+        '3': 3
+      },
+
+      screens: {
+        'viewPL': {'min': '1160px'},
+        'viewHL': {'min': '1275px'},
+        'viewHLphone': {'min': '1275px'},
+      },
     },
   },
   plugins: [],
