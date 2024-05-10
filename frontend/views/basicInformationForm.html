@@ -33,38 +33,43 @@
                 
               </nav>        
         </div>
-              <div class=" justify-self-center mt-4 mr-10 ml-10 w-auto h-auto px-4 py-6 bg-white rounded-lg border-2 border-gray-400">
+              <div class=" justify-self-center mb-8 mt-4 mr-10 ml-10 w-auto h-auto px-4 py-6 bg-white rounded-lg border-2 border-gray-400">
                 <div class=" px-10 py-5 flex justify-between">
                     <h4 class="text-gray-800 text-3xl font-bold mb-4">Basic Information</h4>
-                    <button type="submit" class="bg-blue-600 text-white py-min px-4 rounded-md hover:bg-blue-700 transition-colors">Reset</button>
+                    <button onclick="showResetMessage()" class="bg-blue-950 text-white py-min px-4 rounded-md hover:bg-blue-700 transition-colors flex justify-center items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                      </svg>
+                      Reset</button>
+
                 </div>
 
 
                 <div class="flex flex-wrap gap-3.5 mb-2">
-                  <div class="w-full md:w-48 px-2 mb-4 border border-gray-300 rounded-md">
+                  <div onclick="toggleSelectBorder(this)" id="borderColor" class="w-full md:w-48 px-2 mb-4 border border-gray-300 rounded-md">
                       <label for="campus" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Campus</label>
-                      <select name="campus" id="campus" class="block w-full h-10 ml-1  border-gray-300 rounded-md ">
+                      <select  name="campus" id="campus" class="block w-full h-10 ml-1  border-gray-300 rounded-md ">
                           <option >Select campus</option>
                           <option value="LV">LV</option>
                           <option value="GP">GP</option>
                           
                       </select>
                   </div>
-                  <div class="w-full md:w-64 px-2 mb-4 border border-gray-300 rounded-md">
+                  <div onclick="toggleSelectBorder(this)" class="w-full md:w-64 px-2 mb-4 border border-gray-300 rounded-md">
                       <label for="txtStudentNo" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Student Number</label>
                       <input name="txtStudentNo" type="text" maxlength="10" id="txtStudentNo" class="block w-full h-10  px-2" placeholder="1234-56789" pattern="^[0-9]*$" >
                   </div>
-                  <div class="w-full md:w-2/5 px-2 mb-4 border border-gray-300 rounded-md">
+                  <div  class="w-full md:w-2/5 px-2 mb-4 border rounded-md cursor-pointer"
+                  onclick="toggleSelectBorder(this)" >
                     <label for="course" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Course</label>
                     <select name="course" id="course" class="block w-full h-10 ml-1 border-gray-300 rounded-md">
-                        <option value="">Select course</option>
-                        <option value="LV">Information Technology</option>
-                        <option value="GP">Computer Science</option>
-                        <option value="Bachelor of Science in Business Administration Major in International Management">Bachelor of Science in Business Administration Major in International Management</option>
-                        
+                      <option value="">Select course</option>
+                      <option value="LV">Information Technology</option>
+                      <option value="GP">Computer Science</option>
+                      <option value="Business Administration">Business Administration</option>
                     </select>
-                </div>
-                <div class="w-full md:w-36 px-2 mb-4 border border-gray-300 rounded-md">
+                  </div>
+                <div onclick="toggleSelectBorder(this)" class=" w-full md:w-36 px-2 mb-4 border border-gray-300 rounded-md">
                   <label for="year" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Year</label>
                   <select name="year" id="year" class="block w-full h-10 ml-1 border-gray-300 rounded-md ">
                       <option value="">Select year</option>
@@ -73,7 +78,7 @@
                       
                   </select>
                 </div>
-                <div class="w-full md:w-36 px-2 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-36 px-2 mb-4 border border-gray-300 rounded-md">
                   <label for="section" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Section</label>
                   <select name="section" id="section" class="block w-full h-10 border-gray-300 rounded-md ">
                       <option value="">Select Section</option>
@@ -86,15 +91,15 @@
 
 
               <div class="flex flex-wrap gap-5 mb-2">
-                <div class="w-full md:w-1/3 px-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-1/3 px-4 mb-4 border border-gray-300 rounded-md">
                     <label for="firstName" class="block text-gray-700 text-sm font-medium mt-2 ml-2">First Name</label>
                     <input name="firstName" type="text" id="firstName" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="First Name">
                 </div>
-                <div class="w-full md:w-1/3 px-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-1/3 px-4 mb-4 border border-gray-300 rounded-md">
                     <label for="lastName" class="block text-gray-700 text-sm font-medium  ml-2 mt-2">Last Name</label>
                     <input name="lastName" type="text" id="lastName" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Last Name">
                 </div>
-                <div class="w-full md:w-96 px-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-96 px-4 mb-4 border border-gray-300 rounded-md">
                     <label for="middleName" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Middle Name</label>
                     <input name="middleName" type="text" id="middleName" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Middle Name">
                 </div>
@@ -102,19 +107,19 @@
 
 
               <div class="flex flex-wrap gap-5 mb-2">
-                <div class="w-full md:w-1/3 px-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-1/3 px-4 mb-4 border border-gray-300 rounded-md">
                     <label for="firstName" class="block text-gray-700 text-sm font-medium mt-2 ml-2">CEU Email Address</label>
                     <input name="firstName" type="text" id="firstName" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter CEU Email Address">
                 </div>
-                <div class="w-full md:w-1/3 px-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-1/3 px-4 mb-4 border border-gray-300 rounded-md">
                   <label for="dob" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Date of Birth</label>
                   <input name="dob" type="Date" id="dob" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Select Date">
                 </div>
-                <div class="w-full md:w-44 px-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-44 px-4 mb-4 border border-gray-300 rounded-md">
                     <label for="age" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Age</label>
                     <input name="age" type="number" id="age" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Age">
                 </div>
-                <div class="w-full md:w-44 px-4 ml-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-44 px-4 ml-4 mb-4 border border-gray-300 rounded-md">
                   <label for="gender" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Gender</label>
                   <select name="gender" id="gender" class="block w-full h-10 border-gray-300 rounded-md ">
                       <option value="">Select Gender</option>
@@ -124,44 +129,242 @@
                   </select>
                 </div>
               </div>
-              <div class="flex flex-wrap gap-5 mb-2">
-                <div class="w-full md:w-2/3 px-4 mb-4 border border-gray-300 rounded-md">
+              <div  class="flex flex-wrap gap-5 mb-2">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-2/3 px-4 mb-4 border border-gray-300 rounded-md">
                   <label for="address" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Home Address</label>
                   <input name="address" type="text" id="address" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Home Address">
                 </div>
-                <div class="w-full md:w-96 px-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-96 px-4 mb-4 border border-gray-300 rounded-md">
                 <label for="contactNumber" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Contact Number</label>
                 <input name="contactNumber" type="text" id="contactNumber" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Contact Number">
                 </div>
 
               </div>
-              <div class="flex flex-wrap gap-5 mb-2">
-                <div class="w-full md:w-80 px-4 mb-4 border border-gray-300 rounded-md">
+              <div  class="flex flex-wrap gap-5 mb-2">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-80 px-4 mb-4 border border-gray-300 rounded-md">
                   <label for="nationality" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Nationality</label>
-                  <select name="nationality" id="nationality" class="block w-full h-10 border-gray-300 rounded-md text-gray-300">
-                      <option value="">Select Nationality</option>
-                      <option value="African">African</option>
-                      <option value="American">American</option>
-                      
+                  <select name="nationality" id="nationality" class="block w-full h-10 border-gray-300 rounded-md text-black">
+                    <option value="">Select Nationality</option>
+                    <option value="Afghan">Afghan</option>
+                    <option value="Albanian">Albanian</option>
+                    <option value="Algerian">Algerian</option>
+                    <option value="American">American</option>
+                    <option value="Andorran">Andorran</option>
+                    <option value="Angolan">Angolan</option>
+                    <option value="Antiguans">Antiguans</option>
+                    <option value="Argentinean">Argentinean</option>
+                    <option value="Armenian">Armenian</option>
+                    <option value="Australian">Australian</option>
+                    <option value="Austrian">Austrian</option>
+                    <option value="Azerbaijani">Azerbaijani</option>
+                    <option value="Bahamian">Bahamian</option>
+                    <option value="Bahraini">Bahraini</option>
+                    <option value="Bangladeshi">Bangladeshi</option>
+                    <option value="Barbadian">Barbadian</option>
+                    <option value="Barbudans">Barbudans</option>
+                    <option value="Batswana">Batswana</option>
+                    <option value="Belarusian">Belarusian</option>
+                    <option value="Belgian">Belgian</option>
+                    <option value="Belizean">Belizean</option>
+                    <option value="Beninese">Beninese</option>
+                    <option value="Bhutanese">Bhutanese</option>
+                    <option value="Bolivian">Bolivian</option>
+                    <option value="Bosnian">Bosnian</option>
+                    <option value="Brazilian">Brazilian</option>
+                    <option value="British">British</option>
+                    <option value="Bruneian">Bruneian</option>
+                    <option value="Bulgarian">Bulgarian</option>
+                    <option value="Burkinabe">Burkinabe</option>
+                    <option value="Burmese">Burmese</option>
+                    <option value="Burundian">Burundian</option>
+                    <option value="Cambodian">Cambodian</option>
+                    <option value="Cameroonian">Cameroonian</option>
+                    <option value="Canadian">Canadian</option>
+                    <option value="Cape Verdean">Cape Verdean</option>
+                    <option value="Central African">Central African</option>
+                    <option value="Chadian">Chadian</option>
+                    <option value="Chilean">Chilean</option>
+                    <option value="Chinese">Chinese</option>
+                    <option value="Colombian">Colombian</option>
+                    <option value="Comoran">Comoran</option>
+                    <option value="Congolese">Congolese</option>
+                    <option value="Costa Rican">Costa Rican</option>
+                    <option value="Croatian">Croatian</option>
+                    <option value="Cuban">Cuban</option>
+                    <option value="Cypriot">Cypriot</option>
+                    <option value="Czech">Czech</option>
+                    <option value="Danish">Danish</option>
+                    <option value="Djibouti">Djibouti</option>
+                    <option value="Dominican">Dominican</option>
+                    <option value="Dutch">Dutch</option>
+                    <option value="East Timorese">East Timorese</option>
+                    <option value="Ecuadorean">Ecuadorean</option>
+                    <option value="Egyptian">Egyptian</option>
+                    <option value="Emirian">Emirian</option>
+                    <option value="Equatorial Guinean">Equatorial Guinean</option>
+                    <option value="Eritrean">Eritrean</option>
+                    <option value="Estonian">Estonian</option>
+                    <option value="Ethiopian">Ethiopian</option>
+                    <option value="Fijian">Fijian</option>
+                    <option value="Filipino">Filipino</option>
+                    <option value="Finnish">Finnish</option>
+                    <option value="French">French</option>
+                    <option value="Gabonese">Gabonese</option>
+                    <option value="Gambian">Gambian</option>
+                    <option value="Georgian">Georgian</option>
+                    <option value="German">German</option>
+                    <option value="Ghanaian">Ghanaian</option>
+                    <option value="Greek">Greek</option>
+                    <option value="Grenadian">Grenadian</option>
+                    <option value="Guatemalan">Guatemalan</option>
+                    <option value="Guinea-Bissauan">Guinea-Bissauan</option>
+                    <option value="Guinean">Guinean</option>
+                    <option value="Guyanese">Guyanese</option>
+                    <option value="Haitian">Haitian</option>
+                    <option value="Herzegovinian">Herzegovinian</option>
+                    <option value="Honduran">Honduran</option>
+                    <option value="Hungarian">Hungarian</option>
+                    <option value="I-Kiribati">I-Kiribati</option>
+                    <option value="Icelander">Icelander</option>
+                    <option value="Indian">Indian</option>
+                    <option value="Indonesian">Indonesian</option>
+                    <option value="Iranian">Iranian</option>
+                    <option value="Iraqi">Iraqi</option>
+                    <option value="Irish">Irish</option>
+                    <option value="Israeli">Israeli</option>
+                    <option value="Italian">Italian</option>
+                    <option value="Ivorian">Ivorian</option>
+                    <option value="Jamaican">Jamaican</option>
+                    <option value="Japanese">Japanese</option>
+                    <option value="Jordanian">Jordanian</option>
+                    <option value="Kazakhstani">Kazakhstani</option>
+                    <option value="Kenyan">Kenyan</option>
+                    <option value="Kittian and Nevisian">Kittian and Nevisian</option>
+                    <option value="Kuwaiti">Kuwaiti</option>
+                    <option value="Kyrgyz">Kyrgyz</option>
+                    <option value="Laotian">Laotian</option>
+                    <option value="Latvian">Latvian</option>
+                    <option value="Lebanese">Lebanese</option>
+                    <option value="Liberian">Liberian</option>
+                    <option value="Libyan">Libyan</option>
+                    <option value="Liechtensteiner">Liechtensteiner</option>
+                    <option value="Lithuanian">Lithuanian</option>
+                    <option value="Luxembourger">Luxembourger</option>
+                    <option value="Macedonian">Macedonian</option>
+                    <option value="Malagasy">Malagasy</option>
+                    <option value="Malawian">Malawian</option>
+                    <option value="Malaysian">Malaysian</option>
+                    <option value="Maldivan">Maldivan</option>
+                    <option value="Malian">Malian</option>
+                    <option value="Maltese">Maltese</option>
+                    <option value="Marshallese">Marshallese</option>
+                    <option value="Mauritanian">Mauritanian</option>
+                    <option value="Mauritian">Mauritian</option>
+                    <option value="Mexican">Mexican</option>
+                    <option value="Micronesian">Micronesian</option>
+                    <option value="Moldovan">Moldovan</option>
+                    <option value="Monacan">Monacan</option>
+                    <option value="Mongolian">Mongolian</option>
+                    <option value="Moroccan">Moroccan</option>
+                    <option value="Mosotho">Mosotho</option>
+                    <option value="Motswana">Motswana</option>
+                    <option value="Mozambican">Mozambican</option>
+                    <option value="Namibian">Namibian</option>
+                    <option value="Nauruan">Nauruan</option>
+                    <option value="Nepalese">Nepalese</option>
+                    <option value="New Zealander">New Zealander</option>
+                    <option value="Ni-Vanuatu">Ni-Vanuatu</option>
+                    <option value="Nicaraguan">Nicaraguan</option>
+                    <option value="Nigerien">Nigerien</option>
+                    <option value="North Korean">North Korean</option>
+                    <option value="Northern Irish">Northern Irish</option>
+                    <option value="Norwegian">Norwegian</option>
+                    <option value="Omani">Omani</option>
+                    <option value="Pakistani">Pakistani</option>
+                    <option value="Palauan">Palauan</option>
+                    <option value="Panamanian">Panamanian</option>
+                    <option value="Papua New Guinean">Papua New Guinean</option>
+                    <option value="Paraguayan">Paraguayan</option>
+                    <option value="Peruvian">Peruvian</option>
+                    <option value="Polish">Polish</option>
+                    <option value="Portuguese">Portuguese</option>
+                    <option value="Qatari">Qatari</option>
+                    <option value="Romanian">Romanian</option>
+                    <option value="Russian">Russian</option>
+                    <option value="Rwandan">Rwandan</option>
+                    <option value="Saint Lucian">Saint Lucian</option>
+                    <option value="Salvadoran">Salvadoran</option>
+                    <option value="Samoan">Samoan</option>
+                    <option value="San Marinese">San Marinese</option>
+                    <option value="Sao Tomean">Sao Tomean</option>
+                    <option value="Saudi">Saudi</option>
+                    <option value="Scottish">Scottish</option>
+                    <option value="Senegalese">Senegalese</option>
+                    <option value="Serbian">Serbian</option>
+                    <option value="Seychellois">Seychellois</option>
+                    <option value="Sierra Leonean">Sierra Leonean</option>
+                    <option value="Singaporean">Singaporean</option>
+                    <option value="Slovakian">Slovakian</option>
+                    <option value="Slovenian">Slovenian</option>
+                    <option value="Solomon Islander">Solomon Islander</option>
+                    <option value="Somali">Somali</option>
+                    <option value="South African">South African</option>
+                    <option value="South Korean">South Korean</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="Sri Lankan">Sri Lankan</option>
+                    <option value="Sudanese">Sudanese</option>
+                    <option value="Surinamer">Surinamer</option>
+                    <option value="Swazi">Swazi</option>
+                    <option value="Swedish">Swedish</option>
+                    <option value="Swiss">Swiss</option>
+                    <option value="Syrian">Syrian</option>
+                    <option value="Taiwanese">Taiwanese</option>
+                    <option value="Tajik">Tajik</option>
+                    <option value="Tanzanian">Tanzanian</option>
+                    <option value="Thai">Thai</option>
+                    <option value="Togolese">Togolese</option>
+                    <option value="Tongan">Tongan</option>
+                    <option value="Trinidadian or Tobagonian">Trinidadian or Tobagonian</option>
+                    <option value="Tunisian">Tunisian</option>
+                    <option value="Turkish">Turkish</option>
+                    <option value="Tuvaluan">Tuvaluan</option>
+                    <option value="Ugandan">Ugandan</option>
+                    <option value="Ukrainian">Ukrainian</option>
+                    <option value="Uruguayan">Uruguayan</option>
+                    <option value="Uzbekistani">Uzbekistani</option>
+                    <option value="Venezuelan">Venezuelan</option>
+                    <option value="Vietnamese">Vietnamese</option>
+                    <option value="Welsh">Welsh</option>
+                    <option value="Yemenite">Yemenite</option>
+                    <option value="Zambian">Zambian</option>
+                    <option value="Zimbabwean">Zimbabwean</option>
                   </select>
                 </div>
-                <div class="w-full md:w-80 px-4 mb-4 border border-gray-300 rounded-md">
+                
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-80 px-4 mb-4 border border-gray-300 rounded-md">
                 <label for="religion" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Relgion</label>
                 <input name="religion" type="text" id="religion" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Contact Number">
                 </div>
-                <div class="w-full md:w-56 px-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-56 px-4 mb-4 border border-gray-300 rounded-md">
                   <label for="bloodType" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Blood type</label>
-                  <select name="bloodType" id="bloodType" class="block w-full h-10 border-gray-300 rounded-md text-gray-300">
+                  <select name="bloodType" id="bloodType" class="block w-full h-10 border-gray-300 rounded-md text-black">
                       <option value="">Select Blood Type</option>
-                      <option value="African">African</option>
-                      <option value="American">American</option>
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                      
                       
                   </select>
                 </div>
-                <div class="w-full md:w-96 px-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-96 px-4 mb-4 border border-gray-300 rounded-md">
                   <label for="civilStatus" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Civil Status</label>
-                  <select name="civilStatus" id="civilStatus" class="block w-full h-10 border-gray-300 rounded-md text-gray-300">
-                      <option value="">Select Civil Status</option>
+                  <select name="civilStatus" id="civilStatus" class="block w-full h-10 border-gray-300 rounded-md text-black">
+                      <option >Select Civil Status</option>
                       <option value="African">African</option>
                       <option value="American">American</option>
                       
@@ -176,15 +379,15 @@
                 
               </div>
               <div class="flex flex-wrap gap-5 mb-2">
-                <div class="w-full md:w-1/3 px-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-1/3 px-4 mb-4 border border-gray-300 rounded-md">
                     <label for="guardiansName" class="block text-gray-700 text-sm font-medium mt-2 ml-2">Guardians' Name</label>
                     <input name="guardiansName" type="text" id="guardiansName" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Guardians Name">
                 </div>
-                <div class="w-full md:w-1/3 px-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-1/3 px-4 mb-4 border border-gray-300 rounded-md">
                     <label for="guardiansContactNumber" class="block text-gray-700 text-sm font-medium  ml-2 mt-2">Guardians Contact Number</label>
                     <input name="guardiansContactNumber" type="text" id="guardiansContactNumber" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Guardians Contact Number">
                 </div>
-                <div class="w-full md:w-96 px-4 mb-4 border border-gray-300 rounded-md">
+                <div onclick="toggleSelectBorder(this)" class="w-full md:w-96 px-4 mb-4 border border-gray-300 rounded-md ">
                     <label for="relation" class="block text-gray-700 text-sm font-medium ml-2 mt-2">Relation</label>
                     <input name="relation" type="text" id="relation" class="block w-full h-10  px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Relation">
                 </div>
@@ -201,7 +404,71 @@
 
         
     </div>
+
+    <div onclick=" hideResetMessage()" id="resetMessage" class="fixed left-0 top-0 bg-black bg-opacity-50 w-screen h-screen justify-center items-center opacity-0 hidden transition-opacity duration-500">
+      <div class="bg-blue-950 rounded-lg shadow-md p-8 max-w-md w-full mx-4 md:w-[70%] lg:w-[50%]">
+        <h1 class="text-white text-2xl font-semibold">RESET</h1>
+        <p class="text-white mt-2 mb-4">Are you sure you want to reset the changes made in this section? Once reset, the action cannot be undone.</p>
+        <div class="flex justify-end gap-4">
+          <button onclick="hideResetMessage()" class="border border-white rounded-md mx-2 py-2 px-4 md:px-8 text-lg text-white hover:bg-gray-400">Cancel</button>
+          <button class="bg-blue-400 rounded-md mx-2 py-2 px-4 md:px-8 text-lg font-medium hover:bg-blue-500">Confirm</button>
+        </div>
+      </div>
+    </div>
     <!-- <special-footer></special-footer> -->
+
+    
+
+    
+    <script>
+      function showResetMessage(){
+        let resetMessage = document.getElementById('resetMessage')
+        resetMessage.classList.remove('hidden')
+        resetMessage.classList.add('flex')
+        setTimeout(()=>{
+          resetMessage.classList.add('opacity-100')
+        },20)
+
+      }
+
+      function hideResetMessage(){
+        let resetMessage = document.getElementById('resetMessage')
+        resetMessage.classList.add('opacity-0')
+        resetMessage.classList.remove('opacity-100')
+        setTimeout(()=>{
+          resetMessage.classList.add('hidden')
+          resetMessage.classList.remove("flex")
+        },500)
+      }
+
+      
+    </script>
+
+    
+      <script>
+        document.addEventListener('click', function(event) {
+          const target = event.target;
+      
+          
+          if (!target.closest('.w-full')) {
+            const divsWithBorders = document.querySelectorAll('.w-full');
+      
+            
+            divsWithBorders.forEach((div) => {
+              div.classList.remove('border-blue-500');
+            })
+          }
+        })
+          
+
+        function toggleSelectBorder(element) {
+          
+          element.classList.toggle('border-blue-500'); // Toggle the border color class
+          element.classList.toggle('border-2');
+        }
+      </script>
+
+
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     
