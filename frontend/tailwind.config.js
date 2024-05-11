@@ -16,7 +16,8 @@ module.exports = {
       },
 
       height: {
-        'login': '22rem'
+        'login': '22rem',
+        'browser': '35rem'
       },
 
       fontSize: {

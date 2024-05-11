@@ -47,7 +47,7 @@
                   </button>
                 </div>
             </div>
-            <div class="bg-white w-5/6 h-96 mx-auto mt-2 viewPL:mt-7 rounded-login flex flex-col   overflow-auto overflow-x-auto scrollbar-thin"> <!-- table -->
+            <div class="bg-white w-5/6 h-browser mx-auto mt-2 viewPL:mt-7 rounded-login flex flex-col   overflow-auto overflow-x-auto scrollbar-thin" id="userTable"> <!-- table -->
               <table class=" min-w-full table-fixed">
                 <thead class="sticky top-0 bg-white">
                   <tr>
@@ -57,7 +57,7 @@
                     <th class="px-4 py-2 whitespace-nowrap">Status</th>
                     <th class="px-4 py-2 whitespace-nowrap">Date Created</th>
                     <th class="px-4 py-2 whitespace-nowrap">Date Updated</th>
-                    <th class="px-4 py-2 whitespace-nowrap"> </th>
+                    <th class="px-4 py-2 whitespace-nowrap"></th>
                   </tr>
                 </thead>
                 <tbody class="text-center">
@@ -274,6 +274,10 @@
         </div>
     </div>
     <script src="./templateManager.js"></script>
+    <script src="../API/api_client.js"></script>
+    <script src="../API/user.js"></script>
+    <script src="../component/table.js"></script>
+    <script src="../controller/user.js"></script>
         <script>
             updateTitle('View Users List')
         </script>
