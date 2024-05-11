@@ -99,13 +99,13 @@ class SpecialButton extends HTMLElement {
         this.innerHTML = `
             <button class="flex flex-col justify-end items-start text-white rounded-lg p-7 m-5 focus:outline-none focus:ring-2 
             focus:ring-blue-500 focus:ring-opacity-50 special-button" style="
-            width: 300px; 
-            height: 300px; 
+            width: 250px; 
+            height: 250px; 
             border-radius: 15px; 
             background: linear-gradient(to bottom, var(--bg-gradient-start, #1e3a8a), var(--bg-gradient-end, #000)); 
             transition: background-color 0.5s ease;">
                 <img src="${this.icon}" class="h-${this.iconSize} w-${this.iconSize} mb-2 ${this.icon === '../assets/img/user.png' ? '' : 'non-resizable-icon'}">
-                <p class="text-left" style="font-size: 35px;">${this.text}</p>
+                <p class="text-left" style="font-size: 25px;">${this.text}</p>
             </button> 
         `;
 

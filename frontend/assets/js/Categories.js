@@ -94,8 +94,8 @@ class SpecialButton extends HTMLElement {
         this.innerHTML = `
             <button class="flex flex-col justify-around items-center text-white rounded-lg p-10 focus:outline-none focus:ring-2 
             focus:ring-blue-500 focus:ring-opacity-50 special-button" style="
-            width: 400px; 
-            height: 400px; 
+            width: 300px; 
+            height: 300px; 
             border-radius: 15px; 
             background: linear-gradient(to bottom, var(--bg-gradient-start, #1e3a8a), var(--bg-gradient-end, #000)); 
             transition: background-color 0.5s ease;">
