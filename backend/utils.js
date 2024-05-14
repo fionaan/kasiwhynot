@@ -19,7 +19,7 @@ const textRegex = /^[a-zA-Z]+(?:[\s-]*[a-zA-Z]+)*$/ // /^[a-zA-Z][a-zA-Z.,'\s-]*
 const textOpRegex = /^(?:N\/A|[a-zA-Z]+(?:[\s-']*[a-zA-Z]+)*)$/ 
 
 // CHECKS IF STRING CONTAINS AT LEAST 1 LETTER. WON'T ALLOW NUMBERS/SYMBOLS ONLY
-const aNSRegex = /^(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%^&*()-_=+`~[\]{}|;:'",.<>/?]*$/
+const aNSRegex = /^(?=.*[a-zA-Z]).*$/ // /^(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%^&*()-_=+`~[\]{}|;:'",.<>/?]*$/
 
 //CHECKS IF EMAIL IS VALID
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
