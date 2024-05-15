@@ -24,6 +24,10 @@ const aNSRegex = /^(?=.*[a-zA-Z]).*$/ // /^(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%^&*()-_=
 //CHECKS IF EMAIL IS VALID
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+// CHECKS IF PASSWORD SATISFIES GUIDELINES
+// Contains at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character, and includes 8-20 characters
+const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*()-=_+|{}[\]:;"'<>,.?/])(?=.*[a-z])(?=.*[A-Z]).{8,20}$/
+
 //Valid Campus
 const isValidCampus = ['Manila','Makati', 'Malolos']
 
@@ -56,25 +60,12 @@ const isObjIdValid = (id) => {
 }
 
 //CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
-// const checkIfNull = (data) => {
-//     return data == null || data === '' || typeof data === 'undefined' || data == [];
-// }
-
-//CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
-//HAS .TRIM() METHOD
-// const checkIfNull2 = (data)=>{
-//     return (data == null || data == "null" || data == "" || data.trim() == "" || (typeof data === "undefined"))
-// }
-
-//new
 const checkIfNull = (data)=>{
     return (data == null || data == "null" || data === "" || (typeof data === 'string' && data.trim() == "") || (typeof data === "undefined"))
 }
 
 //CHECKS IF AN OBJ/DATA W DATATYPES OTHER THAN STRING ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
-// const checkObjNull = (obj)=>{
-//     return (obj === null || obj == "null" || obj === "" || (typeof obj === "undefined"))
-// }
+
 const checkObjNull = (obj)=>{
     return (obj === null || obj === "null" || obj === "" || (typeof obj === "undefined") || (obj !== null && typeof obj === 'object' && Object.keys(obj).length === 0)
     || (obj !== null && typeof obj !== 'object'))
@@ -140,7 +131,6 @@ const generatePassword = () => {
         const randomIndex = Math.floor(Math.random() * allChars.length)
         password += allChars[randomIndex]
     }
-
     return password
 }
 
@@ -168,6 +158,7 @@ module.exports = {
     textOpRegex,
     aNSRegex,
     emailRegex,
+    passwordRegex,
     userTypeList,
     historyTypeList,
     recordClassList,

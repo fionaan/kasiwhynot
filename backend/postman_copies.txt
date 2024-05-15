@@ -463,8 +463,8 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
         "guardianRelationship": "Parent's parent",
         "attachments": [
             {
-                "filename": "file-112",
-                "urlLink": "url-1"
+                "filename": "file-d",
+                "urlLink": "url-d1"
             }
         ]
     },
@@ -500,32 +500,32 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
             "protein": "Negative",
             "nitrite": "Negative",
             "leukocyte": "Normal",
-            "phLevel": 7,
-            "spGravity": "0.36",
-            "wbc": "Normal",
-            "rbc": "Normal",
-            "bacteria": "Negative",
-            "epithelialCells": "Normal",
-            "amorphousUrates": "Normal",
-            "mucusThreads": "Normal",
+            "phLevel": 8.0,
+            "spGravity": "1.036",
+            "wbc": "0-9",
+            "rbc": "0-5",
+            "bacteria": "MANY",
+            "epithelialCells": "FEW",
+            "amorphousUrates": "MANY",
+            "mucusThreads": "FEW",
             "others": "Clear"
         },
         "fecalysis": {
             "color": "Brown",
             "consistency": "Formed",
-            "wbc": "Normal",
-            "rbc": "Normal",
-            "fatGlobules": "Negative",
-            "muscleFibers": "Negative",
+            "wbc": "1-9",
+            "rbc": "6-9",
+            "fatGlobules": "FEW",
+            "muscleFibers": "MANY",
             "results": "Normal"
         },
         "others": {
-            "pregnancyTest": "Negative"
+            "pregnancyTest": "N/A"
         },
         "attachments": [
             {
-                "filename": "file-223",
-                "urlLink": "url-45"
+                "filename": "file-1223",
+                "urlLink": "url-415"
             }
         ]
     },
@@ -572,8 +572,8 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
         ],
         "attachments": [
             {
-                "filename": "file-63",
-                "urlLink": "url-49"
+                "filename": "file-6a3",
+                "urlLink": "url-4a9"
             }
         ]
     },
@@ -581,7 +581,7 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
         "tattoo": false,
         "bloodPressure": {
             "systolic": 120,
-            "diastolic": 80
+            "diastolic": 80.2
         },
         "conditions": {
             "anemia": false,
@@ -594,7 +594,7 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
             "chronicDiseases": false,
             "thyroidProblems": false,
             "bloodDyscrasia": false,
-            "others": false
+            "others": "No Answer"
         },
         "q1DoctorDetails": [
             {
@@ -605,7 +605,7 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
             }
         ],
         "q2PastIllnessSurgery": [
-            "Bone Fracture",
+            "   Bone Fractures  ",
             "Brain Surgery"
         ],
         "q3DrugFoodAllergy": [
@@ -625,188 +625,76 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
         ],
         "attachments": [
             {
-                "filename": "file-24",
-                "urlLink": "url-34"
+                "filename": "file-q24",
+                "urlLink": "url-3w4"
             }
         ]
     },
     "dentalRecord": {
         "isFilledOut": false,
-        "q1": [
-            ""
+        "q1": [],
+        "q2": "1999-12-31T23:59:59.999Z",
+        "q3": [],
+        "q4": "N/A",
+        "q5": [
+            {
+                "description": " ",
+                "date": "1971-12-31T23:59:59.999Z"
+            }
         ],
-        "q2": "1999-03-09T12:00:00Z",
-        "q3": {
-            "hasDentures": false,
-            "dentureType": ""
-        },
-        "q4": " ",
-        "q5": {
-            "hasDentalProcedure": false,
-            "pastDentalSurgery": [
-                {
-                    "name": "",
-                    "date": ""
-                }
-            ]
-        },
         "q6": {
-            "55": [
-                ""
-            ],
-            "54": [
-                ""
-            ],
-            "53": [
-                ""
-            ],
-            "52": [
-                ""
-            ],
-            "51": [
-                ""
-            ],
-            "61": [
-                ""
-            ],
-            "62": [
-                ""
-            ],
-            "63": [
-                ""
-            ],
-            "64": [
-                ""
-            ],
-            "65": [
-                ""
-            ],
-            "18": [
-                ""
-            ],
-            "17": [
-                ""
-            ],
-            "16": [
-                ""
-            ],
-            "15": [
-                ""
-            ],
-            "14": [
-                ""
-            ],
-            "13": [
-                ""
-            ],
-            "12": [
-                ""
-            ],
-            "11": [
-                ""
-            ],
-            "21": [
-                ""
-            ],
-            "22": [
-                ""
-            ],
-            "23": [
-                ""
-            ],
-            "24": [
-                ""
-            ],
-            "25": [
-                ""
-            ],
-            "26": [
-                ""
-            ],
-            "27": [
-                ""
-            ],
-            "28": [
-                ""
-            ],
-            "48": [
-                ""
-            ],
-            "47": [
-                ""
-            ],
-            "46": [
-                ""
-            ],
-            "45": [
-                ""
-            ],
-            "44": [
-                ""
-            ],
-            "43": [
-                ""
-            ],
-            "42": [
-                ""
-            ],
-            "41": [
-                ""
-            ],
-            "31": [
-                ""
-            ],
-            "32": [
-                ""
-            ],
-            "33": [
-                ""
-            ],
-            "34": [
-                ""
-            ],
-            "35": [
-                ""
-            ],
-            "36": [
-                ""
-            ],
-            "37": [
-                ""
-            ],
-            "38": [
-                ""
-            ],
-            "85": [
-                ""
-            ],
-            "84": [
-                ""
-            ],
-            "83": [
-                ""
-            ],
-            "82": [
-                ""
-            ],
-            "81": [
-                ""
-            ],
-            "71": [
-                ""
-            ],
-            "72": [
-                ""
-            ],
-            "73": [
-                ""
-            ],
-            "74": [
-                ""
-            ],
-            "75": [
-                ""
-            ]
+            "55": [],
+            "54": [],
+            "53": [],
+            "52": [],
+            "51": [],
+            "61": [],
+            "62": [],
+            "63": [],
+            "64": [],
+            "65": [],
+            "18": [],
+            "17": [],
+            "16": [],
+            "15": [],
+            "14": [],
+            "13": [],
+            "12": [],
+            "11": [],
+            "21": [],
+            "22": [],
+            "23": [],
+            "24": [],
+            "25": [],
+            "26": [],
+            "27": [],
+            "28": [],
+            "48": [],
+            "47": [],
+            "46": [],
+            "45": [],
+            "44": [],
+            "43": [],
+            "42": [],
+            "41": [],
+            "31": [],
+            "32": [],
+            "33": [],
+            "34": [],
+            "35": [],
+            "36": [],
+            "37": [],
+            "38": [],
+            "85": [],
+            "84": [],
+            "83": [],
+            "82": [],
+            "81": [],
+            "71": [],
+            "72": [],
+            "73": [],
+            "74": [],
+            "75": []
         },
         "q7": {
             "presenceOfDebris": false,
@@ -815,9 +703,8 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
             "presenceOfPeriodontalPocket": false,
             "presenceOfOralBiofilm": false,
             "underOrthodonticTreatment": {
-                "hasTreatment": false,
                 "yearStarted": 0,
-                "lastAdjustment": ""
+                "lastAdjustment": "1971-12-31T23:59:59.999Z"
             }
         },
         "q8": {
@@ -854,27 +741,17 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
                 "permanent": 0
             }
         },
-        "q9": {
-            "hasDentofacialAb": false,
-            "name": [
-                ""
-            ]
-        },
+        "q9": [],
         "q10": {
             "needUpperDenture": 0,
             "needLowerDenture": 0
         },
-        "notes": "",
-        "attachments": [
-            {
-                "filename": "file-341",
-                "urlLink": "url-451"
-            }
-        ]
+        "notes": "N/A",
+        "attachments": []
     },
     "exclusiveData": {
-        "studentNo": "7984563123",
-        "course": "Computer Science",
+        "studentNo": "2045-12345",
+        "course": "bachelor of science in computer science",
         "year": "1",
         "section": "A"
     },

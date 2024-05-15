@@ -779,6 +779,10 @@ video {
   width: 100%;
 }
 
+.w-\[15rem\] {
+  width: 15rem;
+}
+
 .max-w-lg {
   max-width: 32rem;
 }
@@ -1397,6 +1401,11 @@ video {
     font-size: 0.75rem;
     line-height: 1rem;
   }
+
+  .sm\:text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
 }
 
 @media (min-width: 768px) {
@@ -1419,6 +1428,10 @@ video {
   .md\:h-fit {
     height: -moz-fit-content;
     height: fit-content;
+  }
+
+  .md\:h-10 {
+    height: 2.5rem;
   }
 
   .md\:w-1\/3 {
@@ -1460,6 +1473,11 @@ video {
     line-height: 1.75rem;
   }
 
+  .md\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
   .md\:font-semibold {
     font-weight: 600;
   }
@@ -1472,6 +1490,16 @@ video {
   .md\:placeholder\:text-base::placeholder {
     font-size: 1rem;
     line-height: 1.5rem;
+  }
+
+  .md\:placeholder\:text-sm::-moz-placeholder {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .md\:placeholder\:text-sm::placeholder {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 }
 
