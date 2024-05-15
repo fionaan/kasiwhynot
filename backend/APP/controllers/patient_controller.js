@@ -290,9 +290,6 @@ const addRecord = async (req, res) => {
             throwError('Invalid patient category was provided.', 400)
         }
 
-        
-        
-
         let success_message = "Successfully added base record, patient record, & log."
         const response = await saveAndLog(editedBy, "ADD", "Medical", success_message,
             [BaseModel, model], ['Base record', `${category.toProperCase()} record`],
@@ -684,7 +681,7 @@ const addDentalRecord = async (req, res, next) => {
         if (category === "students") {
             patientModel = Student
         }
-        else if (category === "employees"){
+        else if (category === "employees") {
             patientModel = Employee
         } else {
             throwError('Invalid patient category was provided.', 400)
@@ -692,249 +689,246 @@ const addDentalRecord = async (req, res, next) => {
 
         let patient = await patientModel.findOne({ _id: patientId })
         if (patient === null) {
-            res.status(404).json({
-                successful: false,
-                message: `Patient record with id ${patientId} does not exist.`
-            })
+            throwError(`Patient record with id ${patientId} does not exist.`, 404)
+            // res.status(404).json({
+            //     successful: false,
+            //     message: `Patient record with id ${patientId} does not exist.`
+            // })
+        }
+
+        let base = await BaseModel.findOne({ _id: patient.details })
+
+        if (base === null) {
+            throwError(`Base record with id ${patient.details} does not exist.`, 404)
+            // res.status(404).json({
+            //     successful: false,
+            //     message: `Base record with id ${patient.details} does not exist.`
+            // })
+        }
+
+        // CHECK IF THE PATIENT RECORD ALREADY CONTAINS DENTAL RECORD
+        if (base.dentalRecord.isFilledOut === true) {
+            throwError(`Base record with id ${base._id} already contains a dental record.`, 400)
+            // return res.status(400).json({
+            //     successful: false,
+            //     message: `Base record with id ${base._id} already contains a dental record.`
+            // })
+        }
+
+        // CHECK FOR NULL DENTAL FIELDS  
+        nullFields = []
+        message = (checkFullArr(dentalRecord.q1, 'q1', null, true))
+        if (message !== null) nullFields.push(message)
+
+        if (checkIfNull(dentalRecord.q2)) nullFields.push('q2')
+
+        if (checkObjNull(dentalRecord.q3)) {
+            nullFields.push('q3')
+        }
+        // else {
+        //     if (checkIfNull(dentalRecord.q3.hasDentures)) {
+        //         nullFields.push('q3: Has Dentures')
+        //     }
+        //     else {
+        //         if (dentalRecord.q3.hasDentures === true && checkIfNull(dentalRecord.q3.dentureType)) nullFields.push('q3: Denture Type')
+        //     }
+        // }
+
+        if (checkIfNull(dentalRecord.q4)) nullFields.push('q4')
+
+        if (checkObjNull(dentalRecord.q5)) {
+            nullFields.push('q5')
         }
         else {
-            let base = await BaseModel.findOne({ _id: patient.details })
-
-            if (base === null) {
-                res.status(404).json({
-                    successful: false,
-                    message: `Base record with id ${patient.details} does not exist.`
+            // if (checkIfNull(dentalRecord.q5.hasDentalProcedure)) {
+            //     nullFields.push('q5: Has Dental Procedure')
+            // }
+            // else {
+            message = checkFullArr(dentalRecord.q5, 'q5: Past Dental Surgery', (arr) => {
+                let list = []
+                arr.forEach((element, index) => {
+                    if (checkIfNull(element.description)) list.push(`q5: Past Dental Surgery: description - Index no. ${index}`)
+                    if (checkIfNull(element.date)) list.push(`q5: Past Dental Surgery: date - Index no. ${index}`)
                 })
-            }
-            else {
-                // CHECK IF THE PATIENT RECORD ALREADY CONTAINS DENTAL RECORD
-                if (base.dentalRecord.isFilledOut === true) {
-                    return res.status(400).json({
-                        successful: false,
-                        message: `Base record with id ${base._id} already contains a dental record.`
-                    })
-                }
-
-
-                // CHECK FOR NULL DENTAL FIELDS  
-                nullFields = []
-                message = (checkFullArr(dentalRecord.q1, 'q1', null))
-                if (message !== null) nullFields.push(message)
-
-                if (checkIfNull(dentalRecord.q2)) nullFields.push('q2')
-
-                if (checkObjNull(dentalRecord.q3)) {
-                    nullFields.push('q3')
-
-                }
-                else {
-                    if (checkIfNull(dentalRecord.q3.hasDentures)) {
-                        nullFields.push('q3: Has Dentures')
-                    }
-                    else {
-                        if (dentalRecord.q3.hasDentures === true && checkIfNull(dentalRecord.q3.dentureType)) nullFields.push('q3: Denture Type')
-                    }
-                }
-
-                if (checkIfNull(dentalRecord.q4)) nullFields.push('q4')
-
-                if (checkObjNull(dentalRecord.q5)) {
-                    nullFields.push('q5')
-                }
-                else {
-                    if (checkIfNull(dentalRecord.q5.hasDentalProcedure)) {
-                        nullFields.push('q5: Has Dental Procedure')
-                    }
-                    else {
-                        message = checkFullArr(dentalRecord.q5.pastDentalSurgery, 'q5: Past Dental Surgery', (arr) => {
-                            let list = []
-                            arr.forEach((element, index) => {
-                                if (checkIfNull(element.name)) list.push(`q5: Past Dental Surgery: name - Index no. ${index}`)
-                                if (checkIfNull(element.date)) list.push(`q5: Past Dental Surgery: date - Index no. ${index}`)
-                            })
-                            return list
-                        })
-                        if (message !== null) Array.isArray(message) ? nullFields = nullFields.concat(message) : nullFields.push(message)
-                    }
-                }
-
-                if (checkObjNull(dentalRecord.q6)) {
-                    nullFields.push('q6')
-                }
-                else {
-                    odontogramKeys.forEach((key) => {
-                        if (!dentalRecord.q6.hasOwnProperty(key.toString())) missingKeys.push(key)
-                    })
-
-                    if (missingKeys.length > 0) nullFields.push(`q6: keys: [${missingKeys.join(', ')}]`)
-                }
-
-                if (checkObjNull(dentalRecord.q7)) {
-                    nullFields.push('q7')
-                }
-                else {
-                    if (checkIfNull(dentalRecord.q7.presenceOfDebris)) nullFields.push('q7: Presence Of Debris')
-                    if (checkIfNull(dentalRecord.q7.presenceOfToothStain)) nullFields.push('q7: Presence Of Tooth Stain')
-                    if (checkIfNull(dentalRecord.q7.presenceOfGingivitis)) nullFields.push('q7: Presence Of Gingivitis')
-                    if (checkIfNull(dentalRecord.q7.presenceOfPeriodontalPocket)) nullFields.push('q7: Presence Of Periodontal Pocket')
-                    if (checkIfNull(dentalRecord.q7.presenceOfOralBiofilm)) nullFields.push('q7: Presence Of Oral Biofilm')
-
-                    if (checkObjNull(dentalRecord.q7.underOrthodonticTreatment)) {
-                        nullFields.push('q7: Under Orthodontic Treatment')
-                    }
-                    else {
-                        if (checkIfNull(dentalRecord.q7.underOrthodonticTreatment.hasTreatment)) {
-                            nullFields.push('q7: Under Orthodontic Treatment: Has Treatment')
-                        }
-                        else {
-                            if (dentalRecord.q7.underOrthodonticTreatment.hasTreatment === true) {
-                                if (checkIfNull(dentalRecord.q7.underOrthodonticTreatment.yearStarted)) nullFields.push('q7: Under Orthodontic Treatment: yearStarted')
-                                if (checkIfNull(dentalRecord.q7.underOrthodonticTreatment.lastAdjustment)) nullFields.push('q7: Under Orthodontic Treatment: lastAdjustment')
-                            }
-                        }
-                    }
-                }
-
-                if (checkObjNull(dentalRecord.q8)) {
-                    nullFields.push('q8')
-                }
-                else {
-                    missingKeys = []
-                    q8Keys.forEach((key) => {
-                        if (!dentalRecord.q8.hasOwnProperty(key)) missingKeys.push(key)
-                    })
-
-                    if (missingKeys.length > 0) {
-                        nullFields.push(`q8: keys: [${missingKeys.join(', ')}]`)
-                    }
-                    else {
-                        q8Keys.forEach((key) => {
-                            if (checkIfNull(dentalRecord.q8[key].temporary)) missingKeys.push(`q8: ${key}: temporary`)
-                            if (checkIfNull(dentalRecord.q8[key].permanent)) missingKeys.push(`q8: ${key}: permanent`)
-                        })
-
-                        if (missingKeys.length > 0) {
-                            nullFields.push(missingKeys)
-                        }
-                    }
-                }
-
-                if (checkObjNull(dentalRecord.q9)) {
-                    nullFields.push('q9')
-                }
-                else {
-                    if (checkIfNull(dentalRecord.q9.hasDentofacialAb)) {
-                        nullFields.push('q9: Has Dentofacial Abnormality')
-                    }
-                    else {
-                        //if (dentalRecord.q9.hasDentofacialAb === true && checkArrNull(dentalRecord.q9.name)) nullFields.push('q9: name')
-                        message = checkFullArr(dentalRecord.q9.name, 'q9: name', null)
-                        if (message !== null) nullFields.push(message)
-                    }
-                }
-
-                if (checkObjNull(dentalRecord.q10)) {
-                    nullFields.push('q10')
-                }
-                else {
-                    if (checkIfNull(dentalRecord.q10.needUpperDenture)) nullFields.push('q10: Need Upper Denture')
-                    if (checkIfNull(dentalRecord.q10.needLowerDenture)) nullFields.push('q10: Need Lower Denture')
-                }
-
-                // ENSURES THAT THE FF FIELDS ARE PRESENT   
-                if (!dentalRecord.hasOwnProperty('notes')) nullFields.push('notes')
-                if (!dentalRecord.hasOwnProperty('attachments')) {
-                    nullFields.push('attachments')
-                }
-                else {
-                    message = checkFullArr(dentalRecord.attachments, 'attachments', ((arr) => {
-                        let list = []
-                        arr.forEach((attachments, index) => {
-                            if (typeof attachments.filename === "undefined") list.push(`attachment no. ${index}: filename`)
-                            if (typeof attachments.urlLink === "undefined") list.push(`attachment no. ${index}: urlLink`)
-                        })
-                        return list
-                    }))
-                    if (message !== null) Array.isArray(message) ? nullFields = nullFields.concat(message) : nullFields.push(message)
-                }
-
-                //CHECK FOR ANY NULL FIELDS 
-                if (nullFields.length > 0) {
-                    res.status(404).json({
-                        successful: false,
-                        message: `Missing data for the following fields: ${nullFields.join(', ')}`
-                    })
-                }
-                else {
-
-                    // CHECK FOR INVALID VALUES
-                    invalidFields = []
-                    if (dentalRecord.q2 > Date.now()) invalidFields.push('q2 date is later than current date')
-                    if (!q4Values.includes(dentalRecord.q4)) invalidFields.push('q4 invalid value')
-                    if (dentalRecord.q5.hasDentalProcedure === true) {
-                        surgeries = dentalRecord.q5.pastDentalSurgery
-                        surgeries.forEach((surgery, index) => {
-                            if (surgery.date > Date.now()) invalidFields.push(`q5: Past Dental Surgery no. ${index}: provided date is later than current date`)
-                        })
-                    }
-                    for (let key in dentalRecord.q6) {
-                        if (Array.isArray(dentalRecord.q6[key])) {
-                            dentalRecord.q6[key].forEach((element) => {
-                                if (!q6Values.includes(element)) invalidFields.push(`q6: #${key}: ${element} is invalid value`)
-                            })
-                        }
-                        else {
-                            invalidFields.push(`q6 #${key} is not an array`)
-                        }
-                    }
-                    if (dentalRecord.q7.underOrthodonticTreatment.hasTreatment === true) {
-                        if (dentalRecord.q7.underOrthodonticTreatment.yearStarted > new Date().getFullYear()) invalidFields.push('q7: Under Orthodontic Treatment: yearStarted is later than current year')
-                        if (dentalRecord.q7.underOrthodonticTreatment.lastAdjustment > Date.now()) invalidFields.push('q7: Under Orthodontic Treatment: lastAdjustment is later than current date')
-                    }
-                    for (let key in dentalRecord.q8) {
-                        if (dentalRecord.q8[key].temporary < 0 || dentalRecord.q8[key].temporary > 50) invalidFields.push(`q8: ${key}: invalid number for temporary`)
-                        if (dentalRecord.q8[key].permanent < 0 || dentalRecord.q8[key].permanent > 50) invalidFields.push(`q8: ${key}: invalid number for permanent`)
-                    }
-                    if (dentalRecord.q10.needUpperDenture < 0 || dentalRecord.q10.needUpperDenture > 3) invalidFields.push('q10: Need Upper Denture invalid number')
-                    if (dentalRecord.q10.needLowerDenture < 0 || dentalRecord.q10.needLowerDenture > 3) invalidFields.push('q10: Need Lower Denture invalid number')
-
-                    // Copy original values in case of reverting
-                    const origDental = JSON.parse(JSON.stringify(base.dentalRecord))
-
-                    // Place the new dental record
-                    dentalRecord.isFilledOut = true
-                    base.dentalRecord = dentalRecord
-
-                    //ADD LOG FOR CREATION OF DENTAL RECORD
-                    let success_message = "Successfully added dental record & log."
-                    const response = await saveAndLog(editedBy, "ADD", "Dental", success_message, [BaseModel], ['Base Record'], [[base, null]],
-                        async (id, model, name) => {
-                            try { // Revert changes
-
-                                let latestDoc = await model.findById(id)
-                                if (!latestDoc) throw Error('Document to Revert: Not found.')
-
-                                latestDoc.dentalRecord = origDental
-
-                                const revertedDoc = await latestDoc.save()
-                                message = revertedDoc ? 'Successfully reverted' : 'Error in reverting'
-
-                            } catch (error) {
-                                message = error.message
-                            }
-                            return ` ${name} Revert status: ${message}.`
-                        })
-
-                    // Send overall response
-                    res.status(200).json(response)
-                }
-
-            }
-
+                return list
+            }, false)
+            if (message !== null) Array.isArray(message) ? nullFields = nullFields.concat(message) : nullFields.push(message)
+            // }
         }
 
+        if (checkObjNull(dentalRecord.q6)) {
+            nullFields.push('q6')
+        }
+        else {
+            odontogramKeys.forEach((key) => {
+                if (!dentalRecord.q6.hasOwnProperty(key.toString())) missingKeys.push(key)
+            })
 
+            if (missingKeys.length > 0) nullFields.push(`q6: keys: [${missingKeys.join(', ')}]`)
+        }
 
+        if (checkObjNull(dentalRecord.q7)) {
+            nullFields.push('q7')
+        }
+        else {
+            if (checkIfNull(dentalRecord.q7.presenceOfDebris)) nullFields.push('q7: Presence Of Debris')
+            if (checkIfNull(dentalRecord.q7.presenceOfToothStain)) nullFields.push('q7: Presence Of Tooth Stain')
+            if (checkIfNull(dentalRecord.q7.presenceOfGingivitis)) nullFields.push('q7: Presence Of Gingivitis')
+            if (checkIfNull(dentalRecord.q7.presenceOfPeriodontalPocket)) nullFields.push('q7: Presence Of Periodontal Pocket')
+            if (checkIfNull(dentalRecord.q7.presenceOfOralBiofilm)) nullFields.push('q7: Presence Of Oral Biofilm')
+
+            if (checkObjNull(dentalRecord.q7.underOrthodonticTreatment)) {
+                nullFields.push('q7: Under Orthodontic Treatment')
+            }
+            else {
+                // if (checkIfNull(dentalRecord.q7.underOrthodonticTreatment.hasTreatment)) {
+                //     nullFields.push('q7: Under Orthodontic Treatment: Has Treatment')
+                // }
+                // else {
+                // if (dentalRecord.q7.underOrthodonticTreatment.hasTreatment === true) {
+
+                // SERVER FAULT
+                if (checkIfNull(dentalRecord.q7.underOrthodonticTreatment.yearStarted)) nullFields.push('q7: Under Orthodontic Treatment: yearStarted')
+                if (checkIfNull(dentalRecord.q7.underOrthodonticTreatment.lastAdjustment)) nullFields.push('q7: Under Orthodontic Treatment: lastAdjustment')
+
+                // }
+                // }
+            }
+        }
+
+        if (checkObjNull(dentalRecord.q8)) {
+            nullFields.push('q8')
+        }
+        else {
+            missingKeys = []
+            q8Keys.forEach((key) => {
+                if (!dentalRecord.q8.hasOwnProperty(key)) missingKeys.push(key)
+            })
+
+            if (missingKeys.length > 0) {
+                nullFields.push(`q8: keys: [${missingKeys.join(', ')}]`)
+            }
+            else {
+                q8Keys.forEach((key) => {
+                    if (checkIfNull(dentalRecord.q8[key].temporary)) missingKeys.push(`q8: ${key}: temporary`)
+                    if (checkIfNull(dentalRecord.q8[key].permanent)) missingKeys.push(`q8: ${key}: permanent`)
+                })
+
+                if (missingKeys.length > 0) {
+                    nullFields.push(missingKeys)
+                }
+            }
+        }
+
+        // if (checkObjNull(dentalRecord.q9)) {
+        //     nullFields.push('q9')
+        // }
+        // else {
+        // if (checkIfNull(dentalRecord.q9.hasDentofacialAb)) {
+        //     nullFields.push('q9: Has Dentofacial Abnormality')
+        // }
+        // else {
+        //if (dentalRecord.q9.hasDentofacialAb === true && checkArrNull(dentalRecord.q9.name)) nullFields.push('q9: name')
+        message = checkFullArr(dentalRecord.q9, 'q9', null, false)
+        if (message !== null) nullFields.push(message)
+        // }
+        // }
+
+        if (checkObjNull(dentalRecord.q10)) {
+            nullFields.push('q10')
+        }
+        else {
+            if (checkIfNull(dentalRecord.q10.needUpperDenture)) nullFields.push('q10: Need Upper Denture')
+            if (checkIfNull(dentalRecord.q10.needLowerDenture)) nullFields.push('q10: Need Lower Denture')
+        }
+
+        // ENSURES THAT THE FF FIELDS ARE PRESENT   
+        if (!dentalRecord.hasOwnProperty('notes')) nullFields.push('notes')
+        // if (!dentalRecord.hasOwnProperty('attachments')) {
+        //     nullFields.push('attachments')
+        // }
+        // else {
+        message = checkFullArr(dentalRecord.attachments, 'attachments', ((arr) => {
+            let list = []
+            arr.forEach((attachments, index) => {
+                if (typeof attachments.filename === "undefined") list.push(`attachment no. ${index}: filename`)
+                if (typeof attachments.urlLink === "undefined") list.push(`attachment no. ${index}: urlLink`)
+            })
+            return list
+        }), false)
+        if (message !== null) Array.isArray(message) ? nullFields = nullFields.concat(message) : nullFields.push(message)
+        // }
+
+        //CHECK FOR ANY NULL FIELDS 
+        if (nullFields.length > 0) {
+            throwError(`Missing data for the following fields: ${nullFields.join(', ')}`, 400)
+            // res.status(404).json({
+            //     successful: false,
+            //     message: `Missing data for the following fields: ${nullFields.join(', ')}`
+            // })
+        }
+        else {
+            // CHECK FOR INVALID VALUES
+            invalidFields = []
+            // if (dentalRecord.q2 > Date.now()) invalidFields.push('q2 date is later than current date')
+            // if (!q4Values.includes(dentalRecord.q4)) invalidFields.push('q4 invalid value')
+            // if (dentalRecord.q5.hasDentalProcedure === true) {
+            //     surgeries = dentalRecord.q5.pastDentalSurgery
+            //     surgeries.forEach((surgery, index) => {
+            //         if (surgery.date > Date.now()) invalidFields.push(`q5: Past Dental Surgery no. ${index}: provided date is later than current date`)
+            //     })
+            // }
+            for (let key in dentalRecord.q6) {
+                if (Array.isArray(dentalRecord.q6[key])) {
+                    dentalRecord.q6[key].forEach((element) => {
+                        if (!q6Values.includes(element)) invalidFields.push(`q6: #${key}: ${element} is invalid value`)
+                    })
+                }
+                else {
+                    invalidFields.push(`q6 #${key} is not an array`)
+                }
+            }
+            // if (dentalRecord.q7.underOrthodonticTreatment.hasTreatment === true) {
+            //     if (dentalRecord.q7.underOrthodonticTreatment.yearStarted > new Date().getFullYear()) invalidFields.push('q7: Under Orthodontic Treatment: yearStarted is later than current year')
+            //     if (dentalRecord.q7.underOrthodonticTreatment.lastAdjustment > Date.now()) invalidFields.push('q7: Under Orthodontic Treatment: lastAdjustment is later than current date')
+            // }
+            // for (let key in dentalRecord.q8) {
+            //     if (dentalRecord.q8[key].temporary < 0 || dentalRecord.q8[key].temporary > 50) invalidFields.push(`q8: ${key}: invalid number for temporary`)
+            //     if (dentalRecord.q8[key].permanent < 0 || dentalRecord.q8[key].permanent > 50) invalidFields.push(`q8: ${key}: invalid number for permanent`)
+            // }
+            // if (dentalRecord.q10.needUpperDenture < 0 || dentalRecord.q10.needUpperDenture > 3) invalidFields.push('q10: Need Upper Denture invalid number')
+            // if (dentalRecord.q10.needLowerDenture < 0 || dentalRecord.q10.needLowerDenture > 3) invalidFields.push('q10: Need Lower Denture invalid number')
+
+            // Copy original values in case of reverting
+            const origDental = JSON.parse(JSON.stringify(base.dentalRecord))
+
+            // Place the new dental record
+            dentalRecord.isFilledOut = true
+            base.dentalRecord = dentalRecord
+
+            //ADD LOG FOR CREATION OF DENTAL RECORD
+            let success_message = "Successfully added dental record & log."
+            const response = await saveAndLog(editedBy, "ADD", "Dental", success_message, [BaseModel], ['Base Record'], [[base, null]],
+                async (id, model, name) => {
+                    try { // Revert changes
+
+                        let latestDoc = await model.findById(id)
+                        if (!latestDoc) throw Error('Document to Revert: Not found.')
+
+                        latestDoc.dentalRecord = origDental
+
+                        const revertedDoc = await latestDoc.save()
+                        message = revertedDoc ? 'Successfully reverted' : 'Error in reverting'
+
+                    } catch (error) {
+                        message = error.message
+                    }
+                    return ` ${name} Revert status: ${message}.`
+                })
+
+            // Send overall response
+            res.status(200).json(response)
+        }
     }
     catch (error) {
         res.status(error.status || 500).json({

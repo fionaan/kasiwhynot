@@ -72,14 +72,14 @@ const checkObjNull = (obj)=>{
 }
 
 //CHECKS IF AN ARRAY ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARRAY IS NULL/EMPTY, OTHERWISE RETURNS FALSE.
-const checkArrNull = (arr)=>{
-    return ((typeof arr === "undefined") || arr.length === 0 || arr.includes("") && arr.length === 1)
+const checkArrNull = (arr, required)=>{
+    return (((typeof arr === "undefined") || arr.includes("") && arr.length === 1) || (required === true && arr.length === 0))
 }
 
-const checkFullArr = (arr, message, func)=>{
+const checkFullArr = (arr, message, func, required)=>{
     if (arr) {
         if (Array.isArray(arr)) {
-            if (!checkArrNull(arr)) {
+            if (!checkArrNull(arr, required)) {
                 if (typeof func === 'function') {
                     return (func(arr))
                 } else {

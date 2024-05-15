@@ -15,7 +15,6 @@ function generateAttachments(name) {
                     type: String,
                     required: [true, `(${name}) Filename is required`],
                     trim: true,
-                    unique: [true, `(${name}) Filename already exists`],
                     // minlength: [5, `(${name}) Filename must contain at least 5 characters or more`],
                     maxlength: [255, `(${name}) Filename exceeded 255 character limit (255)`]
                 },
