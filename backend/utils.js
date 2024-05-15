@@ -119,7 +119,7 @@ const generatePassword = () => {
     const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     const lowerCase = "abcdefghijklmnopqrstuvwxyz"
     const number = "1234567890"
-    const symbol = "~!@#$%^&*()_-+=/|{}[]><"
+    const symbol = "~!@#$%^&*()_-+=/|{}[]><`:;'?.,"
     const allChars = upperCase + lowerCase + number + symbol
 
     password += upperCase[Math.floor(Math.random() * upperCase.length)]

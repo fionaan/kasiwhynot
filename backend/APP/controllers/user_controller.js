@@ -1,6 +1,6 @@
 const nodeMailer = require('nodemailer')
 const User = require('../models/user_model')
-const { nameRegex,
+const { textRegex,
     emailRegex,
     userTypeList,
     toProperCase,
@@ -203,9 +203,10 @@ const addUser = async (req, res, next) => {
             const user = await User.findOne({ emailAddress: emailAddress })
 
             const invalidFields = []
-            if (!nameRegex.test(fullName.firstName)) invalidFields.push('first name')
-            if ((!checkIfNull(fullName.middleName)) && (!nameRegex.test(fullName.middleName))) invalidFields.push('middle name')
-            if (!nameRegex.test(fullName.lastName)) invalidFields.push('last name')
+            if (!textRegex.test(fullName.firstName)) invalidFields.push('first name')
+                console.log('te')
+            if ((!checkIfNull(fullName.middleName)) && (!textRegex.test(fullName.middleName))) invalidFields.push('middle name')
+            if (!textRegex.test(fullName.lastName)) invalidFields.push('last name')
             if (user) {
                 invalidFields.push('email address already exists')
             }
@@ -213,7 +214,7 @@ const addUser = async (req, res, next) => {
                 if (!emailRegex.test(emailAddress)) invalidFields.push('email address')
             }
             if (!userTypeList.includes(userType)) invalidFields.push('user type')
-
+                
             if (invalidFields.length > 0) {
                 res.status(404).send({
                     successful: false,
@@ -221,7 +222,7 @@ const addUser = async (req, res, next) => {
                 })
             }
             else {
-
+                
                 let user = new User({
                     fullName: fullName,
                     emailAddress: emailAddress,
@@ -237,7 +238,7 @@ const addUser = async (req, res, next) => {
                         res.status(200).send({
                             successful: true,
                             message: "Successfully added a new user.",
-                            added_user: result
+                            data: result
                         })
                     })
                     .catch((error) => {

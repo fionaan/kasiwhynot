@@ -8,7 +8,7 @@ const { historyTypeList,
     checkObjNull,
     toProperCase } = require('../../utils')
 
-const deleteLogs = async (req,res) => {
+const deleteLogs = async (req, res) => {
     await historyLog.deleteMany()
         .then(() => {
             res.status(200).send({
@@ -33,7 +33,7 @@ const getAllLogs = async (req, res, next) => {
                 successful: false,
                 message: "Invalid page number."
             })
-        }  
+        }
 
         let logs = await historyLog.aggregate([
             {
@@ -179,41 +179,37 @@ const getAllLogs = async (req, res, next) => {
 }
 
 const addLog = async (editedBy, historyType, recordClass, patientName, callback) => {
-    try{
+    try {
 
         //CHECK FOR NULL OR EMPTY FIELDS
         const nullFields = []
-        if (checkIfNull(editedBy)) nullFields.push('edited by')
-        if (checkIfNull(historyType)) nullFields.push('history type')
-        if (checkIfNull(recordClass)) nullFields.push('record class')
-        if (checkIfNull(patientName)) nullFields.push('patient name')
+        // if (checkIfNull(editedBy)) nullFields.push('edited by')
+        // if (checkIfNull(historyType)) nullFields.push('history type')
+        // if (checkIfNull(recordClass)) nullFields.push('record class')
+        // if (checkIfNull(patientName)) nullFields.push('patient name')
 
+        // ADDITIONAL/SPECIFIC VALIDATIONS 
         //CHECKS IF USER EXISTS
-        if (!isObjIdValid(editedBy)) {
-            nullFields.push('edited by invalid object id')
-        }
-        else {
-            let editor = await user.findOne({ _id: editedBy })
+        let editor = await user.findOne({ _id: editedBy })
 
-            if (editor === null) {
-                nullFields.push('`edited by` user not existing')
-            }
-            else {
-                //CHECK IF USER OBJ HAS COMPLETE NAME
-                if (checkObjNull(editor.fullName)) {
-                    nullFields.push('edited by - full name')
-                }
-                else {
-                    if (checkIfNull(editor.fullName.firstName)) nullFields.push('edited by - first name')
-                    if (!(typeof editor.fullName.middleName === "undefined") && checkIfNull(editor.fullName.middleName)) nullFields.push('edited by - middle name')
-                    if (checkIfNull(editor.fullName.lastName)) nullFields.push('edited by - last name')
-                }
-            }
+        if (editor === null) {
+            nullFields.push('"Edited by" user not existing')
         }
+        // else {
+        //     //CHECK IF USER OBJ HAS COMPLETE NAME
+        //     if (checkObjNull(editor.fullName)) {
+        //         nullFields.push('edited by - full name')
+        //     }
+        //     else {
+        //         if (checkIfNull(editor.fullName.firstName)) nullFields.push('edited by - first name')
+        //         if (!(typeof editor.fullName.middleName === "undefined") && checkIfNull(editor.fullName.middleName)) nullFields.push('edited by - middle name')
+        //         if (checkIfNull(editor.fullName.lastName)) nullFields.push('edited by - last name')
+        //     }
+        // }
 
-        if(nullFields.length > 0){
-            callback(404, false, `Missing data in the following fields: ${nullFields.join(', ')}.`)
-        } 
+        if (nullFields.length > 0) {
+            callback(400, false, `Missing data in the following fields: ${nullFields.join(', ')}.`)
+        }
         else {
             historyType = historyType.trim().toUpperCase()
             recordClass = recordClass.trim().toProperCase()
@@ -223,8 +219,8 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
 
             if (!historyTypeList.includes(historyType)) invalidFields.push('history type')
             if (!recordClassList.includes(recordClass)) invalidFields.push('record class')
-            
-            if (invalidFields.length > 0){
+
+            if (invalidFields.length > 0) {
                 callback(404, false, `Invalid values detected for the following fields: ${invalidFields.join(', ')}.`)
             }
             else {
@@ -237,16 +233,16 @@ const addLog = async (editedBy, historyType, recordClass, patientName, callback)
                 })
 
                 log.save()
-                .then((result)=>{
-                    callback(200, true, result)                    
-                })
-                .catch((error) => {
-                    callback(500, false, error.message)
-                })
+                    .then((result) => {
+                        callback(200, true, result)
+                    })
+                    .catch((error) => {
+                        callback(500, false, error.message)
+                    })
             }
         }
     }
-    catch(err){
+    catch (err) {
         callback(500, false, err.message)
     }
 

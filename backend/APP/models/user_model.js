@@ -31,6 +31,7 @@ const userSchema = new Schema({ // all fields are required
         type: String,
         required: [true, '(User) Email address is required'],
         trim: true,
+        unique: [true, "Email Address already exists"],
         match: [utils.emailRegex, "Invalid (User) Email format"]
     },
     password: {
