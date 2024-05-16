@@ -28,11 +28,11 @@ Add Dental Record w/ Category & Patient Id (body):
         "isFilledOut": true,
         "q1": ["For Internship"],
         "q2": "2024-03-09T12:00:00Z",
-        "q3": {
+        "q3": "Frequently",
+        "q4": {
             "hasDentures": true,
             "dentureType": "Upper only"
         },
-        "q4": "Frequently",
         "q5": {
             "hasDentalProcedure": true,
             "pastDentalSurgery": [{
@@ -167,11 +167,11 @@ Add dental record only (POPULATED):
         "isFilledOut": true,
         "q1": ["For Internship"],
         "q2": "2024-03-09T12:00:00Z",
-        "q3": {
+        "q3": "Frequently",
+        "q4": {
             "hasDentures": true,
             "dentureType": "Upper only"
         },
-        "q4": "Frequently",
         "q5": {
             "hasDentalProcedure": true,
             "pastDentalSurgery": [{
@@ -305,11 +305,11 @@ Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False):
         "isFilledOut": false,
         "q1": [""],
         "q2": "1999-03-09T12:00:00Z",
-        "q3": {
+        "q3": " ",
+        "q4": {
             "hasDentures": false,
             "dentureType": ""
         },
-        "q4": " ",
         "q5": {
             "hasDentalProcedure": false,
             "pastDentalSurgery": [{
@@ -634,8 +634,8 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
         "isFilledOut": false,
         "q1": [],
         "q2": "1999-12-31T23:59:59.999Z",
-        "q3": [],
-        "q4": "N/A",
+        "q3": "N/A",
+        "q4": [],
         "q5": [
             {
                 "description": " ",

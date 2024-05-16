@@ -698,7 +698,16 @@ const baseSchema = new Schema({
             min: [new Date('1969-12-31T00:00:00Z'), "(Dental Record) Q2 must be later than approximately (January 1, 1970)"],
             max: [new Date(), "(Dental Record) Q2 exceeds the current date"]
         },
-        q3: { //Dentures or dental prosthesis
+        q3: { //Frequency of toothbrushing
+            type: String,
+            required: [true, "(Dental Record) Q4 is required"],
+            trim: true,
+            enum: {
+                values: ["2x a day", "3x a day", "Every after meal", "Before going to bed", "N/A"],
+                message: "Invalid (Dental Record) Q4 value"
+            }
+        },
+        q4: { //Dentures or dental prosthesis
             type: [String],
             required: [true, "(Dental Record) Q3 is required"],
             default: undefined,
@@ -716,15 +725,6 @@ const baseSchema = new Schema({
                     message: "Maximum text entered for (Dental Record) Q3 reached (255)"
                 }
             ]
-        },
-        q4: { //Frequency of toothbrushing
-            type: String,
-            required: [true, "(Dental Record) Q4 is required"],
-            trim: true,
-            enum: {
-                values: ["2x a day", "3x a day", "Every after meal", "Before going to bed", "N/A"],
-                message: "Invalid (Dental Record) Q4 value"
-            }
         },
         q5: { //Past dental surgery -- has yesOrNo -- multiple -- optional
             required: [true, "(Dental Record) Q5 is required"],
@@ -927,6 +927,15 @@ const employeeSchema = new mongoose.Schema({
                 "computer science and information technology department",
                 "business administration department"
             ],
+            message: "Invalid Employee Department"
+        }
+    },
+    role: {
+        type: String,
+        required: [true, "Employee Department is required"],
+        trim: true,
+        enum: {
+            values: [ "Faculty", "Non-faculty"],
             message: "Invalid Employee Department"
         }
     },

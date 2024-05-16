@@ -95,7 +95,7 @@ const studentToBase = async (studEmpId, category) => {
         } else if (category === 'employees') {
             model = Employee
         } else {
-            utils.throwError('Invalid category name.', 400)
+            utils.throwError('Invalid category provided.', 400)
         }
 
         const studEmpData = await model.findById(studEmpId)
@@ -453,9 +453,6 @@ const getPatientList = async (req, res, next) => {
 const getPatient = async (req, res, next) => {
     try {
         let { patientId, tab, category, role } = req.body //user must input the _id of the patient
-        tab = tab.trim()
-        category = category.trim().toLowerCase()
-        role = role.trim().toLowerCase()
         const fieldName = tab
         let projection = {} //for the project aggregation because project can't use dynamic variables, so we'll use an object
         projection[fieldName] = `$patientDetails.${fieldName}` //creating properties for projection object which contains the fields of the user's selected tab
@@ -466,6 +463,10 @@ const getPatient = async (req, res, next) => {
         if (utils.checkIfNull(tab)) utils.throwError('No tab value provided.', 400)
         if (utils.checkIfNull(category)) utils.throwError('No category provided.', 400)
         if (utils.checkIfNull(role)) utils.throwError('No role provided.', 400)
+
+        category = category.trim().toLowerCase()
+        role = role.trim().toLowerCase()
+        tab = tab.trim()
 
         if (!utils.tabMedList.includes(tab) && !utils.tabDentalList.includes(tab)) {
             utils.throwError(`${tab} tab does not exist`, 404)
@@ -565,6 +566,20 @@ const searchPatientList = async (req, res, next) => {
         if (utils.checkIfNull(sort)) utils.throwError('No sort value provided.', 400)
         if (sort !== 1 && sort !== -1) utils.throwError('Invalid sort value', 400)
 
+        let patientModel
+        if (category == 'students') {
+            patientModel = Student
+        }
+        else if (category == 'employees') {
+            patientModel = Employee
+        }
+        else {
+            return res.status(400).json({
+                successful: false,
+                message: "Invalid patient category was provided."
+            })
+        }
+
         let matchCondition = {} // what the condition for the search would be
         let noHyphen = search.replace(/-/g, '') //remove the hyphen from the id in case there is
 
@@ -602,20 +617,6 @@ const searchPatientList = async (req, res, next) => {
                     },
                 },
             ];
-        }
-
-        let patientModel
-        if (category == 'students') {
-            patientModel = Student
-        }
-        else if (category == 'employees') {
-            patientModel = Employee
-        }
-        else {
-            return res.status(400).json({
-                successful: false,
-                message: "Invalid patient category was provided."
-            })
         }
 
         let patient = await patientModel.aggregate([
@@ -761,19 +762,19 @@ const addDentalRecord = async (req, res, next) => {
 
         if (utils.checkIfNull(dentalRecord.q2)) nullFields.push('q2')
 
-        if (utils.checkObjNull(dentalRecord.q3)) {
-            nullFields.push('q3')
+        if (utils.checkIfNull(dentalRecord.q3)) nullFields.push('q3')
+
+        if (utils.checkObjNull(dentalRecord.q4)) {
+            nullFields.push('q4')
         }
         // else {
-        //     if (utils.checkIfNull(dentalRecord.q3.hasDentures)) {
-        //         nullFields.push('q3: Has Dentures')
+        //     if (utils.checkIfNull(dentalRecord.q4.hasDentures)) {
+        //         nullFields.push('q4: Has Dentures')
         //     }
         //     else {
-        //         if (dentalRecord.q3.hasDentures === true && utils.checkIfNull(dentalRecord.q3.dentureType)) nullFields.push('q3: Denture Type')
+        //         if (dentalRecord.q4.hasDentures === true && utils.checkIfNull(dentalRecord.q4.dentureType)) nullFields.push('q4: Denture Type')
         //     }
         // }
-
-        if (utils.checkIfNull(dentalRecord.q4)) nullFields.push('q4')
 
         if (utils.checkObjNull(dentalRecord.q5)) {
             nullFields.push('q5')
@@ -982,9 +983,12 @@ const updateRecord = async (req, res, next) => {
         const { role, studEmpId, category, editedBy, updatedData } = req.body
         let response, nullFields = []
 
-        if (!role || (role !== 'doctor' && role !== 'nurse' && role !== 'dentist' && role !== 'admin')) {
-            utils.throwError('The role input is not recognized.', 404)
+        if (role !== 'doctor' && role !== 'nurse' && role !== 'dentist' && role !== 'admin') {
+            utils.throwError('Invalid role.', 400)
         }
+        if (checkIfNull(role)) utils.throwError('No role provided', 400)
+        if (checkIfNull(studEmpId)) utils.throwError('No student/employee Id provided', 400)
+        if (checkIfNull(category)) utils.throwError('No student/employee Id provided', 400)
 
         // Fetch base patient record using stud/emp id 
         const { patient, studEmp, model } = await studentToBase(studEmpId, category)
@@ -1145,6 +1149,9 @@ const updateRecord = async (req, res, next) => {
 const archivePatient = async (req, res) => {
     try {
         const { category, studEmpId, editedBy } = req.body;
+
+        if (checkIfNull(studEmpId)) utils.throwError('No student/employee Id provided', 400)
+        if (checkIfNull(category)) utils.throwError('No student/employee Id provided', 400)
 
         // Fetch base patient record using stud/emp id
         const { patient } = await studentToBase(studEmpId, category)
