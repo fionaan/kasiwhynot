@@ -12,7 +12,10 @@ const dateTimeRegex = /^(?:\d{4})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2][0-9]|3[0-1])
 const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{3}Z$/
 
 //CHECKS IF STRING ONLY CONTAINS LETTERS, APOSTROPHE, HYPHEN, OR SPACE - MUST START AND END W LETTER
-const textRegex = /^(?!.*[.'-,]{2,})[a-zA-Z]+(?:[.'-,]*[a-zA-Z]+)*$/ // /^[a-zA-Z]+(?:[\s-]*[a-zA-Z]+)*$/ // /^[a-zA-Z][a-zA-Z.,'\s-]*$/
+const textRegex = /^(?!.*[.,'\-\s]{2,})(?![.,'\-\s])(?!^[.,'\-\s])[a-zA-Z\s.,'\-]*[a-zA-Z\s]+[a-zA-Z\s.,'\-]*$/
+
+// /^(?!.*[.'-,]{2,})[a-zA-Z]+(?:[.'-,]*[a-zA-Z]+)*(?: [a-zA-Z]+(?:[.'-,]*[a-zA-Z]+)*)*$/
+
 
 // CHECKS IF STRING ONLY CONTAINS LETTERS, APOSTROPHE, HYPHEN, OR SPACE - MUST START AND END W LETTER
 // ALSO ALLOWS N/A INPUT (FOR OPTIONAL FIELDS)

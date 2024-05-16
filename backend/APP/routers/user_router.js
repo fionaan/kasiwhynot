@@ -7,5 +7,6 @@ router.get('/get/:pageNumber?', userController.getUser)
 router.post('/create', userController.addUser);
 router.put('/archiveUser', userController.archiveUser)
 router.put('/unarchiveUser', userController.unarchiveUser)
+router.put('/change-name', userController.setNewName)
 
 module.exports = router

@@ -1,17 +1,12 @@
 const nodeMailer = require('nodemailer')
 const User = require('../models/user_model')
-const { textRegex,
-    emailRegex,
-    userTypeList,
-    toProperCase,
-    checkObjNull,
-    checkIfNull,
-    generatePassword } = require('../../utils')
+const { toProperCase } = require('../../utils')
+const utils = require('../../utils')
 const { emptyDirSync } = require('fs-extra')
 
 const viewProfileSetting = async (req, res, next) => {
     try {
-        const userId = req.body._id
+        const { userId } = req.body
 
         // Validate if the userId is provided
         if (!userId) {
@@ -21,7 +16,8 @@ const viewProfileSetting = async (req, res, next) => {
             })
         }
 
-        const user = await User.findById(userId)
+        if (utils.isObjIdValid(userId)) utils.throwErorr('User Id is invalid')
+        let user = await User.findById(userId)
 
         if (!user) {
             return res.status(404).json({
@@ -30,17 +26,19 @@ const viewProfileSetting = async (req, res, next) => {
             })
         }
 
+        user.fullName.middleName = (user.fullName.middleName === "N/A") ?  "" : user.fullName.middleName[0] + "."  
+
         const passwordLength = user.password.length;
         const maskedPassword = '*'.repeat(passwordLength)
 
         const userProfile = {
-            name: user.name,
+            name: user.fullName.lastName + ", " + user.fullName.firstName + " " + user.fullName.middleName,
             emailAddress: user.emailAddress,
             userType: user.userType,
             password: maskedPassword
         }
 
-        res.json({
+        res.status(200).json({
             successful: true,
             message: 'User profile retrieved successfully.',
             userProfile: userProfile
@@ -48,7 +46,7 @@ const viewProfileSetting = async (req, res, next) => {
     } catch (error) {
         res.status(500).json({
             successful: false,
-            message: 'Internal Server Error'
+            message: error.message
         })
     }
 }
@@ -109,10 +107,10 @@ const getUser = async (req, res, next) => {
                         ]
                     },
                     emailAddress: 1,
-                   
+
                     userType: 1,
                     status: 1,
-                   
+
                     createdAt: {
                         $dateToString: {
                             format: "%Y-%m-%d",
@@ -160,96 +158,95 @@ const getUser = async (req, res, next) => {
         res.status(error.status || 500).json({
             successful: false,
             message: error.message
-        }) 
+        })
     }
 }
 const addUser = async (req, res, next) => {
 
     try {
         let { fullName, emailAddress, userType } = req.body
-        password = generatePassword()
+        password = utils.generatePassword()
 
         //CHECK FOR NULL OR EMPTY FIELDS
-        const nullFields = []
+        // const nullFields = []
 
-        if (checkObjNull(fullName)) {
-            nullFields.push('full name')
-        } else {
+        // if (utils.checkObjNull(fullName)) {
+        //     nullFields.push('full name')
+        // } else {
 
-            if (checkIfNull(fullName.firstName)) nullFields.push('first name')
-            if (!(typeof fullName.middleName === "undefined") && (checkIfNull(fullName.middleName))) nullFields.push('middle name')
+        //     if (utils.checkIfNull(fullName.firstName)) nullFields.push('first name')
+        //     if (!(typeof fullName.middleName === "undefined") && (utils.checkIfNull(fullName.middleName))) nullFields.push('middle name')
 
-            if (checkIfNull(fullName.lastName)) nullFields.push('last name')
-        }
+        //     if (utils.checkIfNull(fullName.lastName)) nullFields.push('last name')
+        // }
 
-        if (checkIfNull(emailAddress)) nullFields.push('email address')
-        if (checkIfNull(password)) nullFields.push('password')
-        if (checkIfNull(userType)) nullFields.push('user type')
+        // if (utils.checkIfNull(emailAddress)) nullFields.push('email address')
+        // if (utils.checkIfNull(password)) nullFields.push('password')
+        // if (utils.checkIfNull(userType)) nullFields.push('user type')
 
-        if (nullFields.length > 0) {
-            res.status(404).send({
-                successful: false,
-                message: `Missing data in the following fields: ${nullFields.join(', ')}`
+        // if (nullFields.length > 0) {
+        //     res.status(404).send({
+        //         successful: false,
+        //         message: `Missing data in the following fields: ${nullFields.join(', ')}`
+        //     })
+        // }
+        // else {
+
+        if (userType) userType = userType.trim().toProperCase()
+        // fullName.firstName = fullName.firstName.trim()
+        // fullName.lastName = fullName.lastName.trim()
+        // if (!utils.checkIfNull(fullName.middleName)) fullName.middleName = fullName.middleName.trim()
+
+        // CHECK FOR FIELDS W INVALID VALUES
+        const existingUser = await User.findOne({ emailAddress: emailAddress })
+
+        // const invalidFields = []
+        // if (!utils.textRegex.test(fullName.firstName)) invalidFields.push('first name')
+        //     console.log('te')
+        // if ((!utils.checkIfNull(fullName.middleName)) && (!utils.textRegex.test(fullName.middleName))) invalidFields.push('middle name')
+        // if (!utils.textRegex.test(fullName.lastName)) invalidFields.push('last name')
+        if (existingUser) utils.throwError('Email address already exists', 400)
+        // }
+        // else {
+        //     if (!utils.emailRegex.test(emailAddress)) invalidFields.push('email address')
+        // }
+        // if (!utils.userTypeList.includes(userType)) invalidFields.push('user type')
+
+        // if (invalidFields.length > 0) {
+        //     res.status(404).send({
+        //         successful: false,
+        //         message: `Invalid values detected for the following fields: ${invalidFields.join(', ')}`
+        //     })
+        // }
+        // else {
+
+        let user = new User({
+            fullName: fullName,
+            emailAddress: emailAddress,
+            password: password,
+            userType: userType,
+            status: "Inactive",
+            passChangeable: true,
+            archived: false
+        })
+
+        user.save()
+            .then((result) => {
+                res.status(200).send({
+                    successful: true,
+                    message: "Successfully added a new user.",
+                    data: result
+                })
             })
-        }
-        else {
-
-            userType = userType.trim().toProperCase()
-            fullName.firstName = fullName.firstName.trim()
-            fullName.lastName = fullName.lastName.trim()
-            if (!checkIfNull(fullName.middleName)) fullName.middleName = fullName.middleName.trim()
-
-            //CHECK FOR FIELDS W INVALID VALUES
-            const user = await User.findOne({ emailAddress: emailAddress })
-
-            const invalidFields = []
-            if (!textRegex.test(fullName.firstName)) invalidFields.push('first name')
-                console.log('te')
-            if ((!checkIfNull(fullName.middleName)) && (!textRegex.test(fullName.middleName))) invalidFields.push('middle name')
-            if (!textRegex.test(fullName.lastName)) invalidFields.push('last name')
-            if (user) {
-                invalidFields.push('email address already exists')
-            }
-            else {
-                if (!emailRegex.test(emailAddress)) invalidFields.push('email address')
-            }
-            if (!userTypeList.includes(userType)) invalidFields.push('user type')
-                
-            if (invalidFields.length > 0) {
-                res.status(404).send({
+            .catch((error) => {
+                res.status(500).send({
                     successful: false,
-                    message: `Invalid values detected for the following fields: ${invalidFields.join(', ')}`
+                    message: error.message
                 })
-            }
-            else {
-                
-                let user = new User({
-                    fullName: fullName,
-                    emailAddress: emailAddress,
-                    password: password,
-                    userType: userType,
-                    status: "Active",
-                    passChangeable: true,
-                    archived: false // New field
-                })
+            })
+        // }
 
-                user.save()
-                    .then((result) => {
-                        res.status(200).send({
-                            successful: true,
-                            message: "Successfully added a new user.",
-                            data: result
-                        })
-                    })
-                    .catch((error) => {
-                        res.status(500).send({
-                            successful: false,
-                            message: error.message
-                        })
-                    })
-            }
-
-        }
+        // }
     }
     catch (err) {
         res.status(500).send({
@@ -265,33 +262,39 @@ const archiveUser = async (req, res, next) => {
         const userId = req.body._id;
 
         if (!userId) {
-            return res.status(400).json({
-                successful: false,
-                message: 'User ID is required.'
-            });
+            utils.throwError('User ID is required', 400)
+            // return res.status(400).json({
+            //     successful: false,
+            //     message: 'User ID is required.'
+            // });
         }
 
         const user = await User.findById(userId);
 
         if (!user) {
-            return res.status(404).json({
-                successful: false,
-                message: 'User not found.'
-            });
+            utils.throwError('User not found', 404)
+            // return res.status(404).json({
+            //     successful: false,
+            //     message: 'User not found.'
+            // });
+        }
+
+        // Check if already archived
+        if (user.archived) {
+            utils.throwError('Patient is already archived', 400)
         }
 
         user.archived = true;
-        await user.save();
+        await user.save()
 
         return res.status(200).json({
             successful: true,
             message: 'User archived successfully.'
         });
     } catch (error) {
-        console.error(error);
         return res.status(500).json({
             successful: false,
-            message: 'Internal Server Error'
+            message: error.message
         });
     }
 };
@@ -301,19 +304,29 @@ const unarchiveUser = async (req, res, next) => {
         const userId = req.body._id;
 
         if (!userId) {
-            return res.status(400).json({
-                successful: false,
-                message: 'User ID is required.'
-            });
+            utils.throwError('User ID is required.', 400)
+            // return res.status(400).json({
+            //     successful: false,
+            //     message: 'User ID is required.'
+            // });
         }
 
         const user = await User.findById(userId);
 
         if (!user) {
-            return res.status(404).json({
-                successful: false,
-                message: 'User not found.'
-            });
+            utils.throwError('User not found.', 404)
+            // return res.status(404).json({
+            //     successful: false,
+            //     message: 'User not found.'
+            // });
+        }
+
+        if (!user.archived) {
+            utils.throwError('Patient is not yet archived', 400)
+            // return res.status(400).json({
+            //     successful: false,
+            //     message: 'Patient is not archived',
+            // });
         }
 
         user.archived = false;
@@ -324,10 +337,9 @@ const unarchiveUser = async (req, res, next) => {
             message: 'User unarchived successfully.'
         });
     } catch (error) {
-        console.error(error);
         return res.status(500).json({
             successful: false,
-            message: 'Internal Server Error'
+            message: error.message
         });
     }
 };
@@ -374,10 +386,49 @@ const sendEmail = async (req, res) => {
     }
 }
 
+const setNewName = async (req, res) => {
+    try {
+        const { userId, fullName } = req.body
+        let nullFields = []
+
+        // Validate if the userId is provided
+        if (!userId) utils.throwError('User ID is required', 400)
+        if (utils.checkObjNull(fullName)) {
+            nullFields.push('Fullname required.')
+        } else {
+            if (utils.checkIfNull(fullName.firstName)) nullFields.push('Firstname required.')
+            if (utils.checkIfNull(fullName.middleName)) nullFields.push('Middlename required.')
+            if (utils.checkIfNull(fullName.lastName)) nullFields.push('Lastname required.')
+        }
+
+        if (nullFields.length > 0) utils.throwError(`Missing fields: ${nullFields.join(', ')}`, 400)
+
+        const user = await User.findByIdAndUpdate(userId, User.findByIdAndUpdate(userId, {
+            'fullName.firstName': fullName.firstName,
+            'fullName.middleName': fullName.middleName,
+            'fullName.lastName': fullName.lastName
+        }), { new: true, runValidators: true })
+
+        if (!user) utils.throwError('User not found', 404)
+
+        res.status(200).json({
+            successful: true,
+            message: "Successfully changed name."
+        })
+
+    } catch (error) {
+        res.status(error.status || 500).json({
+            successful: false,
+            message: error.message
+        })
+    }
+}
+
 module.exports = {
     addUser,
     getUser,
     viewProfileSetting,
     archiveUser,
-    unarchiveUser
+    unarchiveUser,
+    setNewName
 };
