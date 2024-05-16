@@ -12,7 +12,7 @@ const dateTimeRegex = /^(?:\d{4})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2][0-9]|3[0-1])
 const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{3}Z$/
 
 //CHECKS IF STRING ONLY CONTAINS LETTERS, APOSTROPHE, HYPHEN, OR SPACE - MUST START AND END W LETTER
-const textRegex = /^[a-zA-Z]+(?:[\s-]*[a-zA-Z]+)*$/ // /^[a-zA-Z][a-zA-Z.,'\s-]*$/
+const textRegex = /^(?!.*[.'-,]{2,})[a-zA-Z]+(?:[.'-,]*[a-zA-Z]+)*$/ // /^[a-zA-Z]+(?:[\s-]*[a-zA-Z]+)*$/ // /^[a-zA-Z][a-zA-Z.,'\s-]*$/
 
 // CHECKS IF STRING ONLY CONTAINS LETTERS, APOSTROPHE, HYPHEN, OR SPACE - MUST START AND END W LETTER
 // ALSO ALLOWS N/A INPUT (FOR OPTIONAL FIELDS)
@@ -27,6 +27,11 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 // CHECKS IF PASSWORD SATISFIES GUIDELINES
 // Contains at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character, and includes 8-20 characters
 const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*()-=_+|{}[\]:;"'<>,.?/])(?=.*[a-z])(?=.*[A-Z]).{8,20}$/
+
+// LIST OF TABS
+const tabMedList = ['basicInfo', 'laboratory', 'vaccination', 'medicalHistory']
+
+const tabDentalList = ['basicInfo', 'dentalRecord']
 
 //Valid Campus
 const isValidCampus = ['Manila','Makati', 'Malolos']
@@ -73,7 +78,7 @@ const checkObjNull = (obj)=>{
 
 //CHECKS IF AN ARRAY ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARRAY IS NULL/EMPTY, OTHERWISE RETURNS FALSE.
 const checkArrNull = (arr, required)=>{
-    return (((typeof arr === "undefined") || arr.includes("") && arr.length === 1) || (required === true && arr.length === 0))
+    return (((typeof arr === "undefined") || arr.includes("") && arr.length === 1) || (required && required === true && arr.length === 0))
 }
 
 const checkFullArr = (arr, message, func, required)=>{
@@ -162,6 +167,8 @@ module.exports = {
     userTypeList,
     historyTypeList,
     recordClassList,
+    tabMedList,
+    tabDentalList,
     q4Values,
     q6Values,
     dateNone,
