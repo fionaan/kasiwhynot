@@ -1506,6 +1506,10 @@ const getFilteredResultList = async (req, res, next) => {
             matchCondition['patientDetails.basicInfo.campus'] = { $in: filters.campus }
         }
 
+        if (filters.status) {
+            matchCondition['patientDetails.archived'] = { $in: filters.status }
+        }
+
         let patient = await patientModel.aggregate([
             {
                 $lookup: {
