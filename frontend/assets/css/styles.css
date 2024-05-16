@@ -855,10 +855,6 @@ video {
   height: 2.25rem;
 }
 
-.h-96 {
-  height: 24rem;
-}
-
 .h-auto {
   height: auto;
 }
@@ -878,22 +874,6 @@ video {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-3\/5 {
-  height: 60%;
-}
-
-.h-1\/2 {
-  height: 50%;
-}
-
-.h-4\/5 {
-  height: 80%;
-}
-
-.h-2\/3 {
-  height: 66.666667%;
 }
 
 .min-h-2 {
@@ -1122,10 +1102,6 @@ video {
 
 .overflow-x-auto {
   overflow-x: auto;
-}
-
-.overflow-x-hidden {
-  overflow-x: hidden;
 }
 
 .whitespace-nowrap {

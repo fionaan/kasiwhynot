@@ -1,280 +1,77 @@
 <html>
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Archived Users List</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Users List</title>
+  <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 
 <body class="bg-bgColor bg-no-repeat bg-fixed w-full h-screen flex flex-col">
-    <div class="flex flex-col flex-1">
-        <special-header></special-header> <!-- header -->
-        <div id="title"></div>
-        <div class="flex flex-col items-center"> <!-- content -->
-            <div class="px-20 my-5 mx-8 flex items-center flex-col viewHL:flex-row justify-between w-full"> <!-- utility bar -->
-                <div class="flex flex-col viewHLphone:flex-row items-center"> <!-- container for search bar and filters -->
-                    <div class="bg-white rounded-lg mx-5 px-3 max-w-md h-9 flex viewHL:my-0 my-2 justify-left items-center 
+  <div class="flex flex-col flex-1">
+    <special-header></special-header> <!-- header -->
+    <div id="title"></div>
+    <div class="flex flex-col items-center"> <!-- content -->
+      <div class="px-20 my-5 mx-8 flex items-center flex-col viewHL:flex-row justify-between w-full">
+        <!-- utility bar -->
+        <div class="flex flex-col viewHLphone:flex-row items-center"> <!-- container for search bar and filters -->
+          <div class="bg-white rounded-lg mx-5 px-3 max-w-md h-9 flex viewHL:my-0 my-2 justify-left items-center 
                     relative focus-within:border-black border border-gray-300"> <!-- search bar -->
-                        <p class="text-search font-semibold mr-2">Search: </p>
-                        <input class="pl-1 pr-5 text-search focus:outline-none flex-grow-3" type="text" placeholder="Search ID or name here...">
-                        <button class="absolute right-0 top-0 bottom-0 p-2  text-white flex items-center justify-center rounded-r-lg">
-                            <img class="h-5 w-5" src="../assets/img/search.svg" alt="Search">
-                        </button>
-                    </div>
-                    
-                    <!-- <input id="searchBar" class="w-full px-4 px-4 py-2 whitespace-nowrap border border-gray-300 rounded-lg transition duration-300 focus:outline-none focus:border-blue-500" type="text" placeholder="Search..." /> -->
-                    <div class="mx-5 flex flex-grow-3 items-center mt-0 px-3"> <!-- filters -->
-                        <span class="mx-2 text-search font-semibold">Filters: </span>                   
-                        <span class="flex items-center w-fit h-fit p-1 mx-1 bg-white rounded-lg"> <!-- User Type -->
-                            <button class="font-semibold hover:underline whitespace-nowrap">User Type</button>
-                            <button class="ml-2 mt-1 items-center"><img class="h-2 w-2 min-h-2 min-w-2"
-                                    src="../assets/img/tempPlus.png" /></button>
-                        </span>
-                        <span class="flex items-center w-fit h-fit p-1 mx-1 bg-white rounded-lg"> <!-- status -->
-                            <button class="font-semibold hover:underline whitespace-nowrap">Status</button>
-                            <button class="ml-2 mt-1 items-center"><img class="h-2 w-2 min-h-2 min-w-2"
-                                    src="../assets/img/tempPlus.png" /></button>
-                        </span>
-                    </div>
-                </div>
+            <p class="text-search font-semibold mr-2">Search: </p>
+            <input class="pl-1 pr-5 text-search focus:outline-none flex-grow-3" type="text"
+              placeholder="Search ID or name here...">
+            <button
+              class="absolute right-0 top-0 bottom-0 p-2  text-white flex items-center justify-center rounded-r-lg">
+              <img class="h-5 w-5" src="../assets/img/search.svg" alt="Search">
+            </button>
+          </div>
 
-                <div class="flex flex-row justify-center my-2 viewHL:my-0"> <!-- button commands -->       
-                  <button
-                      class="py-1 px-2 mx-1 bg-overlay rounded-lg text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 whitespace-nowrap">View Unarchived Users
-                  </button>
-                </div>
-            </div>
-            <div class="bg-white w-5/6 h-browser mx-auto mt-2 viewPL:mt-7 rounded-login flex flex-col   overflow-auto overflow-x-auto scrollbar-thin"> <!-- table -->
-              <table class=" min-w-full table-fixed">
-                <thead class="sticky top-0 bg-white">
-                  <tr>
-                    <th class="px-4 py-2 whitespace-nowrap">Name</th>
-                    <th class="px-4 py-2 whitespace-nowrap">Email Address</th>
-                    <th class="px-4 py-2 whitespace-nowrap">User Type</th>
-                    <th class="px-4 py-2 whitespace-nowrap">Status</th>
-                    <th class="px-4 py-2 whitespace-nowrap">Date Created</th>
-                    <th class="px-4 py-2 whitespace-nowrap">Date Updated</th>
-                    <th class="px-4 py-2 whitespace-nowrap"> </th>
-                  </tr>
-                </thead>
-                <tbody class="text-center">
-                  <tr class=" w-full bg-gray-200">
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr class=" w-full bg-gray-200">
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr class=" w-full bg-gray-200">
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr class=" w-full bg-gray-200">
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr class=" w-full bg-gray-200">
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr class=" w-full bg-gray-200">
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr class=" w-full bg-gray-200">
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr class=" w-full bg-gray-200">
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr class=" w-full bg-gray-200">
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="px-4 py-2 whitespace-nowrap">Yuar Mai Sun Chai</td>
-                    <td class="px-4 py-2 whitespace-nowrap">myonlysunshine@happy.com</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Doctor</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Active</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 18, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">Jan. 24, 2024</td>
-                    <td class="px-4 py-2 whitespace-nowrap">
-                      <button class="text-blue-800">Unarchive</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="flex my-2"> <!-- pagination -->   
-                <button class="mx-1">&lt;</button>
-                <button class="mx-1">1</button>
-                <button class="mx-1">2</button>
-                <button class="mx-1">...</button>
-                <button class="mx-1">38</button>
-                <button class="mx-1">39</button>
-                <button class="mx-1">&gt;</button>
-            </div>
+          <!-- <input id="searchBar" class="w-full px-4 px-4 py-2 whitespace-nowrap border border-gray-300 rounded-lg transition duration-300 focus:outline-none focus:border-blue-500" type="text" placeholder="Search..." /> -->
+          <div class="mx-5 flex flex-grow-3 items-center mt-0 px-3"> <!-- filters -->
+            <span class="mx-2 text-search font-semibold">Filters: </span>
+            <span class="flex items-center w-fit h-fit p-1 mx-1 bg-white rounded-lg"> <!-- User Type -->
+              <button class="font-semibold hover:underline whitespace-nowrap">User Type</button>
+              <button class="ml-2 mt-1 items-center"><img class="h-2 w-2 min-h-2 min-w-2"
+                  src="../assets/img/tempPlus.png" /></button>
+            </span>
+          </div>
         </div>
+
+        <div class="flex flex-row justify-center my-2 viewHL:my-0"> <!-- button commands -->
+          <button
+            id="viewActiveUsers" class="py-1 px-2 mx-1 bg-overlay rounded-lg text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 whitespace-nowrap">View
+            Active Users
+          </button>
+        </div>
+      </div>
+      <div
+        class="bg-white w-5/6 max-h-browser mx-auto mt-2 viewPL:mt-7 rounded-login flex flex-col   overflow-auto overflow-x-auto scrollbar-thin"
+        id="userTable"> <!-- table -->
+
+      </div>
+      <div class="flex my-2"> <!-- pagination -->
+        <button class="mx-1">&lt;</button>
+        <button class="mx-1">1</button>
+        <button class="mx-1">2</button>
+        <button class="mx-1">...</button>
+        <button class="mx-1">38</button>
+        <button class="mx-1">39</button>
+        <button class="mx-1">&gt;</button>
+      </div>
     </div>
-    <script src="./templateManager.js"></script>
-        <script>
-            updateTitle('View Archived Users List')
-        </script>
-        <special-footer></special-footer>
+  </div>
+  <script src="./templateManager.js"></script>
+  <script src="../API/api_client.js"></script>
+  <script src="../API/user.js"></script>
+  <script src="../component/table.js"></script>
+  <script src="../controller/inactiveUsers.js"></script>
+  <script>
+    updateTitle('View Archived Users List')
+
+    document.getElementById('viewActiveUsers').addEventListener('click', () => {
+            window.location.href = 'viewUserList.html';
+        })
+  </script>
+  <special-footer></special-footer>
 </body>
 
 </html>
