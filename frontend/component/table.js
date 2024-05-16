@@ -60,7 +60,16 @@ const renderTable = (data, columns, page) => {
             <td class="px-4 py-2 whitespace-nowrap">${element.campus}</td>
             <td class="px-4 py-2 whitespace-nowrap">${element.status}</td>
         </tr>`;
-    }
+        
+    } else if (page == "Logs") {
+      trow += `<tr class="${rowClass}">
+          <td class="px-4 py-2 whitespace-nowrap">${element.dateTime}</td>
+          <td class="px-4 py-2 whitespace-nowrap">${element.editedBy}</td>
+          <td class="px-4 py-2 whitespace-nowrap">${element.historyType}</td>
+          <td class="px-4 py-2 whitespace-nowrap">${element.recordClass}</td>
+          <td class="px-4 py-2 whitespace-nowrap">${element.patientName}</td>
+      </tr>`;
+  }
   });
 
   let table = `
