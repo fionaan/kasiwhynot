@@ -21,69 +21,333 @@
             </header>
 
             <div class="flex px-3 sm:px-8 align-middle"> <!-- title -->
-                <button class="mx-5 mr-4 pl-3 relative w-12 h-12 sm:w-11 sm:h-11">
-                    <img src="../assets/img/realBack.png" class="w-6 h-6 sm:w-5 sm:h-5">
-                    <span class="absolute inset-0 flex items-center justify-center rounded-full bg-transparent hover:bg-black hover:bg-opacity-25 transition-all">
+                <button
+                    class="mx-5 mr-4 pl-3 relative w-12 h-12 sm:w-11 sm:h-11">
+                    <img src="../assets/img/realBack.png"
+                        class="w-6 h-6 sm:w-5 sm:h-5">
+                    <span
+                        class="absolute inset-0 flex items-center justify-center rounded-full bg-transparent hover:bg-black hover:bg-opacity-25 transition-all">
                     </span>
                 </button>
-                <h1 class="px-4 pt-1 text-3xl sm:px-2 sm:pb-1">Profile Settings</h1>
+                <h1 class="px-4 pt-1 text-3xl sm:px-2 sm:pb-1">Profile
+                    Settings</h1>
             </div>
 
-            
-            <div class="flex flex-col p-11 grow gap-y-3 justify-center sm:flex-row sm:items-center sm:gap-x-24 sm:p-0 sm:pb-10">
-                
-                    <div class="items-center w-fit mx-auto pb-5 sm:mx-0 sm:p-0">
-                        <img src="../assets/img/profile-img.png"
-                            class="rounded-full w-[10rem] sm:w-[14.50rem] shadow-lg shadow-slate-500">
-                    </div>
+            <div
+                class="flex flex-col p-11 grow gap-y-3 justify-center sm:flex-row sm:items-center sm:gap-x-24 sm:p-0 sm:pb-10">
 
-                    <div>
-                        <div class="flex flex-col pt-2 gap-y-3.5">
-                            <!-- profile info -->
-                            <div>
-                                <h1 class="text-darkButton font-bold text-lg sm:text-xl">Name</h1>
-                                <div class="flex items-center">
-                                    <h1 class="h-fit text-base sm:text-lg">Undo Lumayad</h1>
-                                    <button class="justify-center ml-4 relative w-10 h-10 sm:w-11 sm:h-11">
-                                        <img src="../assets/img/edit.png" class="mx-auto ml-2.5 w-5 h-5 sm:w-5 sm:h-5">
-                                        <span class="absolute inset-0 flex items-center justify-center rounded-full bg-transparent hover:bg-black hover:bg-opacity-25 transition-all"> </span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div>
-                                <h1
-                                    class="text-darkButton font-bold text-lg sm:text-xl">User
-                                    Type</h1>
-                                <h1
-                                    class="text-darkButton text-base sm:text-lg">Doctor</h1>
-                            </div>
-                            <div>
-                                <h1
-                                    class="text-darkButton font-bold text-lg sm:text-xl">Email
-                                    Address</h1>
-                                <h1
-                                    class="text-darkButton text-base sm:text-lg">hantulumayad@gmail.com</h1>
-                            </div>
-                            <div>
-                                <h1
-                                    class="mb-2 text-darkButton font-bold text-lg sm:text-xl sm:mb-3">Password</h1>
-                                <button
-                                    class="px-4 py-2 bg-darkButton rounded-md text-white font-semibold hover:bg-hoverDarkBlue focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 focus:ring-opacity-50 transition-all active:bg-activeDarkBlue">Change
-                                    Password</button>
+                <div class="items-center w-fit mx-auto pb-5 sm:mx-0 sm:p-0">
+                    <img src="../assets/img/profile-img.png"
+                        class="rounded-full w-[10rem] sm:w-[14.50rem] shadow-lg shadow-slate-500">
+                </div>
+
+                <div>
+                    <div class="flex flex-col pt-2 gap-y-3.5">
+                        <!-- profile info -->
+                        <div>
+                            <h1
+                                class="text-darkButton font-bold text-lg sm:text-xl">Name</h1>
+                            <div class="flex items-center">
+                                <h1 class="h-fit text-base sm:text-lg">Undo
+                                    Lumayad</h1>
+                                <button onclick="openModal('changeName')"
+                                    class="justify-center ml-4 relative w-10 h-10 sm:w-11 sm:h-11 ">
+                                    <img src="../assets/img/edit.png"
+                                        class="mx-auto ml-2.5 w-5 h-5 sm:w-5 sm:h-5 hover:bg-gray-300 hover:rounded-sm hover:ring-[10px] md:hover:ring-[9px] hover:ring-gray-300 transition-all">
+                                </button>
                             </div>
                         </div>
+                        <div>
+                            <h1
+                                class="text-darkButton font-bold text-lg sm:text-xl">User
+                                Type</h1>
+                            <h1
+                                class="text-darkButton text-base sm:text-lg">Doctor</h1>
+                        </div>
+                        <div>
+                            <h1
+                                class="text-darkButton font-bold text-lg sm:text-xl">Email
+                                Address</h1>
+                            <h1
+                                class="text-darkButton text-base sm:text-lg">hantulumayad@gmail.com</h1>
+                        </div>
+                        <div>
+                            <h1
+                                class="mb-2 text-darkButton font-bold text-lg sm:text-xl sm:mb-3">Password</h1>
+                            <button onclick="openModal('changePassword')"
+                                class="px-4 py-2 bg-darkButton rounded-md text-white font-semibold hover:bg-hoverDarkBlue focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 focus:ring-opacity-50 transition-all active:bg-activeDarkBlue">Change
+                                Password</button>
+                        </div>
                     </div>
-                
+                </div>
+
+            </div>
+
+            <!-- Modal -->
+            <div id="modal"
+                class="hidden opacity-0 fixed left-0 top-0 bg-black bg-opacity-50 w-screen h-screen justify-center items-center transition-all duration-500">
+                <div id="modalContainer"
+                    class="bg-white rounded-lg shadow-md p-7 w-[50%] flex flex-col max-w-96 md:justify-center md:max-w-md gap-y-3.5 md:p-10">
+
+                    <div id="changePassword" class="hidden flex-col gap-y-3.5">
+
+                        <div class="flex flex-col gap-y-0.5">
+                            <!-- change password -->
+                            <h1
+                                class="text-sm font-bold text-darkButton md:text-2xl">Change
+                                Password</h1>
+                            <h2 class="text-xs text-gray-800 md:text-base">Your
+                                password must be 8-20 characters and
+                                should
+                                include a combination of at least 1 uppercase
+                                letter, 1 lowercase letter, 1 number, and
+                                1
+                                special character.</h2>
+                        </div>
+
+                        <div>
+                            <div onclick="toggleSelectBorder(this)"
+                                class=" w-full px-2 py-1 md:px-3 md:py-2 my-3 border border-gray-300 rounded-md">
+                                <label for="emailAddress"
+                                    class="block text-darkButton text-xs font-medium md:text-base md:font-semibold">Current
+                                    password</label>
+                                <div class="flex items-center">
+                                    <input name="currentPassword"
+                                        type="password" id="currentPassword"
+                                        placeholder="Enter current password"
+                                        class="block w-full h-5 focus:outline-none focus:border-blue-500 text-xs placeholder:text-xs md:h-6 md:text-base md:placeholder:text-base">
+                                    <img src="../assets/img/eye-hidden.png"
+                                        onclick="passwordHide('currentPassword', this)"
+                                        id="eyeicon"
+                                        class="w-[22px] ml-2 mr-0.5 cursor-pointer hover:bg-gray-300 hover:rounded-full hover:ring-[2px] md:hover:ring-[5px] hover:ring-gray-300 transition-all">
+                                </div>
+                            </div>
+                            <div onclick="toggleSelectBorder(this)"
+                                class="w-full px-2 py-1 md:px-3 md:py-2 my-3 border border-gray-300 rounded-md">
+                                <label for="emailAddress"
+                                    class="block text-darkButton text-xs font-medium md:text-base md:font-semibold">New
+                                    Password</label>
+                                <div class="flex items-center">
+                                    <input name="newPassword" type="password"
+                                        id="newPassword"
+                                        placeholder="Enter new password"
+                                        class="block w-full h-5 focus:outline-none focus:border-blue-500 text-xs placeholder:text-xs md:h-6 md:text-base md:placeholder:text-base">
+                                    <img src="../assets/img/eye-hidden.png"
+                                        onclick="passwordHide('newPassword', this)"
+                                        id="eyeicon"
+                                        class="w-[22px] ml-2 mr-0.5 cursor-pointer hover:bg-gray-300 hover:rounded-full hover:ring-[2px] md:hover:ring-[5px] hover:ring-gray-300 transition-all">
+                                </div>
+                            </div>
+                            <div onclick="toggleSelectBorder(this)"
+                                class="w-full px-2 py-1 md:px-3 md:py-2 my-3 border border-gray-300 rounded-md">
+                                <label for="emailAddress"
+                                    class="block text-darkButton text-xs font-medium md:text-base md:font-semibold">Current
+                                    password</label>
+                                <div class="flex items-center">
+                                    <input name="newPassword2" type="password"
+                                        id="newPassword2"
+                                        placeholder="Re-enter new password"
+                                        class="block w-full h-5 focus:outline-none focus:border-blue-500 text-xs placeholder:text-xs md:h-6 md:text-base md:placeholder:text-base">
+                                    <img src="../assets/img/eye-hidden.png"
+                                        onclick="passwordHide('newPassword2', this)"
+                                        id="eyeicon"
+                                        class="w-[22px] ml-2 mr-0.5 cursor-pointer hover:bg-gray-300 hover:rounded-full hover:ring-[2px] md:hover:ring-[5px] hover:ring-gray-300 transition-all">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-y-1.5 md:mt-1 md:gap-y-2">
+                            <button
+                                onclick="nextModal('changePassword', 'successMessage')"
+                                class="bg-darkButton border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-12 md:rounded-full p-1.5 mb-0.5 font-semibold text-white text-sm md:text-base hover:bg-hoverDarkBlue active:bg-activeDarkBlue focus:outline-none focus:ring-2 focus: focus:ring-offset-1 transition-all">Confirm</button>
+
+                            <button onclick="closeModal('changePassword')"
+                                class="bg-white border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-12 md:rounded-full p-1.5 mb-0.5 font-medium text-darkButton text-sm md:text-base border-2 hover:bg-gray-200 active:bg-activeDarkBlue active:text-white focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all">Back</button>
+                        </div>
+                    </div>
+
+                    <div id="changeName" class="hidden flex-col gap-y-3.5">
+
+                        <div class="flex flex-col gap-y-0.5">
+                            <!-- change password -->
+                            <h1
+                                class="text-sm font-bold text-darkButton md:text-2xl">Change
+                                Name</h1>
+                            <h2 class="text-xs text-gray-800 md:text-base">You can only change your name every 60 days.</h2>
+                        </div>
+
+                        <div>
+                            <div onclick="toggleSelectBorder(this)"
+                                class=" w-full px-2 py-1 md:px-3 md:py-2 my-3 border border-gray-300 rounded-md">
+                                <label for="firstName"
+                                    class="block text-darkButton text-xs font-medium md:text-base md:font-semibold">First
+                                    Name</label>
+                                <div class="flex items-center">
+                                    <input name="firstName"
+                                        type="text" id="firstName"
+                                        placeholder="Enter first name"
+                                        class="block w-full h-5 focus:outline-none focus:border-blue-500 text-xs placeholder:text-xs md:h-6 md:text-base md:placeholder:text-base">
+                                </div>
+                            </div>
+                            <div onclick="toggleSelectBorder(this)"
+                                class="w-full px-2 py-1 md:px-3 md:py-2 my-3 border border-gray-300 rounded-md">
+                                <label for="middleName"
+                                    class="block text-darkButton text-xs font-medium md:text-base md:font-semibold">Middle
+                                    Name</label>
+                                <div class="flex items-center">
+                                    <input name="middleName" type="text"
+                                        id="middleName"
+                                        placeholder="Enter middle name"
+                                        class="block w-full h-5 focus:outline-none focus:border-blue-500 text-xs placeholder:text-xs md:h-6 md:text-base md:placeholder:text-base">
+                                </div>
+                            </div>
+                            <div onclick="toggleSelectBorder(this)"
+                                class="w-full px-2 py-1 md:px-3 md:py-2 my-3 border border-gray-300 rounded-md">
+                                <label for="lastName"
+                                    class="block text-darkButton text-xs font-medium md:text-base md:font-semibold">Last
+                                    Name</label>
+                                <div class="flex items-center">
+                                    <input name="lastName" type="text"
+                                        id="lastName"
+                                        placeholder="Enter last name"
+                                        class="block w-full h-5 focus:outline-none focus:border-blue-500 text-xs placeholder:text-xs md:h-6 md:text-base md:placeholder:text-base">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-y-1.5 md:mt-1 md:gap-y-2">
+                            <button
+                                onclick="nextModal('changeName', 'successMessage')"
+                                class="bg-darkButton border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-12 md:rounded-full p-1.5 mb-0.5 font-semibold text-white text-sm md:text-base hover:bg-hoverDarkBlue active:bg-activeDarkBlue focus:outline-none focus:ring-2 focus: focus:ring-offset-1 transition-all">Confirm</button>
+
+                            <button onclick="closeModal('changeName')"
+                                class="bg-white border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-12 md:rounded-full p-1.5 mb-0.5 font-medium text-darkButton text-sm md:text-base border-2 hover:bg-gray-200 active:bg-activeDarkBlue active:text-white focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all">Back</button>
+                        </div>
+                    </div>
+
+                    <div id="successMessage"
+                        class="hidden flex-col gap-y-3 items-center">
+                        <img src="../assets/img/success-check.png"
+                            class="w-[5rem]">
+
+                        <div class="flex flex-col gap-y-3 items-center">
+                            <!-- confirm title -->
+                            <h1
+                                class="text-sm font-bold text-darkButton md:text-2xl">Password
+                                Changed!</h1>
+                            <h2 class="text-xs text-gray-800 md:text-base">Your
+                                password has been changed successfully.
+                            </h2>
+                        </div>
+
+                        <button onclick="closeModal('successMessage')"
+                            class="bg-white border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-12 md:rounded-full p-1.5 mb-0.5 font-medium text-darkButton text-sm md:text-base border-2 hover:bg-gray-200 active:bg-activeDarkBlue active:text-white focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all">Return
+                            to Login Page</button>
+                    </div>
+
+                </div>
             </div>
 
             <footer class="bg-blue-950 text-white py-2 px-8 bottom-0 w-full">
                 <!-- footer -->
                 <div class="container mx-auto">
-                    <p class="text-center text-[0.75rem] sm:text-xs">Copyright 2023 CEU
+                    <p class="text-center text-[0.75rem] sm:text-xs">Copyright
+                        2023 CEU
                         Healthy</p>
                 </div>
             </footer>
         </div>
+        <script> 
+
+        let previousInputs = []
+
+            // First open of modal
+        function openModal(firstElement) {
+            let modal = document.getElementById('modal')
+            let first = document.getElementById(firstElement)
+
+            previousInputs.push(first.id)
+
+            modal.classList.remove('hidden')
+            modal.classList.add("flex")
+            setTimeout(() => {
+                modal.classList.add("opacity-100")
+                first.classList.remove("hidden")
+                first.classList.add("flex")
+            }, 10)
+        }
+
+        // Closing whole modal
+        function closeModal(lastElement) {
+            let modal = document.getElementById('modal')
+            let last = document.getElementById(lastElement)
+            console.log("hi")
+            modal.classList.add('opacity-0')
+            modal.classList.remove('opacity-100')
+
+            setTimeout(() => {
+                console.log(last)
+                modal.classList.add('hidden')
+                last.classList.add('hidden')
+                last.classList.remove('flex')
+                modal.classList.remove("flex")
+                console.log("hello")
+
+            }, 10)
+
+            // Clears the value of each input field
+            if (previousInputs.includes('changePassword')) clearFields([document.getElementById('changePassword')])
+            if (previousInputs.includes('changeName')) clearFields([document.getElementById('changeName')])
+
+        }
+
+        // Switching contents of modal
+        function nextModal(previous, next) {
+            const prev = document.getElementById(previous)
+            const nex = document.getElementById(next)
+
+            if (!previousInputs.includes(nex)) previousInputs.push(nex)
+
+            prev.classList.add('hidden')
+            prev.classList.remove('flex')
+            nex.classList.add('flex')
+            nex.classList.remove('hidden')
+
+        }
+
+        function clearFields(elements) {
+            if (!Array.isArray(elements)) {
+                elements = [elements]
+            }
+
+            elements.forEach(element => {
+                const inputFields = element.querySelectorAll('input');
+                inputFields.forEach(input => {
+                    input.value = ''
+                });
+            });
+            console.log("clear")
+        }
+
+        function toggleSelectBorder(element) {
+            element.classList.remove("border-gray-300")
+            element.classList.remove("border-2")
+            element.classList.add('border-blue-500'); // Toggle the border color class
+            element.classList.add('border-2');
+        }
+
+        function passwordHide(inputId, iconElement) {
+            const passwordField = document.getElementById(inputId);
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                iconElement.src = "../assets/img/eye-open.png"; // Change icon to visible
+            } else {
+                passwordField.type = "password";
+                iconElement.src = "../assets/img/eye-hidden.png"; // Change icon to hidden
+            }
+        }
+        </script>
         <script src="./templateManager.js"></script>
     </body>
 
