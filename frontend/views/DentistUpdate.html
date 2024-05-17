@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Patient</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="flex flex-col justify-between bg-bgColor">
+    <special-header></special-header>
+
+    <div id="title"></div>
+    <div class="flex flex-row-reverse items-center mt-14">
+        <div id="patient-table-container"></div>
+        <nav class="flex justify-around items-center mr-28">
+            <section id="buttons-column" class="flex flex-col items-start font-semibold text-3xl m-10">
+                <button class="button flex items-center mb-16 whitespace-nowrap hover:underline"
+                    aria-label="Basic Info">
+                    <img src="../assets/img/basic-info-icon.png" alt="Basic Info Icon" class="mr-2">
+                    Basic Info
+                </button>
+                <button class="button flex items-center mb-16 whitespace-nowrap hover:underline"
+                    aria-label="Laboratory">
+                    <img src="../assets/img/laboratory-icon.png" alt="Laboratory Icon" class="mr-2">
+                    Laboratory
+                </button>
+                <button class="button flex items-center mb-16 whitespace-nowrap hover:underline"
+                    aria-label="Vaccination">
+                    <img src="../assets/img/vaccination-icon.png" alt="Vaccination Icon" class="mr-2">
+                    Vaccination
+                </button>
+                <button class="button flex items-center mb-16 whitespace-nowrap hover:underline"
+                    aria-label="Medical History">
+                    <img src="../assets/img/medical-history-icon.png" alt="Medical History Icon" class="mr-2">
+                    Medical History
+                </button>
+                <button class="button flex items-center mb-16 whitespace-nowrap hover:underline" aria-label="Dental">
+                    <img src="../assets/img/dental-icon.png" alt="Dental Icon" class="mr-2">
+                    Dental
+                </button>
+            </section>
+        </nav>
+    </div>
+
+    <special-footer></special-footer>
+
+    <script src="../assets/js/Template.js"></script>
+    <script>
+        updateTitle('View Patient List')
+        document.addEventListener('DOMContentLoaded', function () {
+            // Load default patient table content when the page is loaded
+            loadPatientTable('BasicInfoTable.html');
+
+            // Add event listeners to the buttons
+            document.querySelectorAll('#buttons-column button').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var sectionName = button.getAttribute('aria-label');
+                    var fileName = sectionName.replace(/\s+/g, '') + 'Table.html'; // Assuming file names are constructed this way
+                    loadPatientTable(fileName);
+                });
+            });
+        });
+
+        // Function to load patient table content
+        function loadPatientTable(fileName) {
+            fetch(fileName)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('patient-table-container').innerHTML = data;
+
+                    // Add event listener to the edit button inside the table
+                    var editButton = document.getElementById('editButton');
+                    if (editButton) {
+                        editButton.addEventListener('click', toggleEdit);
+                    }
+                })
+                .catch(error => console.error('Error loading patient table:', error));
+        }
+
+        // Function to handle edit button click
+        function toggleEdit() {
+            var formElements = document.querySelectorAll('select, input');
+            formElements.forEach(function (element) {
+                element.disabled = !element.disabled;
+            });
+        }
+
+    </script>
+</body>
+
+</html>

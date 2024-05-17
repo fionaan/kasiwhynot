@@ -5,42 +5,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CEU Health - Categories</title>
-  <link rel="stylesheet" href="../assets/css/HomePage.css">
   <link rel="stylesheet" href="../assets/css/styles.css">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
 <body>
-  <div class="site-body">
-    <special-header></special-header>
-
-    <section class="welcome-banner">
-      <div class="container m-20 p-10 flex justify-around">
-        <h1 class="text-5xl flex justify-center font-semibold">Choose a Patient Category</h1>
-      </div>
-    </section>
-
-    <section class="site-buttons">
-      <div
-        class="bg-gradient-to-b from-blue-900 to-black  hover:from-black hover:to-blue-900 rounded-2xl w-80 h-80 flex items-center justify-center">
-        <button class="p-2 flex flex-col items-center justify-center">
-          <img src="./Icons/student-icon.png" class="h-36 w-30 mb-10">
-          <h3 class="text-white text-4xl">Students</h3>
-        </button>
-      </div>
-
-      <div
-        class="bg-gradient-to-b from-blue-900 to-black hover:from-black hover:to-blue-900 rounded-2xl w-80 h-80 flex items-center justify-center">
-        <button class="p-2 flex flex-col items-center justify-center">
-          <img src="./Icons/employee-icon.png" class="h-36 w-30 mb-10">
-          <h3 class="text-white text-4xl">Employees</h3>
-        </button>
-      </div>
-    </section>
+  <special-header></special-header>
+  <h1 class="flex justify-center font-semibold text-6xl p-20 m-20">Choose a Patient Category</h1>
+  <div class="flex justify-evenly"> 
+    <special-button id="employeeButton" icon="../assets/img/employee-icon.png"
+      text="Employee"></special-button>
+    <special-button id="studentButton" icon="../assets/img/student-icon.png"
+      text="Student"></special-button>
   </div>
+  
   <special-footer></special-footer>
+  <script src="../assets/js/Categories.js"></script>
+  <script>
+    const employeeButton = document.getElementById('employeeButton');
+    const studentButton = document.getElementById('studentButton');
 
-  <script src="../assets/js/Template.js"></script>
+    employeeButton.setIconSize("32");
+    studentButton.setIconSize("32");
+  </script>
 </body>
 
 </html>

@@ -2,7 +2,7 @@
 module.exports = {
   content: ["./views/**/*.{html,js}"],
   theme: {
-    extend: { 
+    extend: {
       colors: {
       "bgColor": "F2F7FF",
       "bgColorWh": "FDFDFD",
@@ -16,14 +16,19 @@ module.exports = {
       },
 
       borderRadius: {
-      'login': '0.75rem',
+        'login': '0.75rem'
       },
 
       height: {
         'login': '22rem',
         'browser': '35rem',
         'computed-height': 'calc(96vh - (48px + 88px + 32px))',
-        'medium-pic': '9px'
+        'medium-pic': '9px',
+        'tableheight': '40rem'
+      },
+
+      width: {
+        'tablewidth': '86rem'
       },
 
       fontSize: {
@@ -40,7 +45,8 @@ module.exports = {
         'viewHLphone': {'min': '1275px'},
       },
     },
+
   },
-  plugins: [],
+  plugins: []
 }
 
