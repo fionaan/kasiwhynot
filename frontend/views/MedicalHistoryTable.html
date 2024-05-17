@@ -1,0 +1,391 @@
+<div id="patient-table"
+    class="relative bg-gray-100 p-8 rounded-lg shadow-md mr-10 h-tableheight w-tablewidth overflow-auto">
+    <div class="flex flex-col items-end sticky top-0">
+        <button id="editButton" class="flex flex-row bg-blue-900 text-white rounded-lg px-4 py-2 hover:bg-blue-600 
+        focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            <img src="../assets/img/edit-icon.png" alt="Edit Icon" class="mr-2">
+            Edit
+        </button>
+    </div>
+
+    <div class="flex flex-wrap gap-10 mx-10 mb-6">
+        <div class="justify-self-center mx-1 px-6 py-6 w-auto h-36 bg-white rounded-lg border border-black">
+            <h1 class="text-gray-400 mb-2 text-base">Tattoo</h1>
+            <p class="text-blue-900 text-base font-bold ">Do you have Tattoo?</p>
+            <div class="flex items-center mb-2 mt-4">
+                <input id="tattooCheckBox" type="checkbox" value=""
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    disabled>
+                <label for="tattooCheckBox" class="ms-2 text-base font-medium text-black">Yes</label>
+            </div>
+        </div>
+        <div class="mx-2 my-5">
+            <h1 class="text-gray-400 mb-2 text-base">Blood Pressure*</h1>
+            <div class="flex flex-col md:flex-row gap-2">
+                <div class="flex-1 md:w-32 border border-blue-900 rounded-md px-2">
+                    <label for="systolic" class="block text-gray-700 text-sm font-medium mt-2">Systolic</label>
+                    <input name="systolic" type="number" step="0.1" id="systolic"
+                        class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="0"
+                        disabled>
+                </div>
+                <p class="my-2 md:my-0">/</p>
+                <div class="flex-1 md:w-32 border border-blue-900 rounded-md px-2">
+                    <label for="diastolic" class="block text-gray-700 text-sm font-medium mt-2">Diastolic</label>
+                    <input name="diastolic" type="number" step="0.1" id="diastolic"
+                        class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="0"
+                        disabled>
+                </div>
+                <p class="my-2 md:my-0 text-gray-400 text-sm">mmHg</p>
+            </div>
+            <p class="text-sm text-gray-300 mt-2">*Systolic must be greater than diastolic</p>
+        </div>
+    </div>
+
+    <div class="justify-self-center mx-10 my-6 w-auto h-auto bg-white rounded-lg border-2 border-gray-400">
+        <div class="flex flex-wrap gap-10 mx-10 mb-2">
+            <p class="text-gray-400 my-4">Tick the following conditions which you previously experienced or
+                currently experiencing*</p>
+        </div>
+        <div class="flex flex-wrap gap-10 mx-10 mb-6">
+            <div class="flex flex-col items-start gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                    <input id="anemia" type="checkbox" value="Yes"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="anemia" class="ms-2 text-lg font-medium text-black">Anemia</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input id="asthma" type="checkbox" value="Yes"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="asthma" class="ms-2 text-lg font-medium text-black">Asthma/Lung Disease</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input id="blackJointProblem" type="checkbox" value="Yes"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="blackJointProblem" class="ms-2 text-lg font-medium text-black">Back Joint
+                        Problem</label>
+                </div>
+            </div>
+            <div class="flex flex-col items-start gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                    <input id="heartDiseases" type="checkbox" value="Yes"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="heartDiseases" class="ms-2 text-lg font-medium text-black">Heart Diseases</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input id="hepatitis" type="checkbox" value="Yes"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="hepatitis" class="ms-2 text-lg font-medium text-black">Hepatitis</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input id="highBloodPressure" type="checkbox" value="Yes"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="highBloodPressure" class="ms-2 text-lg font-medium text-black">High Blood
+                        Pressure</label>
+                </div>
+            </div>
+            <div class="flex flex-col items-start gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                    <input id="kidneyProblem" type="checkbox" value="Yes"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="kidneyProblem" class="ms-2 text-lg font-medium text-black">Kidney Problem</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input id="chronicDisease" type="checkbox" value="Yes"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="chronicDisease" class="ms-2 text-lg font-medium text-black">Recurrent/Chronic
+                        Disease</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input id="thyroidProblems" type="checkbox" value="Yes"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="thyroidProblems" class="ms-2 text-lg font-medium text-black">Thyroid Problem</label>
+                </div>
+            </div>
+            <div class="flex flex-col items-start gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                    <input id="bloodDyscrasia" type="checkbox" value="Yes"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="bloodDyscrasia" class="ms-2 text-lg font-medium text-black">Blood Dyscrasia</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input id="others" type="checkbox" value="Yes"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="others" class="ms-2 text-lg font-medium text-black">Others:</label>
+                </div>
+                <div class="mb-4">
+                    <textarea id="message1" rows="4"
+                        class="block w-full md:w-80 h-24 px-4 py-4  text-sm text-blue-950 bg-blue-300 rounded-lg border focus:border-blue-500 dark:placeholder-blue-950 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 resize-none"
+                        placeholder="Enter Text" style="color: #0e227d;" disabled></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="justify-self-center mx-10 w-auto h-auto bg-white rounded-lg border-2 border-gray-400">
+        <div class="mx-10 py-5 flex justify-between">
+            <p class="text-lg text-black mr-20"> 1. Is the patient currently under the care of a doctor or other
+                health care professional, including mental health treatment ever since a young age?</p>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center">
+                    <input id="q1Yes" type="radio" value="" name="default-radio"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-blue-900 dark:border-blue-900"
+                        disabled>
+                    <label for="default-radio-1"
+                        class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Yes</label>
+                </div>
+                <div class="flex items-center">
+                    <input checked id="q1No" type="radio" value="" name="default-radio"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="default-radio-2"
+                        class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">No</label>
+                </div>
+            </div>
+        </div>
+        <div>
+            <p class="block text-gray-400 text-lg mx-10 font-medium mb-2 mt-2"> Kindly fill up the following
+                details: </p>
+            <div class="justify-self-center mx-10 my-6 w-auto h-auto bg-blue-200 rounded-lg border-2 border-blue-300">
+                <div class="flex flex-wrap gap-9 mx-8 my-4">
+                    <div class="w-full md:w-80 h-14 px-4 mb-2 border bg-white border-gray-300 rounded-md">
+                        <label for="firstName" class="block text-gray-700 text-xs font-medium mt-2">First
+                            Name</label>
+                        <input name="firstName" type="text" id="firstName"
+                            class="block w-full h-6  focus:outline-none focus:border-blue-500 text-sm"
+                            placeholder="First Name" disabled>
+                    </div>
+                    <div class="w-full md:w-72 h-14 px-4 mb-2 border bg-white border-gray-300 rounded-md">
+                        <label for="phone" class="block text-gray-700 text-xs font-medium mt-2">Phone/Fax*</label>
+                        <input name="phone" type="text" id="phone"
+                            class="block w-full h-6  focus:outline-none focus:border-blue-500 text-sm"
+                            placeholder="Enter Phone/Fax" disabled>
+                    </div>
+                    <div class="w-full md:w-2/5 h-14 px-4 mb-2 border bg-white border-gray-300 rounded-md">
+                        <label for="homeAddress" class="block text-gray-700 text-xs font-medium mt-2">Home
+                            Address</label>
+                        <input name="homeAddress" type="text" id="homeAddress"
+                            class="block w-full h-6  focus:outline-none focus:border-blue-500 text-sm"
+                            placeholder="Enter Home Address" disabled>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-8 mx-8 my-4">
+                    <div class="w-full md:w-full h-14 px-4 mb-2 border bg-white border-gray-300 rounded-md">
+                        <label for="homeAddress" class="block text-gray-700 text-xs font-medium mt-2">For what
+                            Condition(s)</label>
+                        <input name="homeAddress" type="text" id="homeAddress"
+                            class="block w-full h-6 focus:outline-none focus:border-blue-500 text-sm"
+                            placeholder="Enter Text" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-8 mx-10 my-4">
+                <button id="addAnotherDose"
+                    class="w-full bg-gray-300 border-2 border-dashed border-gray-500 text-gray-600 px-4 py-4 rounded-2xl flex items-center justify-center space-x-2"
+                    disabled>
+                    <img src="../assets/img/plus-symbol-button.png" alt="addbutton" class="w-6 h-6">
+                    <span class="font-medium text-lg text-center">Add Doctor</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="justify-self-center mt-6 mx-10 w-auto h-auto bg-white rounded-lg border-2 border-gray-400">
+        <div class="mx-10 py-5 flex justify-between">
+            <p class="text-lg text-black mr-20"> 2. Does the patient have any past illnesses/surgeries?*</p>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center">
+                    <input id="q1Yes" type="radio" value="" name="default-radio"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-blue-900 dark:border-blue-900"
+                        disabled>
+                    <label for="default-radio-1"
+                        class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Yes</label>
+                </div>
+                <div class="flex items-center">
+                    <input checked id="q1No" type="radio" value="" name="default-radio"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="default-radio-2"
+                        class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">No</label>
+                </div>
+            </div>
+        </div>
+        <div class="mx-10 ">
+            <p class="block text-gray-400 text-lg  font-medium mb-2 mt-2"> Kindly fill up the following details:
+            </p>
+            <label for="pastIllnessSurgery" class="text-blue-900  font-bold">Past illness/surgery</label>
+            <div class="w-full md:w-full h-20 px-4 mt-2 mb-2 border bg-gray-300 border-gray-300 rounded-md">
+                <input name="pastIllnessSurgery" type="text" id="pastIllnessSurgery"
+                    class="block w-full h-6 focus:outline-none bg-gray-300 focus:border-blue-500 text-sm"
+                    placeholder="Enter Information" disabled>
+            </div>
+            <div class="flex flex-wrap gap-8  my-4">
+                <button id="addPastIllnessSurgery"
+                    class="w-full bg-gray-300 border-2 border-dashed border-gray-500 text-gray-600 px-4 py-4 rounded-2xl flex items-center justify-center space-x-2"
+                    disabled>
+                    <img src="../assets/img/plus-symbol-button.png" alt="addbutton" class="w-6 h-6">
+                    <span class="font-medium text-lg text-center">Add Past Illness/Surgery</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="justify-self-center mt-6 mx-10 w-auto h-auto bg-white rounded-lg border-2 border-gray-400">
+        <div class="mx-10 py-5 flex justify-between">
+            <p class="text-lg text-black mr-20"> 3. Does the patient have any food/drug allergies</p>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center">
+                    <input id="q1Yes" type="radio" value="" name="default-radio"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-blue-900 dark:border-blue-900"
+                        disabled>
+                    <label for="default-radio-1"
+                        class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Yes</label>
+                </div>
+                <div class="flex items-center">
+                    <input checked id="q1No" type="radio" value="" name="default-radio"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="default-radio-2"
+                        class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">No</label>
+                </div>
+            </div>
+        </div>
+        <div class="mx-10 ">
+            <p class="block text-gray-400 text-lg  font-medium mb-2 mt-2"> Kindly fill up the following details:
+            </p>
+            <label for="pastIllnessSurgery" class="text-blue-900  font-bold">Past illness/surgery</label>
+            <div class="w-full md:w-full h-20 px-4 mt-2 mb-2 border bg-gray-300 border-gray-300 rounded-md">
+                <input name="pastIllnessSurgery" type="text" id="pastIllnessSurgery"
+                    class="block w-full h-6 focus:outline-none bg-gray-300 focus:border-blue-500 text-sm"
+                    placeholder="Enter Information" disabled>
+            </div>
+            <div class="flex flex-wrap gap-8  my-4">
+                <button id="addPastIllnessSurgery"
+                    class="w-full bg-gray-300 border-2 border-dashed border-gray-500 text-gray-600 px-4 py-4 rounded-2xl flex items-center justify-center space-x-2"
+                    disabled>
+                    <img src="../assets/img/plus-symbol-button.png" alt="addbutton" class="w-6 h-6">
+                    <span class="font-medium text-lg text-center">Add Past Illness/Surgery</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="justify-self-center mt-6 mx-10 w-auto h-auto bg-white rounded-lg border-2 border-gray-400">
+        <div class="mx-10 py-5 flex justify-between">
+            <p class="text-lg text-black mr-20">4. Is the patient currently taking any medication/s?*</p>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center">
+                    <input id="q4Yes" type="radio" value="" name="default-radio"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-blue-900 dark:border-blue-900"
+                        disabled>
+                    <label for="q4Yes" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Yes</label>
+                </div>
+                <div class="flex items-center">
+                    <input checked id="q4No" type="radio" value="" name="default-radio"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="q4Yes" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">No</label>
+                </div>
+            </div>
+        </div>
+        <div class="mx-10 ">
+            <p class="block text-gray-400 text-lg  font-medium mb-2 mt-2"> Kindly fill up the following details:
+            </p>
+            <div class="flex flex-wrap gap-4  my-4">
+                <div>
+                    <div class="w-full md:w-80 h-14 px-4 border bg-white border-blue-900 rounded-md">
+                        <label for="nameOfMedication" class="block text-blue-900 text-xs font-medium mt-2">Name
+                            of Medication</label>
+                        <input name="nameOfMedication" type="text" id="nameOfMedication"
+                            class="block w-full h-6  focus:outline-none focus:border-blue-500 text-sm"
+                            placeholder="Enter Name of Medication" disabled>
+                    </div>
+                    <p class="mx-2 text-gray-400 text-xs">Ex. Aspirin</p>
+                </div>
+                <div class="w-full md:w-64 h-14 px-4 border bg-white border-blue-900 rounded-md">
+                    <label for="type" class="block text-blue-900 text-xs font-medium mt-2">Type</label>
+                    <input name="type" type="text" id="type"
+                        class="block w-full h-6  focus:outline-none focus:border-blue-500 text-sm"
+                        placeholder="Enter Type" disabled>
+                </div>
+                <div class="w-full md:w-64 h-14 px-4 border bg-white border-blue-900 rounded-md">
+                    <label for="brand" class="block text-blue-900 text-xs font-medium mt-2">Brand</label>
+                    <input name="brand" type="text" id="brand"
+                        class="block w-full h-6  focus:outline-none focus:border-blue-500 text-sm"
+                        placeholder="Enter Brand" disabled>
+                </div>
+                <div class="w-full md:w-80 h-14 px-4 border bg-white border-blue-900 rounded-md">
+                    <label for="other" class="block text-blue-900 text-xs font-medium mt-2">Other Medical
+                        Device/s Currently Used</label>
+                    <input name="other" type="text" id="other"
+                        class="block w-full h-6  focus:outline-none focus:border-blue-500 text-sm"
+                        placeholder="Enter Medical Device/s" disabled>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-8  my-4">
+                <button id="addMedications"
+                    class="w-full bg-gray-300 border-2 border-dashed border-gray-500 text-gray-600 px-4 py-4 rounded-2xl flex items-center justify-center space-x-2">
+                    <img src="../assets/img/plus-symbol-button.png" alt="addbutton" class="w-6 h-6">
+                    <span class="font-medium text-lg text-center">Add Medications</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="justify-self-center mt-6 mx-10 w-auto h-auto bg-white rounded-lg border-2 border-gray-400">
+        <div class="mx-10 py-5 flex justify-between">
+            <p class="text-lg text-black mr-20">5. Does the patient have any physical or learning disabilities?*</p>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center">
+                    <input id="q5Yes" type="radio" value="" name="default-radio"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-blue-900 dark:border-blue-900"
+                        disabled>
+                    <label for="q5Yes" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Yes</label>
+                </div>
+                <div class="flex items-center">
+                    <input checked id="q5No" type="radio" value="" name="default-radio"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        disabled>
+                    <label for="q5No" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">No</label>
+                </div>
+            </div>
+        </div>
+        <div class="mx-10 ">
+            <p class="block text-gray-400 text-lg  font-medium mb-2 mt-2"> Kindly fill up the following details:
+            </p>
+            <label for="physicalLearningDisability" class="text-blue-900  font-bold">Physical or Learning
+                Disability</label>
+            <div class="w-full md:w-full h-20 px-4 mt-2 mb-2 border bg-gray-300 border-gray-300 rounded-md">
+                <input name="physicalLearningDisability" type="text" id="physicalLearningDisability"
+                    class="block w-full h-6 focus:outline-none bg-gray-300 focus:border-blue-500 text-sm"
+                    placeholder="Enter Information" disabled>
+            </div>
+            <div class="flex flex-wrap gap-8  my-4">
+                <button id="addPhysicalLearningDisability"
+                    class="w-full bg-gray-300 border-2 border-dashed border-gray-500 text-gray-600 px-4 py-4 rounded-2xl flex items-center justify-center space-x-2">
+                    <img src="../assets/img/plus-symbol-button.png" alt="addbutton" class="w-6 h-6">
+                    <span class="font-medium text-lg text-center">Add Physical/Learning Disability</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="block text-gray-700 text-base mx-10 font-medium mb-2 mt-4">Upload Medical History Attachment/s</h2>
+
+    <div class="flex flex-wrap gap-6 mx-10 mb-2">
+        <button id="addFiles" class="w-64 bg-blue-950 text-white px-4 py-4 rounded-2xl flex items-center space-x-2">
+            <img src="../assets/img/plus-symbol-button.png" alt="addbutton" class=" w-6 h-6">
+            <span>Add Files</span>
+        </button>
+    </div>
+    <script src="../assets/js/TableTemplate.js"></script>

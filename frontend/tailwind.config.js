@@ -2,22 +2,26 @@
 module.exports = {
   content: ["./views/**/*.{html,js}"],
   theme: {
-    extend: { 
+    extend: {
       colors: {
-      "bgColor": "#E2E2F2",
-      "overlay": "001F54",
-      "overButton": "ABC8FF",
-      "darkBlutton": "001F44",
-      "popupColor": "BFD9FF"
+        "bgColor": "#E2E2F2",
+        "overlay": "001F54",
+        "overButton": "ABC8FF",
+        "darkBlutton": "001F44",
+        "popupColor": "BFD9FF"
       },
 
       borderRadius: {
-      'login': '0.75rem',
+        'login': '0.75rem'
       },
 
       height: {
         'login': '22rem',
-        'tableheight': '36rem'
+        'tableheight': '40rem'
+      },
+
+      width: {
+        'tablewidth': '86rem'
       },
 
       fontSize: {
@@ -29,13 +33,13 @@ module.exports = {
       },
 
       screens: {
-        'viewPL': {'min': '1160px'},
-        'viewHL': {'min': '1275px'},
-        'viewHLphone': {'min': '1275px'},
+        'viewPL': { 'min': '1160px' },
+        'viewHL': { 'min': '1275px' },
+        'viewHLphone': { 'min': '1275px' }
       },
     },
 
   },
-  plugins: [],
+  plugins: []
 }
 
