@@ -1,0 +1,59 @@
+#buttons-column {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    height: calc(75vh - 200px);
+}
+
+.button {
+    font-size: 24pt;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #e2e2f2;
+    color: #2d3748;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 5px;
+}
+
+.button:hover {
+    text-decoration: underline;
+}
+
+
+h2 {
+    margin-top: 20px;
+}
+
+.content {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+    height: calc(100vh - 200px);
+}
+
+.table-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+}
+
+table {
+    border-collapse: collapse;
+    width: 80%;
+    max-width: 800px;
+}
+
+table,
+th,
+td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
+}

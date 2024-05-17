@@ -1,0 +1,83 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Patient List Employees</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+
+<body class="bg-bgColor bg-no-repeat bg-fixed w-full h-screen flex flex-col">
+    <div class="flex flex-col flex-1">
+        <special-header></special-header> <!-- header -->
+        <div id="title"></div>
+        <div class="flex flex-col items-center"> <!-- content -->
+            <div class="px-20 my-5 mx-8 flex items-center flex-col viewPL:flex-row justify-between w-full"> <!-- utility bar -->
+                <div class="flex flex-col md:flex-row items-center"> <!-- container for search bar and filters -->
+                    <div class="bg-white rounded-lg mx-5 px-3 max-w-md h-9 flex md:my-0 my-2 justify-left items-center 
+                    relative focus-within:border-black border border-gray-300"> <!-- search bar -->
+                        <p class="text-search font-semibold mr-2">Search: </p>
+                        <input class="pl-1 pr-5 text-search focus:outline-none flex-grow-3" type="text" placeholder="Search ID or name here...">
+                        <button class="absolute right-0 top-0 bottom-0 p-2  text-white flex items-center justify-center rounded-r-lg">
+                            <img class="h-5 w-5" src="../assets/img/search.svg" alt="Search">
+                        </button>
+                    </div>
+                    
+                    <!-- <input id="searchBar" class="w-full px-4 px-4 py-2 whitespace-nowrap border border-gray-300 rounded-lg transition duration-300 focus:outline-none focus:border-blue-500" type="text" placeholder="Search..." /> -->
+                    <div class="mx-5 flex flex-grow-3 items-center mt-0"> <!-- filters -->
+                        <span class="mx-2 text-search font-semibold">Filters: </span>
+                        <span class="flex items-center w-fit h-fit p-1 mx-1 bg-white rounded-lg"> <!-- department -->
+                            <button class="font-semibold hover:underline">Department</button>
+                            <button class="ml-2 mt-1 items-center"><img class="h-2 w-2 min-h-2 min-w-2"
+                                    src="../assets/img/tempPlus.png" /></button>
+                        </span>
+                        <span class="flex items-center w-fit h-fit p-1 mx-1 bg-white rounded-lg"> <!-- role -->
+                            <button class="font-semibold hover:underline">Role</button>
+                            <button class="ml-2 mt-1 items-center"><img class="h-2 w-2 min-h-2 min-w-2"
+                                    src="../assets/img/tempPlus.png" /></button>
+                        </span>
+                        <span class="flex items-center w-fit h-fit p-1 mx-1 bg-white rounded-lg"> <!-- campus -->
+                            <button class="font-semibold hover:underline">Campus</button>
+                            <button class="ml-2 mt-1 items-center"><img class="h-2 w-2 min-h-2 min-w-2"
+                                    src="../assets/img/tempPlus.png" /></button>
+                        </span>
+                        <span class="flex items-center w-fit h-fit p-1 mx-1 bg-white rounded-lg"> <!-- status -->
+                            <button class="font-semibold hover:underline">Status</button>
+                            <button class="ml-2 mt-1 items-center"><img class="h-2 w-2 min-h-2 min-w-2"
+                                    src="../assets/img/tempPlus.png" /></button>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="flex flex-row justify-center my-2 viewPL:my-0"> <!-- button commands -->
+                    <button
+                        class="py-1 px-2 mx-1 bg-overlay rounded-lg text-white hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Archive
+                    </button>
+                </div>
+            </div>
+            <div id="patientTable" class="bg-white w-5/6 max-h-browser mx-auto mt-2 viewPL:mt-7 rounded-login flex flex-col   overflow-auto overflow-x-auto scrollbar-thin"> <!-- table -->
+              
+            </div>
+            <div class="flex my-2"> <!-- pagination -->   
+                <button class="mx-1">&lt;</button>
+                <button class="mx-1">1</button>
+                <button class="mx-1">2</button>
+                <button class="mx-1">...</button>
+                <button class="mx-1">38</button>
+                <button class="mx-1">39</button>
+                <button class="mx-1">&gt;</button>
+            </div>
+        </div>
+    </div>
+    <script src="./templateManager.js"></script>
+    <script src="../API/api_client.js"></script>
+    <script src="../API/patient.js"></script>
+    <script src="../component/table.js"></script>
+    <script src="../controller/employees.js"></script>
+        <script>
+            updateTitle('View Patient List')
+            renderPatientPage()
+        </script>
+        <special-footer></special-footer>
+</body>
+
+</html>

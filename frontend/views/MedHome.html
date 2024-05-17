@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CEU Health - Homepage</title>
+  <link rel="stylesheet" href="../assets/css/HomePage.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="site-body">
+    <special-header></special-header>
+
+    <section class="welcome-banner">
+      <div class="container m-20 p-10 flex justify-around">
+        <h1 class="text-5xl flex justify-center font-semibold">Welcome, Doctor/Nurse!</h1>
+      </div>
+    </section>
+
+    <section class="site-buttons">
+      <div
+        class="bg-gradient-to-b from-blue-900 to-black px-8 py-16 rounded-3xl shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-3xl font-semibold flex flex-col">
+          <img src="./Icons/add-medical-records-icon.png" alt="Medical.png" class="h-14 w-16 mb-2">
+          <span class="button-text">Add Medical Records</span>
+        </a>
+      </div>
+      <div
+        class="bg-gradient-to-b from-blue-900 to-black px-8 py-16 rounded-3xl shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-3xl font-semibold flex flex-col">
+          <img src="./Icons/view-patient-records-icon.png" alt="Records.png" class="h-14 w-20 mb-2">
+          <span class="button-text">View Patient Records</span>
+        </a>
+      </div>
+      <div
+        class="bg-gradient-to-b from-blue-900 to-black px-8 py-16 rounded-3xl shadow-md flex flex-col items-center button-container">
+        <a href="./Categories.html" class="hover:text-gray-400 text-3xl font-semibold flex flex-col">
+          <img src="./Icons/view-logs-icon.png" alt="Logs.png" class="h-14 w-16 mb-2">
+          <span class="button-text">View Patient History Logs</span>
+        </a>
+      </div>
+    </section>
+
+    <special-footer></special-footer>
+
+    <script src="../assets/js/Template.js"></script>
+  </div>
+
+</body>
+
+</html>

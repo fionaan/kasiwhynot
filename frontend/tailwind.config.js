@@ -16,7 +16,8 @@ module.exports = {
       },
 
       height: {
-        'login': '22rem'
+        'login': '22rem',
+        'browser': '35rem'
       },
 
       fontSize: {
@@ -25,9 +26,14 @@ module.exports = {
 
       flexGrow: {
         '3': 3
-      }
-    },
+      },
 
+      screens: {
+        'viewPL': {'min': '1160px'},
+        'viewHL': {'min': '1275px'},
+        'viewHLphone': {'min': '1275px'},
+      },
+    },
   },
   plugins: [],
 }

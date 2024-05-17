@@ -70,6 +70,9 @@ const reqOTP = async (req, res, next) => {
     if (user == null) {
         return res.status(400).send("The specified user does not exist in the database.")
     }
+    if (user.status == "Inactive") {
+        return res.status(400).send("This user account is inactive.")
+    }
 
     sendOTP(email, otp)
     res.cookie('otpCache', OTPcache, {maxAge: 30000, httpOnly: true})
