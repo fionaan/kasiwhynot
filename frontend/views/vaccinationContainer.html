@@ -1,0 +1,141 @@
+
+    <div class=" px-10 py-5 flex justify-between">
+        <h4 class="text-gray-800 text-3xl font-bold mb-4">Vaccination</h4>
+        <button onclick="showResetMessage()" class="bg-blue-950 text-white w-24 h-12 py-min px-4 rounded-md hover:bg-blue-700 transition-colors flex justify-center items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+          </svg>
+          Reset</button>
+    </div>
+
+    <h1 class="block text-gray-700 text-lg mx-10 font-medium mb-2 mt-4">COVID VACCINATION</h1>
+    <div class="flex flex-wrap mx-8 space-x-4 mb-2">
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="firstDose" class="block text-gray-700 text-sm font-medium mt-2 ml-2">1st Dose</label>
+            <input name="firstDose" type="text" id="firstDose" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Type of COVID-19 Vaccine">
+        </div>
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="color" class="block text-gray-700 text-sm font-medium mt-2 ml-2">Date Given</label>
+            <input name="color" type="date" id="color" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Color">
+        </div>
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="secondDose" class="block text-gray-700 text-sm font-medium mt-2 ml-2">2nd Dose</label>
+            <input name="secondDose" type="text" id="secondDose" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Type of COVID-19 Vaccine">
+        </div>
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="dateSecondDose" class="block text-gray-700 text-sm font-medium mt-2 ml-2">Date Given</label>
+            <input name="dateSecondDose" type="date" id="dateSecondDose" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Color">
+        </div>
+    </div>
+    <div class="flex flex-wrap gap-6 mx-8 mb-2">
+    
+        <button id="addAnotherDose" class="w-64 bg-gray-300 border-2 border-dashed border-gray-500 text-white px-4 py-4 rounded-2xl flex  space-x-2">
+          <img src="../assets/img/plus-symbol-button.png" alt="addbutton" class=" w-6 h-6">
+          <span class="font-medium">Add Another Dose</span>
+        </button>
+
+        
+      </div>
+
+      <h1 class="block text-gray-700 text-lg mx-10 font-medium mb-2 mt-6">FLU-VACCINATION:</h1>
+      <div class="flex flex-wrap mx-8 space-x-4 mb-2">
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="firstDose" class="block text-gray-700 text-sm font-medium mt-2 ml-2">1st Dose</label>
+            <input name="firstDose" type="text" id="firstDose" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Type of Flu-Vaccine">
+        </div>
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="color" class="block text-gray-700 text-sm font-medium mt-2 ml-2">Date Given</label>
+            <input name="color" type="date" id="color" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Color">
+        </div>
+        <div class="flex flex-wrap gap-6 h-16 mx-8 mb-2">
+    
+            <button id="addAnotherDose" class="w-64 bg-gray-300 border-2 border-dashed border-gray-500 text-white px-4 py-4 rounded-2xl flex items-center  space-x-2">
+              <img src="../assets/img/plus-symbol-button.png" alt="addbutton" class=" w-6 h-6">
+              <span class="font-medium">Add Another Dose</span>
+            </button>
+
+            
+          </div>
+        
+        
+        
+        </div>
+
+    <h1 class="block text-gray-700 text-lg mx-10 font-medium mb-2 mt-4">HEPATITIS B VACCINATION </h1>
+    <div class="flex flex-wrap mx-8 space-x-4 mb-2">
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="firstDose" class="block text-gray-700 text-sm font-medium mt-2 ml-2">1st Dose</label>
+            <input name="firstDose" type="text" id="firstDose" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Type of COVID-19 Vaccine">
+        </div>
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="color" class="block text-gray-700 text-sm font-medium mt-2 ml-2">Date Given</label>
+            <input name="color" type="date" id="color" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Color">
+        </div>
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="secondDose" class="block text-gray-700 text-sm font-medium mt-2 ml-2">2nd Dose</label>
+            <input name="secondDose" type="text" id="secondDose" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Type of COVID-19 Vaccine">
+        </div>
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="dateSecondDose" class="block text-gray-700 text-sm font-medium mt-2 ml-2">Date Given</label>
+            <input name="dateSecondDose" type="date" id="dateSecondDose" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Color">
+        </div>
+        
+    </div>
+    <div class="flex flex-wrap gap-4 mx-8 mb-2">
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2  mb-4 border border-blue-900 rounded-md">
+            <label for="secondDose" class="block text-gray-700 text-sm font-medium mt-2 ml-2">3rd Dose</label>
+            <input name="secondDose" type="text" id="secondDose" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Type of COVID-19 Vaccine">
+        </div>
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="dateSecondDose" class="block text-gray-700 text-sm font-medium mt-2 ml-2">Date Given</label>
+            <input name="dateSecondDose" type="date" id="dateSecondDose" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Color">
+        </div>
+
+    </div>
+    <div class="flex flex-wrap gap-6 mx-8 mb-2">
+    
+        <button id="addAnotherDose" class="w-64 bg-gray-300 border-2 border-dashed border-gray-500 text-white px-4 py-4 rounded-2xl flex  space-x-2">
+          <img src="../assets/img/plus-symbol-button.png" alt="addbutton" class=" w-6 h-6">
+          <span class="font-medium">Add Another Dose</span>
+        </button>
+
+        
+      </div>
+
+
+      <h1 class="block text-gray-700 text-lg mx-10 font-medium mb-2 mt-6">PNEUMONIA VACCINATION</h1>
+      <div class="flex flex-wrap mx-8 space-x-4 mb-2">
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="firstDose" class="block text-gray-700 text-sm font-medium mt-2 ml-2">1st Dose</label>
+            <input name="firstDose" type="text" id="firstDose" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Type of Flu-Vaccine">
+        </div>
+        <div onclick="toggleSelectBorder(this)" class="w-full md:w-72 px-2 mb-4 border border-blue-900 rounded-md">
+            <label for="color" class="block text-gray-700 text-sm font-medium mt-2 ml-2">Date Given</label>
+            <input name="color" type="date" id="color" class="block w-full h-10 px-2 focus:outline-none focus:border-blue-500" placeholder="Enter Color">
+        </div>
+        <div class="flex flex-wrap gap-6 h-16 mx-8 mb-2">
+    
+            <button id="addAnotherDose" class="w-64 bg-gray-300 border-2 border-dashed border-gray-500 text-white px-4 py-4 rounded-2xl flex items-center  space-x-2">
+              <img src="../assets/img/plus-symbol-button.png" alt="addbutton" class=" w-6 h-6">
+              <span class="font-medium">Add Another Dose</span>
+            </button>
+
+            
+          </div>
+        
+        
+        
+        </div>
+
+        <h2 class="block text-gray-700 text-base mx-8 font-medium mb-2 mt-2">Upload Laboratory Attachment/s</h2>
+        <div class="flex flex-wrap gap-6 mx-8 mb-2">
+    
+            <button id="addFiles" class="w-64 bg-blue-950 text-white px-4 py-4 rounded-2xl flex items-center space-x-2">
+                <img src="../assets/img/plus-symbol-button.png" alt="addbutton" class=" w-6 h-6">
+                <span>Add Files</span>
+            </button>
+
+    
+  </div>
+    
+  
