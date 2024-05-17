@@ -4,10 +4,14 @@ module.exports = {
   theme: {
     extend: { 
       colors: {
-      "bgColor": "#E2E2F2",
+      "bgColor": "F2F7FF",
+      "bgColorWh": "FDFDFD",
+      "bgColorWh2": "F0F2F5",
       "overlay": "001F54",
       "overButton": "ABC8FF",
-      "darkBlutton": "001F44",
+      "darkButton": "001F44",
+      "hoverDarkBlue": "004496",
+      "activeDarkBlue": "00144F",
       "popupColor": "BFD9FF"
       },
 
@@ -17,7 +21,9 @@ module.exports = {
 
       height: {
         'login': '22rem',
-        'browser': '35rem'
+        'browser': '35rem',
+        'computed-height': 'calc(96vh - (48px + 88px + 32px))',
+        'medium-pic': '9px'
       },
 
       fontSize: {

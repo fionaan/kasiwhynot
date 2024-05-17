@@ -1,0 +1,90 @@
+<html>
+
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>View Profile</title>
+        <link rel="stylesheet" href="../assets/css/styles.css">
+    </head>
+
+    <body class="bg-bgColor">
+        <div class="flex flex-col h-screen">
+            <header
+                class="flex basis-auto items-center justify-between px-9 py-7 sm:px-12 sm:py-4">
+                <!-- header -->
+                <h1 class="text-overlay text-2xl font-bold">CEU Health</h1>
+                <button href="login"
+                    class="flex items-center bg-darkButton text-white rounded-lg py-2 px-8 hover:bg-hoverDarkBlue focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 focus:ring-opacity-50 active:bg-activeDarkBlue transition-all">
+                    <img src="../assets/img/user.png"
+                        class="h-4 w-4 mr-2 filter invert">
+                    <p class="text-center">Profile</p>
+                </button>
+            </header>
+
+            <div class="flex px-8 align-middle">
+                <!-- title -->
+                <button class="mx-5 mr-4 pl-3 relative w-12 h-12">
+                    <img src="../assets/img/realBack.png" class="w-6 h-6">
+                    <span
+                        class="absolute inset-0 flex items-center justify-center rounded-full bg-transparent hover:bg-black hover:bg-opacity-25 transition-all">
+                    </span>
+                </button>
+                <h1 class="px-4 pt-1 text-3xl align-middle">Profile
+                    Settings</h1>
+            </div>
+
+            <div class="flex grow justify-center items-center sm:pb-6">
+                <div class="flex flex-col bg-white p-10 gap-y-3 w-fit h-fit border-gray-200 border-2 justify-center sm:items-center rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 sm:flex-row sm:gap-x-14 sm:py-5 sm:pb-10">
+                    
+                    <div class="justify-center pb-6 pl-20 pr-20 sm:p-0 sm:pt-5">
+                        <img src="../assets/img/profile-img.png"
+                            class="rounded-full w-[14.50rem]">
+                    </div>
+
+                    <div>
+                        <div class="flex flex-col pt-2 gap-y-3.5">
+                            <!-- profile info -->
+                            <div>
+                                <h1
+                                    class="text-darkButton font-bold text-xl sm:text-lg">Name</h1>
+                                <h1
+                                    class="text-darkButton text-lg sm:text-base">Undo
+                                    Lumayad</h1>
+                            </div>
+                            <div>
+                                <h1
+                                    class="text-darkButton font-bold text-xl sm:text-lg">User
+                                    Type</h1>
+                                <h1
+                                    class="text-darkButton text-lg sm:text-base">Doctor</h1>
+                            </div>
+                            <div>
+                                <h1
+                                    class="text-darkButton font-bold text-xl sm:text-lg">Email
+                                    Address</h1>
+                                <h1
+                                    class="text-darkButton text-lg sm:text-base">hantulumayad@gmail.com</h1>
+                            </div>
+                            <div>
+                                <h1
+                                    class="mb-2 text-darkButton font-bold text-xl sm:text-lg sm:mb-3">Password</h1>
+                                <button
+                                    class="px-4 py-2 bg-darkButton rounded-md text-white font-semibold hover:bg-hoverDarkBlue focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 focus:ring-opacity-50 transition-all active:bg-activeDarkBlue">Change
+                                    Password</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="bg-blue-950 text-white py-2 px-8 bottom-0 w-full">
+                <!-- footer -->
+                <div class="container mx-auto">
+                    <p class="text-center text-xs">Copyright 2023 CEU
+                        Healthy</p>
+                </div>
+            </footer>
+        </div>
+        <script src="./templateManager.js"></script>
+    </body>
+
+</html>

@@ -28,11 +28,11 @@ Add Dental Record w/ Category & Patient Id (body):
         "isFilledOut": true,
         "q1": ["For Internship"],
         "q2": "2024-03-09T12:00:00Z",
-        "q3": {
+        "q3": "Frequently",
+        "q4": {
             "hasDentures": true,
             "dentureType": "Upper only"
         },
-        "q4": "Frequently",
         "q5": {
             "hasDentalProcedure": true,
             "pastDentalSurgery": [{
@@ -167,11 +167,11 @@ Add dental record only (POPULATED):
         "isFilledOut": true,
         "q1": ["For Internship"],
         "q2": "2024-03-09T12:00:00Z",
-        "q3": {
+        "q3": "Frequently",
+        "q4": {
             "hasDentures": true,
             "dentureType": "Upper only"
         },
-        "q4": "Frequently",
         "q5": {
             "hasDentalProcedure": true,
             "pastDentalSurgery": [{
@@ -305,11 +305,11 @@ Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False):
         "isFilledOut": false,
         "q1": [""],
         "q2": "1999-03-09T12:00:00Z",
-        "q3": {
+        "q3": " ",
+        "q4": {
             "hasDentures": false,
             "dentureType": ""
         },
-        "q4": " ",
         "q5": {
             "hasDentalProcedure": false,
             "pastDentalSurgery": [{
@@ -440,28 +440,33 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
 {
     "basicInfo": {
         "fullName": {
-            "firstName": "Manila",
-            "middleName": "Sup",
-            "lastName": "Marius"
+            "firstName": "rdfdfgdfg",
+            "middleName": "  gg",
+            "lastName": "D"
         },
         "emailAddress": "kendra.doe@example.com",
-        "dateOfBirth": "1990-01-01",
-        "age": 32,
+        "dateOfBirth": " 2005-01-01 ",
+        "age": 28,
         "gender": "Male",
-        "campus": "Manila",
-        "homeAddress": "123 Main St, City",
-        "contactNo": 1234567890,
+        "campus": "LV/GP",
+        "homeAddress": " Fort Bonifacio Makati City, Makati City, 8154837  ",
+        "contactNo": "639521423651",
         "nationality": "American",
         "religion": "Christian",
         "bloodType": "A+",
         "civilStatus": "Single",
         "height": 175,
         "weight": 70,
-        "bmi": 23,
+        "bmi": 23.23,
         "guardianName": "Jane Doe",
-        "guardianContactNo": 9876543210,
-        "guardianRelationship": "Parent",
-        "attachment": "attachment-url"
+        "guardianContactNo": "09876543210",
+        "guardianRelationship": "Parent's parent",
+        "attachments": [
+            {
+                "filename": "file-d",
+                "urlLink": "url-d1"
+            }
+        ]
     },
     "laboratory": {
         "chestXray": {
@@ -473,16 +478,16 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
             "date": "2023-01-10"
         },
         "hepatitisProfile": {
-            "hbsag": "Negative",
-            "antiHbs": "Positive",
-            "antiHbcIgg": "Negative",
-            "antiHbcIgm": "Negative"
+            "hbsag": "N?",
+            "antiHbs": "Normal",
+            "antiHbcIgg": "High",
+            "antiHbcIgm": "High"
         },
         "drugTest": {
-            "methamphethamineResults": "Negative",
-            "methamphetamineRemarks": "No remarks",
-            "tetrahydrocannabinolResults": "Negative",
-            "tetrahydrocannabinolRemarks": "No remarks"
+            "methamphetamineResult": "Negative",
+            "methamphetamineRemarks": "Passed",
+            "tetrahydrocannabinolResult": "Negative",
+            "tetrahydrocannabinolRemarks": "Failed"
         },
         "urinalysis": {
             "color": "Yellow",
@@ -495,73 +500,88 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
             "protein": "Negative",
             "nitrite": "Negative",
             "leukocyte": "Normal",
-            "phLevel": 7,
-            "spGravity": "Normal",
-            "wbc": "Normal",
-            "rbc": "Normal",
-            "bacteria": "Negative",
-            "epithelialCells": "Normal",
-            "amorphousUrates": "Normal",
-            "mucusThreads": "Normal"
+            "phLevel": 8.0,
+            "spGravity": "1.036",
+            "wbc": "0-9",
+            "rbc": "0-5",
+            "bacteria": "MANY",
+            "epithelialCells": "FEW",
+            "amorphousUrates": "MANY",
+            "mucusThreads": "FEW",
+            "others": "Clear"
         },
         "fecalysis": {
             "color": "Brown",
             "consistency": "Formed",
-            "wbc": "Normal",
-            "rbc": "Normal",
-            "fatGlobules": "Negative",
-            "muscleFibers": "Negative",
+            "wbc": "1-9",
+            "rbc": "6-9",
+            "fatGlobules": "FEW",
+            "muscleFibers": "MANY",
             "results": "Normal"
         },
         "others": {
-            "pregnancyTest": "Negative"
+            "pregnancyTest": "N/A"
         },
-        "attachments": "attachments-url"
+        "attachments": [
+            {
+                "filename": "file-1223",
+                "urlLink": "url-415"
+            }
+        ]
     },
     "vaccination": {
-        "covidVaccination": {
-            "firstDose": {
+        "covidVaccination": [
+            {
                 "dose": "Pfizer",
                 "dateGiven": "2023-09-18"
             },
-            "secondDose" :{
+            {
                 "dose": "Astra",
                 "dateGiven": "2024-01-18"
             },
-            "thirdDose":{
+            {
                 "dose": "Pfizer",
                 "dateGiven": "2024-03-10"
             }
-        },
-        "fluVaccination": {
-            "firstDose": "Influvac",
-            "dateGiven": "2023-01-08"
-        },
-        "hepatitisBVaccination": {
-            "firstDose": {
+        ],
+        "fluVaccination": [
+            {
+                "dose": "Influvac",
+                "dateGiven": "2023-01-08"
+            }
+        ],
+        "hepatitisBVaccination": [
+            {
                 "dose": "HepA",
                 "dateGiven": "2009-10-18"
             },
-            "secondDose" :{
+            {
                 "dose": "HepB",
                 "dateGiven": "2020-08-04"
             },
-            "thirdDose":{
+            {
                 "dose": "HebAvi",
                 "dateGiven": "2024-04-01"
             }
-        },
-        "pneumoniaVaccination": {
-            "firstDose": "Pneumovax",
-            "dateGiven": "2023-01-15"
-        },
-        "attachments": "vaccination-attachments-url"
+        ],
+        "pneumoniaVaccination": [
+            {
+                "dose": "Pneumovax",
+                "dateGiven": "2023-01-15"
+            }
+        ],
+        "attachments": [
+            {
+                "filename": "file-6a3",
+                "urlLink": "url-4a9"
+            }
+        ]
     },
     "medicalHistory": {
         "tattoo": false,
         "bloodPressure": {
             "systolic": 120,
-            "diastolic": 80
+            "diastolic": 80.2
         },
         "conditions": {
             "anemia": false,
@@ -574,213 +594,107 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
             "chronicDiseases": false,
             "thyroidProblems": false,
             "bloodDyscrasia": false,
-            "others": false
+            "others": "No Answer"
         },
-        "q1": {
-            "yesOrNo": false,
-            "doctorName": "Abukar",
-            "phone": 0,
-            "homeAddress": "Iran",
-            "forWhatCondition": "Autism"
-        },
-        "q2": {
-            "yesOrNo": false,
-            "pastIllnessSurgery": "Tagos"
-        },
-        "q3": {
-            "yesOrNo": false,
-            "drugFoodAllergies": "Feather"
-        },
-        "q4": {
-            "yesOrNo": false,
-            "nameOfMedication": "Meth",
-            "type": "2",
-            "brand": "jajaka",
-            "others": "none"
-        },
-        "q5": {
-            "yesOrNo": false,
-            "physicalLearningDisability": "Lack of Choromosomes"
-        },
-        "attachments": "medical-history-attachments-url"
+        "q1DoctorDetails": [
+            {
+                "doctorName": "Abukar",
+                "phone": "09542132563",
+                "homeAddress": "Fort Bonifacio Makati City, Makati City, 8154837",
+                "forWhatCondition": "Autism"
+            }
+        ],
+        "q2PastIllnessSurgery": [
+            "   Bone Fractures  ",
+            "Brain Surgery"
+        ],
+        "q3DrugFoodAllergy": [
+            "Peanuts",
+            "Antibiotic"
+        ],
+        "q4MedicationDetails": [
+            {
+                "nameOfMedication": "Amoxicillin ",
+                "type": "Tablet",
+                "brand": "Pfizer"
+            }
+        ],
+        "q5PhysicalLearningDisability": [
+            "Spina bifida",
+            "Developmental coordination disorder"
+        ],
+        "attachments": [
+            {
+                "filename": "file-q24",
+                "urlLink": "url-3w4"
+            }
+        ]
     },
     "dentalRecord": {
         "isFilledOut": false,
-        "q1": [
-            ""
+        "q1": [],
+        "q2": "1999-12-31T23:59:59.999Z",
+        "q3": "N/A",
+        "q4": [],
+        "q5": [
+            {
+                "description": " ",
+                "date": "1971-12-31T23:59:59.999Z"
+            }
         ],
-        "q2": "1999-03-09T12:00:00Z",
-        "q3": {
-            "hasDentures": false,
-            "dentureType": ""
-        },
-        "q4": " ",
-        "q5": {
-            "hasDentalProcedure": false,
-            "pastDentalSurgery": [
-                {
-                    "name": "",
-                    "date": ""
-                }
-            ]
-        },
         "q6": {
-            "55": [
-                ""
-            ],
-            "54": [
-                ""
-            ],
-            "53": [
-                ""
-            ],
-            "52": [
-                ""
-            ],
-            "51": [
-                ""
-            ],
-            "61": [
-                ""
-            ],
-            "62": [
-                ""
-            ],
-            "63": [
-                ""
-            ],
-            "64": [
-                ""
-            ],
-            "65": [
-                ""
-            ],
-            "18": [
-                ""
-            ],
-            "17": [
-                ""
-            ],
-            "16": [
-                ""
-            ],
-            "15": [
-                ""
-            ],
-            "14": [
-                ""
-            ],
-            "13": [
-                ""
-            ],
-            "12": [
-                ""
-            ],
-            "11": [
-                ""
-            ],
-            "21": [
-                ""
-            ],
-            "22": [
-                ""
-            ],
-            "23": [
-                ""
-            ],
-            "24": [
-                ""
-            ],
-            "25": [
-                ""
-            ],
-            "26": [
-                ""
-            ],
-            "27": [
-                ""
-            ],
-            "28": [
-                ""
-            ],
-            "48": [
-                ""
-            ],
-            "47": [
-                ""
-            ],
-            "46": [
-                ""
-            ],
-            "45": [
-                ""
-            ],
-            "44": [
-                ""
-            ],
-            "43": [
-                ""
-            ],
-            "42": [
-                ""
-            ],
-            "41": [
-                ""
-            ],
-            "31": [
-                ""
-            ],
-            "32": [
-                ""
-            ],
-            "33": [
-                ""
-            ],
-            "34": [
-                ""
-            ],
-            "35": [
-                ""
-            ],
-            "36": [
-                ""
-            ],
-            "37": [
-                ""
-            ],
-            "38": [
-                ""
-            ],
-            "85": [
-                ""
-            ],
-            "84": [
-                ""
-            ],
-            "83": [
-                ""
-            ],
-            "82": [
-                ""
-            ],
-            "81": [
-                ""
-            ],
-            "71": [
-                ""
-            ],
-            "72": [
-                ""
-            ],
-            "73": [
-                ""
-            ],
-            "74": [
-                ""
-            ],
-            "75": [
-                ""
-            ]
+            "55": [],
+            "54": [],
+            "53": [],
+            "52": [],
+            "51": [],
+            "61": [],
+            "62": [],
+            "63": [],
+            "64": [],
+            "65": [],
+            "18": [],
+            "17": [],
+            "16": [],
+            "15": [],
+            "14": [],
+            "13": [],
+            "12": [],
+            "11": [],
+            "21": [],
+            "22": [],
+            "23": [],
+            "24": [],
+            "25": [],
+            "26": [],
+            "27": [],
+            "28": [],
+            "48": [],
+            "47": [],
+            "46": [],
+            "45": [],
+            "44": [],
+            "43": [],
+            "42": [],
+            "41": [],
+            "31": [],
+            "32": [],
+            "33": [],
+            "34": [],
+            "35": [],
+            "36": [],
+            "37": [],
+            "38": [],
+            "85": [],
+            "84": [],
+            "83": [],
+            "82": [],
+            "81": [],
+            "71": [],
+            "72": [],
+            "73": [],
+            "74": [],
+            "75": []
         },
         "q7": {
             "presenceOfDebris": false,
@@ -789,9 +703,8 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
             "presenceOfPeriodontalPocket": false,
             "presenceOfOralBiofilm": false,
             "underOrthodonticTreatment": {
-                "hasTreatment": false,
                 "yearStarted": 0,
-                "lastAdjustment": ""
+                "lastAdjustment": "1971-12-31T23:59:59.999Z"
             }
         },
         "q8": {
@@ -828,27 +741,17 @@ COMPLETE Add medical w/ dental record (Dental Record NOT POPULATED/Blank/False)
                 "permanent": 0
             }
         },
-        "q9": {
-            "hasDentofacialAb": false,
-            "name": [
-                ""
-            ]
-        },
+        "q9": [],
         "q10": {
             "needUpperDenture": 0,
             "needLowerDenture": 0
         },
-        "notes": "",
-        "attachments": [
-            {
-                "filename": "",
-                "urlLink": ""
-            }
-        ]
+        "notes": "N/A",
+        "attachments": []
     },
     "exclusiveData": {
-        "studentNo": "95463",
-        "course": "Computer Science",
+        "studentNo": "2045-12345",
+        "course": "bachelor of science in computer science",
         "year": "1",
         "section": "A"
     },
@@ -861,33 +764,38 @@ UPDATE Complete Medical Record
 {
     "role": "doctor",
     "category": "students",
-    "patientId": "6618fa5af133b543ad8a47d0",
+    "studEmpId": "66436064dfb2f2a72d046dd9",
     "editedBy": "65eac8b708bb861743108ced",
     "updatedData": {
         "basicInfo": {
             "fullName": {
-                "firstName": "Sevy",
-                "middleName": "Isaac",
-                "lastName": "Hong"
+                "firstName": "rdfdfgdfg",
+                "middleName": "  gg",
+                "lastName": "D"
             },
             "emailAddress": "kendra.doe@example.com",
-            "dateOfBirth": "1990-01-01",
-            "age": 32,
+            "dateOfBirth": " 2005-01-01 ",
+            "age": 28,
             "gender": "Male",
-            "campus": "Manila",
-            "homeAddress": "123 Main St, City",
-            "contactNo": 1234567890,
+            "campus": "LV/GP",
+            "homeAddress": " Fort Bonifacio Makati City, Makati City, 8154837  ",
+            "contactNo": "639521423651",
             "nationality": "American",
             "religion": "Christian",
             "bloodType": "A+",
             "civilStatus": "Single",
             "height": 175,
             "weight": 70,
-            "bmi": 23,
+            "bmi": 23.23,
             "guardianName": "Jane Doe",
-            "guardianContactNo": 9876543210,
-            "guardianRelationship": "Parent",
-            "attachment": "attachment-url"
+            "guardianContactNo": "09876543210",
+            "guardianRelationship": "Parent's parent",
+            "attachments": [
+                {
+                    "filename": "file-h112",
+                    "urlLink": "url-21h"
+                }
+            ]
         },
         "laboratory": {
             "chestXray": {
@@ -899,16 +807,16 @@ UPDATE Complete Medical Record
                 "date": "2023-01-10"
             },
             "hepatitisProfile": {
-                "hbsag": "Negative",
-                "antiHbs": "Positive",
-                "antiHbcIgg": "Negative",
-                "antiHbcIgm": "Negative"
+                "hbsag": "N?",
+                "antiHbs": "Normal",
+                "antiHbcIgg": "High",
+                "antiHbcIgm": "High"
             },
             "drugTest": {
-                "methamphethamineResults": "Negative",
-                "methamphetamineRemarks": "No remarks",
-                "tetrahydrocannabinolResults": "Negative",
-                "tetrahydrocannabinolRemarks": "No remarks"
+                "methamphetamineResult": "Negative",
+                "methamphetamineRemarks": "Passed",
+                "tetrahydrocannabinolResult": "Negative",
+                "tetrahydrocannabinolRemarks": "Failed"
             },
             "urinalysis": {
                 "color": "Yellow",
@@ -922,13 +830,14 @@ UPDATE Complete Medical Record
                 "nitrite": "Negative",
                 "leukocyte": "Normal",
                 "phLevel": 7,
-                "spGravity": "Normal",
+                "spGravity": "0.36",
                 "wbc": "Normal",
                 "rbc": "Normal",
                 "bacteria": "Negative",
                 "epithelialCells": "Normal",
                 "amorphousUrates": "Normal",
-                "mucusThreads": "Normal"
+                "mucusThreads": "Normal",
+                "others": "Clear"
             },
             "fecalysis": {
                 "color": "Brown",
@@ -942,46 +851,60 @@ UPDATE Complete Medical Record
             "others": {
                 "pregnancyTest": "Negative"
             },
-            "attachments": "attachments-url"
+            "attachments": [
+                {
+                    "filename": "file-2f23",
+                    "urlLink": "url-f45"
+                }
+            ]
         },
         "vaccination": {
-            "covidVaccination": {
-                "firstDose": {
+            "covidVaccination": [
+                {
                     "dose": "Pfizer",
                     "dateGiven": "2023-09-18"
                 },
-                "secondDose": {
+                {
                     "dose": "Astra",
                     "dateGiven": "2024-01-18"
                 },
-                "thirdDose": {
+                {
                     "dose": "Pfizer",
                     "dateGiven": "2024-03-10"
                 }
-            },
-            "fluVaccination": {
-                "firstDose": "Influvac",
-                "dateGiven": "2023-01-08"
-            },
-            "hepatitisBVaccination": {
-                "firstDose": {
+            ],
+            "fluVaccination": [
+                {
+                    "dose": "Influvac",
+                    "dateGiven": "2023-01-08"
+                }
+            ],
+            "hepatitisBVaccination": [
+                {
                     "dose": "HepA",
                     "dateGiven": "2009-10-18"
                 },
-                "secondDose": {
+                {
                     "dose": "HepB",
                     "dateGiven": "2020-08-04"
                 },
-                "thirdDose": {
+                {
                     "dose": "HebAvi",
                     "dateGiven": "2024-04-01"
                 }
-            },
-            "pneumoniaVaccination": {
-                "firstDose": "Pneumovax",
-                "dateGiven": "2023-01-15"
-            },
-            "attachments": "vaccination-attachments-url"
+            ],
+            "pneumoniaVaccination": [
+                {
+                    "dose": "Pneumovax",
+                    "dateGiven": "2023-01-15"
+                }
+            ],
+            "attachments": [
+                {
+                    "filename": "file-6f3",
+                    "urlLink": "url-4f9"
+                }
+            ]
         },
         "medicalHistory": {
             "tattoo": false,
@@ -1002,38 +925,44 @@ UPDATE Complete Medical Record
                 "bloodDyscrasia": false,
                 "others": false
             },
-            "q1": {
-                "yesOrNo": false,
-                "doctorName": "Abukar",
-                "phone": 0,
-                "homeAddress": "Iran",
-                "forWhatCondition": "Autism"
-            },
-            "q2": {
-                "yesOrNo": false,
-                "pastIllnessSurgery": "Tagos"
-            },
-            "q3": {
-                "yesOrNo": false,
-                "drugFoodAllergies": "Feather"
-            },
-            "q4": {
-                "yesOrNo": false,
-                "nameOfMedication": "Meth",
-                "type": "2",
-                "brand": "jajaka",
-                "others": "none"
-            },
-            "q5": {
-                "yesOrNo": false,
-                "physicalLearningDisability": "Lack of Choromosomes"
-            },
-            "attachments": "medical-history-attachments-url"
+            "q1DoctorDetails": [
+                {
+                    "doctorName": "Abukar",
+                    "phone": "09542132563",
+                    "homeAddress": "Fort Bonifacio Makati City, Makati City, 8154837",
+                    "forWhatCondition": "Autism"
+                }
+            ],
+            "q2PastIllnessSurgery": [
+                "Bone Fracture",
+                "Brain Surgery"
+            ],
+            "q3DrugFoodAllergy": [
+                "Peanuts",
+                "Antibiotic"
+            ],
+            "q4MedicationDetails": [
+                {
+                    "nameOfMedication": "Amoxicillin ",
+                    "type": "Tablet",
+                    "brand": "Pfizer"
+                }
+            ],
+            "q5PhysicalLearningDisability": [
+                "Spina bifida",
+                "Developmental coordination disorder"
+            ],
+            "attachments": [
+                {
+                    "filename": "file-f24",
+                    "urlLink": "url-34f"
+                }
+            ]
         },
-        "studentNo": "5452412",
+        "studentNo": "49687321",
         "course": "Computer Science",
         "year": "1",
-        "section": "B"
+        "section": "C"
     }
 }
 

@@ -1,34 +1,289 @@
 <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login Page</title>
-        <link rel="stylesheet" href="../assets/css/styles.css">
-    </head>
-    <body>
-        <div class="relative">
-            <div class="bg-cover bg-center" style="background-image: url('../assets/img/homepage_bg.jpg'); height: 100vh;"></div> <!-- bg cover -->
-                <div class="absolute inset-0 bg-black opacity-50 flex justify-center items-center"></div>
-                <div class="absolute inset-0 flex justify-around items-center">
-                    <div class="flex flex-col justify-center items-start mx-7" style="font-family: Arial, sans-serif"> <!-- title & description -->
-                        <h1 class="text-pink-400 text-7xl mb-4 font-bold">CEU HEALTHY</h1>
-                        <div class="max-w-lg">
-                            <p class="text-white text-xl flex justify-start pl-4">A CEU health database system.</p>
-                            <br/>
-                            <p class="text-white text-xl flex justify-start pl-4">CEU Health is an electronic medical records (EMR) system, allowing CEU health staffs to manage medical records of both CEU students & employees.  </p>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+
+<body>
+    <div class="h-screen w-screen">
+        <div class="bg-cover bg-center" style="background-image: url('../assets/img/homepage_bg.jpg'); height: 100vh;">
+        </div> <!-- bg cover -->
+        <div class="absolute inset-0 bg-black opacity-50 flex justify-center items-center"></div>
+        <div class="absolute inset-0 flex justify-around items-center">
+            <div class="flex flex-col justify-center items-start mx-7" style="font-family: Arial, sans-serif">
+                <!-- title & description -->
+                <h1 class="text-pink-400 text-7xl mb-4 font-bold">CEU HEALTHY</h1>
+                <div class="max-w-lg">
+                    <p class="text-white text-xl flex justify-start pl-4">A CEU health database system.</p>
+                    <br />
+                    <p class="text-white text-xl flex justify-start pl-4">CEU Health is an electronic medical records
+                        (EMR) system, allowing CEU health staffs to manage medical records of both CEU students &
+                        employees. </p>
+                </div>
+            </div>
+            <div class="w-80 h-login bg-popupColor rounded-login mx-7 flex flex-col justify-center items-center">
+                <!-- login window -->
+                <h2 class="text-blue-950 font-bold text-2xl p-5">Login</h2>
+                <p class="text-left w-full pl-11">Email Address</p>
+                <input type="text" placeholder="Enter your Email Address"
+                    class="w-64 h-10 border border-gray-300 rounded-md pl-2 focus:outline-none focus:ring focus:border-blue-400 mt-1 mb-5">
+                <p class="text-left w-full pl-11">Password</p>
+                <input type="password" placeholder="Enter your Password"
+                    class="w-64 h-10 border border-gray-300 rounded-md pl-2 focus:outline-none focus:ring focus:border-blue-400 mt-1">
+                <a href="#" onclick="openModal('confirmEmail')" class="underline text-right w-full pr-9 text-xs">Forgot
+                    Password</a>
+                <button href="login"
+                    class="bg-blue-950 text-white rounded-full py-2 px-4 my-5 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">LOGIN</a>
+            </div>
+            <!-- Modal -->
+            <div id="modal"
+                class="hidden opacity-0 fixed left-0 top-0 bg-black bg-opacity-50 w-screen h-screen justify-center items-center transition-all duration-500">
+                <div id="modalContainer"
+                    class="bg-white rounded-lg shadow-md p-7 w-[50%] flex flex-col max-w-96 md:justify-center md:max-w-md gap-y-3.5 md:p-10">
+
+                    <!-- Confirm email -->
+                    <div id="confirmEmail" class="hidden flex-col gap-y-3">
+                        <div class="flex flex-col gap-y-0.5" data-error=""> <!-- confirm title -->
+                            <h1 class="text-sm font-bold text-darkButton md:text-2xl">Confirm your email</h1>
+                            <h2 class="text-xs text-gray-800 md:text-base">Enter the email address associated to your
+                                account to confirm resetting your password.</h2>
+                        </div>
+
+                        <div onclick="toggleSelectBorder(this)"
+                            class="w-full px-2 py-1 md:px-3 md:py-2 my-3 border border-gray-300 rounded-md">
+                            <label for="emailAddress"
+                                class="block text-darkButton text-xs font-medium md:text-base md:font-semibold">Email
+                                Address</label>
+                            <input name="emailAddress" type="text" id="emailAddress"
+                                placeholder="Enter your email address"
+                                class="block w-full h-5 focus:outline-none focus:border-blue-500 text-xs placeholder:text-xs md:h-6 md:text-base md:placeholder:text-base">
+                        </div>
+
+                        <div class="flex flex-col gap-y-1.5 md:mt-1 md:gap-y-2">
+                            <button onclick="nextModal('confirmEmail', 'otpVerification')"
+                                class="bg-darkButton border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-12 md:rounded-full p-1.5 mb-0.5 font-semibold text-white text-sm md:text-base hover:bg-hoverDarkBlue active:bg-activeDarkBlue focus:outline-none focus:ring-2 focus: focus:ring-offset-1 transition-all">Confirm</button>
+
+                            <button onclick="closeModal('confirmEmail')"
+                                class="bg-white border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-12 md:rounded-full p-1.5 mb-0.5 font-medium text-darkButton text-sm md:text-base border-2 hover:bg-gray-200 active:bg-activeDarkBlue active:text-white focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all">Return
+                                to Login Page</button>
                         </div>
                     </div>
-                    <div class="w-80 h-login bg-popupColor rounded-login mx-7 flex flex-col justify-center items-center"> <!-- login window -->
-                        <h2 class="text-blue-950 font-bold text-2xl p-5">Login</h2>
-                        <p class="text-left w-full pl-11">Email Address</p>
-                        <input type="text" placeholder="Enter your Email Address" class="w-64 h-10 border border-gray-300 rounded-md pl-2 focus:outline-none focus:ring focus:border-blue-400 mt-1 mb-5">
-                        <p class="text-left w-full pl-11">Password</p>
-                        <input type="password" placeholder="Enter your Password" class="w-64 h-10 border border-gray-300 rounded-md pl-2 focus:outline-none focus:ring focus:border-blue-400 mt-1">
-                        <a href="forgetpassword/page" class="underline text-right w-full pr-9 text-xs">Forgot Password</a>
-                        <button href="login" class="bg-blue-950 text-white rounded-full py-2 px-4 my-5 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">LOGIN</a>
+
+                    <div id="otpVerification" class="hidden flex-col gap-y-3.5">
+                        <div class="flex flex-col gap-y-0.5"> <!-- OTP Verification -->
+                            <h1 class="text-sm font-bold text-darkButton md:text-2xl">OTP Verification</h1>
+                            <h2 class="text-xs text-gray-800 md:text-base">Please enter the 6-digit authentication code
+                                sent to your email address.</h2>
+                        </div>
+
+                        <div class="flex w-full justify-around">
+                            <input type="text"
+                                class="border-2 border-gray-400 w-11 h-11 rounded-xl mx-auto text-xl text-center focus:border-2 focus:border-darkButton"
+                                maxlength="1" />
+                            <input type="text"
+                                class="border-2 border-gray-400 w-11 h-11 rounded-xl mx-auto text-xl text-center focus:border-2 focus:border-darkButton"
+                                maxlength="1" />
+                            <input type="text"
+                                class="border-2 border-gray-400 w-11 h-11 rounded-xl mx-auto text-xl text-center focus:border-2 focus:border-darkButton"
+                                maxlength="1" />
+                            <input type="text"
+                                class="border-2 border-gray-400 w-11 h-11 rounded-xl mx-auto text-xl text-center focus:border-2 focus:border-darkButton"
+                                maxlength="1" />
+                            <input type="text"
+                                class="border-2 border-gray-400 w-11 h-11 rounded-xl mx-auto text-xl text-center focus:border-2 focus:border-darkButton"
+                                maxlength="1" />
+                            <input type="text"
+                                class="border-2 border-gray-400 w-11 h-11 rounded-xl mx-auto text-xl text-center focus:border-2 focus:border-darkButton"
+                                maxlength="1" />
+                        </div>
+
+                        <div class="flex flex-col gap-y-1.5 md:mt-1 md:gap-y-2">
+                            <button onclick="nextModal('otpVerification', 'changePassword')"
+                                class="bg-darkButton border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-12 md:rounded-full p-1.5 mb-0.5 font-semibold text-white text-sm md:text-base hover:bg-hoverDarkBlue active:bg-activeDarkBlue focus:outline-none focus:ring-2 focus: focus:ring-offset-1 transition-all">Verify</button>
+
+                            <button onclick="nextModal('otpVerification', 'confirmEmail')"
+                                class="bg-white border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-12 md:rounded-full p-1.5 mb-0.5 font-medium text-darkButton text-sm md:text-base border-2 hover:bg-gray-200 active:bg-activeDarkBlue active:text-white focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all">Back</button>
+                        </div>
                     </div>
+
+                    <div id="changePassword" class="hidden flex-col gap-y-3.5">
+
+                        <div class="flex flex-col gap-y-0.5"> <!-- change password -->
+                            <h1 class="text-sm font-bold text-darkButton md:text-2xl">Change Password</h1>
+                            <h2 class="text-xs text-gray-800 md:text-base">Your password must be 8-20 characters and
+                                should
+                                include a combination of at least 1 uppercase letter, 1 lowercase letter, 1 number, and
+                                1
+                                special character.</h2>
+                        </div>
+
+                        <div>
+                            <div onclick="toggleSelectBorder(this)"
+                                class=" w-full px-2 py-1 md:px-3 md:py-2 my-3 border border-gray-300 rounded-md">
+                                <label for="currentPassword"
+                                    class="block text-darkButton text-xs font-medium md:text-base md:font-semibold">Current
+                                    password</label>
+                                <div class="flex items-center">
+                                    <input name="currentPassword" type="password" id="currentPassword"
+                                        placeholder="Enter current password"
+                                        class="block w-full h-5 focus:outline-none focus:border-blue-500 text-xs placeholder:text-xs md:h-6 md:text-base md:placeholder:text-base">
+                                    <img src="../assets/img/eye-hidden.png"
+                                        onclick="passwordHide('currentPassword', this)" id="eyeicon"
+                                        class="w-[22px] ml-2 mr-0.5 cursor-pointer hover:bg-gray-300 hover:rounded-full hover:ring-[2px] md:hover:ring-[5px] hover:ring-gray-300 transition-all">
+                                </div>
+                            </div>
+                            <div onclick="toggleSelectBorder(this)"
+                                class="w-full px-2 py-1 md:px-3 md:py-2 my-3 border border-gray-300 rounded-md">
+                                <label for="newPassword"
+                                    class="block text-darkButton text-xs font-medium md:text-base md:font-semibold">New
+                                    Password</label>
+                                <div class="flex items-center">
+                                    <input name="newPassword" type="password" id="newPassword"
+                                        placeholder="Enter new password"
+                                        class="block w-full h-5 focus:outline-none focus:border-blue-500 text-xs placeholder:text-xs md:h-6 md:text-base md:placeholder:text-base">
+                                    <img src="../assets/img/eye-hidden.png" onclick="passwordHide('newPassword', this)"
+                                        id="eyeicon"
+                                        class="w-[22px] ml-2 mr-0.5 cursor-pointer hover:bg-gray-300 hover:rounded-full hover:ring-[2px] md:hover:ring-[5px] hover:ring-gray-300 transition-all">
+                                </div>
+                            </div>
+                            <div onclick="toggleSelectBorder(this)"
+                                class="w-full px-2 py-1 md:px-3 md:py-2 my-3 border border-gray-300 rounded-md">
+                                <label for="newPassword2"
+                                    class="block text-darkButton text-xs font-medium md:text-base md:font-semibold">Re-enter
+                                    password</label>
+                                <div class="flex items-center">
+                                    <input name="newPassword2" type="password" id="newPassword2"
+                                        placeholder="Re-enter new password"
+                                        class="block w-full h-5 focus:outline-none focus:border-blue-500 text-xs placeholder:text-xs md:h-6 md:text-base md:placeholder:text-base">
+                                    <img src="../assets/img/eye-hidden.png" onclick="passwordHide('newPassword2', this)"
+                                        id="eyeicon"
+                                        class="w-[22px] ml-2 mr-0.5 cursor-pointer hover:bg-gray-300 hover:rounded-full hover:ring-[2px] md:hover:ring-[5px] hover:ring-gray-300 transition-all">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-y-1.5 md:mt-1 md:gap-y-2">
+                            <button onclick="nextModal('changePassword', 'successMessage')"
+                                class="bg-darkButton border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-12 md:rounded-full p-1.5 mb-0.5 font-semibold text-white text-sm md:text-base hover:bg-hoverDarkBlue active:bg-activeDarkBlue focus:outline-none focus:ring-2 focus: focus:ring-offset-1 transition-all">Confirm</button>
+
+                            <button onclick="closeModal('changePassword')"
+                                class="bg-white border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-12 md:rounded-full p-1.5 mb-0.5 font-medium text-darkButton text-sm md:text-base border-2 hover:bg-gray-200 active:bg-activeDarkBlue active:text-white focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all">Return
+                                to Login Page</button>
+                        </div>
+                    </div>
+
+                    <div id="successMessage" class="hidden flex-col gap-y-3 items-center">
+                        <img src="../assets/img/success-check.png" class="w-[5rem]">
+
+                        <div class="flex flex-col gap-y-3 items-center"> <!-- confirm title -->
+                            <h1 class="text-sm font-bold text-darkButton md:text-2xl">Password Changed!</h1>
+                            <h2 class="text-xs text-gray-800 md:text-base">Your password has been changed successfully.
+                            </h2>
+                        </div>
+
+                        <button onclick="closeModal('successMessage')"
+                            class="bg-white border-darkButton rounded-lg w-full self-center md:w-4/5 md:h-12 md:rounded-full p-1.5 mb-0.5 font-medium text-darkButton text-sm md:text-base border-2 hover:bg-gray-200 active:bg-activeDarkBlue active:text-white focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all">Return
+                            to Login Page</button>
+                    </div>
+
                 </div>
+            </div>
         </div>
-        <special-footer></special-footer> <!-- footer -->
-        <script src="./templateManager.js"></script>
-    </body>
+    </div>
+    <special-footer></special-footer> <!-- footer -->
+    <script>
+
+        // First open of modal
+        function openModal(firstElement) {
+            let modal = document.getElementById('modal')
+            let first = document.getElementById(firstElement)
+
+            modal.classList.remove('hidden')
+            modal.classList.add("flex")
+            setTimeout(() => {
+                modal.classList.add("opacity-100")
+                first.classList.remove("hidden")
+                first.classList.add("flex")
+            }, 10)
+        }
+
+        // Closing whole modal
+        function closeModal(lastElement) {
+            let modal = document.getElementById('modal')
+            let last = document.getElementById(lastElement)
+            console.log("hi")
+            modal.classList.add('opacity-0')
+            modal.classList.remove('opacity-100')
+
+            setTimeout(() => {
+                console.log(last)
+                modal.classList.add('hidden')
+                last.classList.add('hidden')
+                last.classList.remove('flex')
+                modal.classList.remove("flex")
+                console.log("hello")
+
+            }, 10)
+
+            // Clears the value of each input field
+            clearFields([document.getElementById('confirmEmail'),
+            document.getElementById('otpVerification'),
+            document.getElementById('changePassword')])
+
+        }
+
+        // Switching contents of modal
+        function nextModal(previous, next) {
+            const prev = document.getElementById(previous)
+            const nex = document.getElementById(next)
+
+            prev.classList.add('hidden')
+            prev.classList.remove('flex')
+            nex.classList.add('flex')
+            nex.classList.remove('hidden')
+
+        }
+
+        function clearFields(elements) {
+            if (!Array.isArray(elements)) {
+                elements = [elements]
+            }
+
+            elements.forEach(element => {
+                const inputFields = element.querySelectorAll('input');
+                inputFields.forEach(input => {
+                    input.value = ''
+                });
+            });
+            console.log("clear")
+        }
+
+
+
+        function toggleSelectBorder(element) {
+            element.classList.remove("border-gray-300")
+            element.classList.remove("border-2")
+            element.classList.add('border-blue-500'); // Toggle the border color class
+            element.classList.add('border-2');
+        }
+
+        function passwordHide(inputId, iconElement) {
+            const passwordField = document.getElementById(inputId);
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                iconElement.src = "../assets/img/eye-open.png"; // Change icon to visible
+            } else {
+                passwordField.type = "password";
+                iconElement.src = "../assets/img/eye-hidden.png"; // Change icon to hidden
+            }
+        }
+
+
+    </script>
+    <script src="./templateManager.js"></script>
+</body>
+
 </html>

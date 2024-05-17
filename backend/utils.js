@@ -9,13 +9,32 @@ const dateNone = new Date("9999-12-31T23:59:59.999Z")
 const dateTimeRegex = /^(?:\d{4})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[1-2][0-9]|3[0-1])T(?:[0-1][0-9]|2[0-3]):(?:[0-5][0-9]):(?:[0-5][0-9])$/
 
 //CHECKS IF DATA CONTAINS DATE ONLY
-const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$/
+const dateRegex = /^(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\.\d{3}Z$/
 
-//CHECKS IF STRING ONLY CONTAINS LETTERS, PERIOD, APOSTROPHE, HYPHEN, OR SPACE - MUST START W LETTER
-const nameRegex = /^[a-zA-Z][a-zA-Z.,'\s-]*$/
+//CHECKS IF STRING ONLY CONTAINS LETTERS, APOSTROPHE, HYPHEN, OR SPACE - MUST START AND END W LETTER
+const textRegex = /^(?!.*[.,'\-\s]{2,})(?![.,'\-\s])(?!^[.,'\-\s])[a-zA-Z\s.,'\-]*[a-zA-Z\s]+[a-zA-Z\s.,'\-]*$/
+
+// /^(?!.*[.'-,]{2,})[a-zA-Z]+(?:[.'-,]*[a-zA-Z]+)*(?: [a-zA-Z]+(?:[.'-,]*[a-zA-Z]+)*)*$/
+
+
+// CHECKS IF STRING ONLY CONTAINS LETTERS, APOSTROPHE, HYPHEN, OR SPACE - MUST START AND END W LETTER
+// ALSO ALLOWS N/A INPUT (FOR OPTIONAL FIELDS)
+const textOpRegex = /^(?:N\/A|[a-zA-Z]+(?:[\s-']*[a-zA-Z]+)*)$/ 
+
+// CHECKS IF STRING CONTAINS AT LEAST 1 LETTER. WON'T ALLOW NUMBERS/SYMBOLS ONLY
+const aNSRegex = /^(?=.*[a-zA-Z]).*$/ // /^(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%^&*()-_=+`~[\]{}|;:'",.<>/?]*$/
 
 //CHECKS IF EMAIL IS VALID
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+// CHECKS IF PASSWORD SATISFIES GUIDELINES
+// Contains at least 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character, and includes 8-20 characters
+const passwordRegex = /^(?=.*\d)(?=.*[!@#$%^&*()-=_+|{}[\]:;"'<>,.?/])(?=.*[a-z])(?=.*[A-Z]).{8,20}$/
+
+// LIST OF TABS
+const tabMedList = ['basicInfo', 'laboratory', 'vaccination', 'medicalHistory']
+
+const tabDentalList = ['basicInfo', 'dentalRecord']
 
 //Valid Campus
 const isValidCampus = ['Manila','Makati', 'Malolos']
@@ -49,39 +68,26 @@ const isObjIdValid = (id) => {
 }
 
 //CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
-// const checkIfNull = (data) => {
-//     return data == null || data === '' || typeof data === 'undefined' || data == [];
-// }
-
-//CHECKS IF THE ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
-//HAS .TRIM() METHOD
-// const checkIfNull2 = (data)=>{
-//     return (data == null || data == "null" || data == "" || data.trim() == "" || (typeof data === "undefined"))
-// }
-
-//new
 const checkIfNull = (data)=>{
     return (data == null || data == "null" || data === "" || (typeof data === 'string' && data.trim() == "") || (typeof data === "undefined"))
 }
 
 //CHECKS IF AN OBJ/DATA W DATATYPES OTHER THAN STRING ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARGUMENT IS NULL, OTHERWISE RETURNS FALSE.
-// const checkObjNull = (obj)=>{
-//     return (obj === null || obj == "null" || obj === "" || (typeof obj === "undefined"))
-// }
+
 const checkObjNull = (obj)=>{
     return (obj === null || obj === "null" || obj === "" || (typeof obj === "undefined") || (obj !== null && typeof obj === 'object' && Object.keys(obj).length === 0)
     || (obj !== null && typeof obj !== 'object'))
 }
 
 //CHECKS IF AN ARRAY ARGUMENT IS NULL OR NOT. RETURNS TRUE IF THE ARRAY IS NULL/EMPTY, OTHERWISE RETURNS FALSE.
-const checkArrNull = (arr)=>{
-    return ((typeof arr === "undefined") || arr.length === 0 || arr.includes("") && arr.length === 1)
+const checkArrNull = (arr, required)=>{
+    return (((typeof arr === "undefined") || arr.includes("") && arr.length === 1) || (required && required === true && arr.length === 0))
 }
 
-const checkFullArr = (arr, message, func)=>{
+const checkFullArr = (arr, message, func, required)=>{
     if (arr) {
         if (Array.isArray(arr)) {
-            if (!checkArrNull(arr)) {
+            if (!checkArrNull(arr, required)) {
                 if (typeof func === 'function') {
                     return (func(arr))
                 } else {
@@ -121,7 +127,7 @@ const generatePassword = () => {
     const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     const lowerCase = "abcdefghijklmnopqrstuvwxyz"
     const number = "1234567890"
-    const symbol = "~!@#$%^&*()_-+=/|{}[]><"
+    const symbol = "~!@#$%^&*()_-+=/|{}[]><`:;'?.,"
     const allChars = upperCase + lowerCase + number + symbol
 
     password += upperCase[Math.floor(Math.random() * upperCase.length)]
@@ -133,7 +139,6 @@ const generatePassword = () => {
         const randomIndex = Math.floor(Math.random() * allChars.length)
         password += allChars[randomIndex]
     }
-
     return password
 }
 
@@ -157,11 +162,16 @@ const q6Values = ["/", "C", "X", "Rf", "M", "Tf", "Co", "Gf", "JC", "S", "Im", "
 module.exports = {
     dateTimeRegex,
     dateRegex,
-    nameRegex,
+    textRegex,
+    textOpRegex,
+    aNSRegex,
     emailRegex,
+    passwordRegex,
     userTypeList,
     historyTypeList,
     recordClassList,
+    tabMedList,
+    tabDentalList,
     q4Values,
     q6Values,
     dateNone,

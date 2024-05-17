@@ -1,12 +1,12 @@
-const { checkIfNull, checkObjNull, checkArrNull, checkFullArr, q4Values,
-    q6Values, isValidCampus, emailRegex, gender, toProperCase, throwError } = require('../../utils')
+const utils = require('../../utils')
+const { toProperCase } = require('../../utils')
 const { BaseModel, Student, Employee } = require('../models/patient_model')
 const HistoryLog = require('../models/historylog_model')
 const { addLog } = require('./historylog_controller')
 const mongoose = require('mongoose')
 const convertExcelToJson = require('convert-excel-to-json')
 const fs = require('fs-extra')
-const xlsx = require ('xlsx')
+const xlsx = require('xlsx')
 const csvParser = require('csv-parser')
 
 
@@ -14,7 +14,7 @@ const csvParser = require('csv-parser')
 const deleteStudents = async (req, res) => {
     await Student.deleteMany()
         .then(() => {
-            res.status(200).send({
+            res.status(200).json({
                 successful: true,
                 message: 'deleted students'
             })
@@ -24,7 +24,7 @@ const deleteStudents = async (req, res) => {
 const deleteEmployees = async (req, res) => {
     await Employee.deleteMany()
         .then(() => {
-            res.status(200).send({
+            res.status(200).json({
                 successful: true,
                 message: 'deleted employees'
             })
@@ -34,7 +34,7 @@ const deleteEmployees = async (req, res) => {
 const deleteBase = async (req, res) => {
     await BaseModel.deleteMany()
         .then(() => {
-            res.status(200).send({
+            res.status(200).json({
                 successful: true,
                 message: 'deleted base patients'
             })
@@ -51,17 +51,17 @@ const testSb = async (req, res) => {
         } else if (category === 'employees') {
             model = Employee
         } else {
-            throwError('Invalid category name.', 404)
+            utils.throwError('Invalid category name.', 404)
         }
 
         const studEmpData = await model.findById(studEmpId)
         if (!studEmpData) {
-            throwError('Patient Record not found.', 404)
+            utils.throwError('Patient Record not found.', 404)
         }
 
         const baseData = await BaseModel.findById(studEmpData.details)
         if (!baseData) {
-            throwError('Base Record not found.', 404)
+            utils.throwError('Base Record not found.', 404)
         }
 
         res.status(200).json({
@@ -95,17 +95,17 @@ const studentToBase = async (studEmpId, category) => {
         } else if (category === 'employees') {
             model = Employee
         } else {
-            throwError('Invalid category name.', 400)
+            utils.throwError('Invalid category provided.', 400)
         }
 
         const studEmpData = await model.findById(studEmpId)
         if (!studEmpData) {
-            throwError('Patient Record not found.', 404)
+            utils.throwError('Patient Record not found.', 404)
         }
 
         const baseData = await BaseModel.findById(studEmpData.details)
         if (!baseData) {
-            throwError('Base Record not found.', 404)
+            utils.throwError('Base Record not found.', 404)
         }
 
         return {
@@ -188,7 +188,6 @@ const addBulkExcel = async (req, res) => {
 
 
 // addBulk using CSV
-
 const addBulk = async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No file uploaded' });
@@ -210,10 +209,6 @@ const addBulk = async (req, res) => {
                     // Process each row of CSV data
                     for (const row of csvData) {
                         console.log('Row:', row)
-
-                        
-                        
-
                         // Save the JSON data to the database
                         const baseModel = new BaseModel(row);
                         await baseModel.save()
@@ -226,7 +221,7 @@ const addBulk = async (req, res) => {
                         };
                         // If category is 'students', save to Student model as well
                         if (row.category === 'students') {
-                            
+
                             const student = new Student(exclusiveData);
                             student.details = baseModel._id
                             await student.save()
@@ -267,11 +262,6 @@ const revertUpdate = (deleteDoc, models, name) => {
 
 }
 
-// ['', () => add extra task] --> for docs requiring extra work
-// [base, null] --> for docs requiring no additional work  
-
-//documents -> array of docs to save?
-//expected -> array of expected arrays to save in string format
 const saveAndLog = async (editedBy, type, record, successMessage, models, expected, documents, undoExcess) => {
     try {
         let results = [], response, log_id
@@ -332,74 +322,6 @@ const saveAndLog = async (editedBy, type, record, successMessage, models, expect
     }
 }
 
-const addHistoryLog = async (editedBy, type, record, id, saveDocument, successMessage, saveHandler, undoExcess) => {
-
-    const data = await addLogPromise(editedBy, type, record, id)
-        .then(async ({ status_log, successful_log, message_log }) => {
-            if (successful_log === true) {
-                let pass_data
-                return await saveDocument.save()
-                    .then((result) => {
-                        if (saveHandler !== null) {
-                            pass_data = result
-                            const newDocument = saveHandler(result)
-                            return newDocument.save()
-                        }
-                    })
-                    .then((result) => {
-                        let handle = {
-                            status: 200,
-                            successful_action: true,
-                            message: successMessage,
-                            // log_id: message_log._id,
-                            // base_id: pass_data._id,
-                        }
-
-                        // if (result) handle.record_id = result._id 
-                        return handle
-                    })
-                    .catch(async (error) => {
-                        if (pass_data) {
-                            error.message += undoExcess !== null ? undoExcess(pass_data._id) : 'No DELETE operation is specified as argument.'
-                        }
-                        let isDeletedLog = false
-                        error.message += 'Log Deletion status:'
-
-                        try {
-                            deleteLog = message_log._id
-                            const deleted_log = await HistoryLog.findByIdAndDelete({ _id: deleteLog })
-                            if (deleted_log) isDeletedLog = true
-                            error.message += isDeletedLog ? ' Successfully deleted the log.' : '  Error deleting log.'
-                        }
-                        catch (err) {
-                            error.message += err.message
-                        }
-
-                        return {
-                            status: 500,
-                            successful_action: false,
-                            isDeletedLog,
-                            error_report: error.message
-                        }
-                    })
-            }
-            else {
-                let error = new Error(message_log)
-                error.status_log = status_log
-                throw error
-            }
-        })
-        .catch((error) => {
-            const status = error.status_log ? error.status_log : 500
-            return {
-                status: status,
-                successful: false,
-                message: error.message
-            }
-        })
-    return data
-}
-
 const addRecord = async (req, res) => {
     try {
         const { basicInfo, laboratory, vaccination, medicalHistory, dentalRecord, exclusiveData, category, editedBy } = req.body
@@ -414,52 +336,16 @@ const addRecord = async (req, res) => {
             dentalRecord,
         })
 
-        // const nullFields = []
-
-        // if (checkObjNull(basicInfo)) {
-        //     nullFields.push('basicInfo')
-        // } else {
-
-        //     if (checkIfNull(basicInfo.campus)) {
-        //         nullFields.push('basicInfo.campus')
-        //     } else if (!isValidCampus.includes(basicInfo.campus)) {
-        //         nullFields.push('Invalid Campus')
-        //     }
-
-        //     if (checkIfNull(basicInfo.fullName.firstName)) nullFields.push('basicInfo.fullName.firstName')
-
-        //     if (checkIfNull(basicInfo.fullName.lastName)) nullFields.push('basicInfo.fullName.lastName')
-        //     if (!basicInfo.emailAddress) {
-        //         nullFields.push('basicInfo.emailAddress')
-        //     } else if (!emailRegex.test(basicInfo.emailAddress)) {
-        //         nullFields.push('Invalid Email Address')
-        //     }
-        //     if (checkIfNull(basicInfo.dateOfBirth)) nullFields.push('basicInfo.dateOfBirth')
-        //     if (checkIfNull(basicInfo.age)) nullFields.push('basicInfo.age')
-
-        //     if (checkIfNull(basicInfo.gender)) {
-        //         nullFields.push('basicInfo.gender')
-        //     } else if (!gender.includes(basicInfo.gender)) {
-        //         nullFields.push('Invalid gender input')
-        //     }
-
-        // }
-
-        // if (nullFields.length > 0) {
-        //     const errorResponse = {
-        //         successful: false,
-        //         message: `Empty or missing fields: ${nullFields.join(', ')}`,
-        //     }
-        //     return res.status(400).send(errorResponse)
-        // }
-
+        // ADDITIONAL/SPECIFIC VALIDATIONS
         if (category === 'students') {
             model = Student
-        }
-        else if (category === 'employees') {
+            if (exclusiveData.studentNo === "2000-00000") utils.throwError('Invalid Student Number.')
+        } else if (category === 'employees') {
             model = Employee
+            if (exclusiveData.employeeNo === "0000-0") utils.throwError('Invalid Employee Number.')
+        } else {
+            utils.throwError('Invalid patient category was provided.', 400)
         }
-
 
         let success_message = "Successfully added base record, patient record, & log."
         const response = await saveAndLog(editedBy, "ADD", "Medical", success_message,
@@ -467,7 +353,6 @@ const addRecord = async (req, res) => {
             [[basePatient, null], [null, (base_id) => {
                 const studEmpData = { ...exclusiveData, details: base_id }
                 const studEmp = new model(studEmpData)
-                // console.log(studEmp)
                 return studEmp
             }]],
             (async (id, model, name) => {
@@ -480,43 +365,10 @@ const addRecord = async (req, res) => {
                 }
                 return ` ${name} Deletion status: ${message}`
             }))
-
-        // console.log(response)
         res.status(200).json(response)
-
-        //ADD LOG FOR CREATION OF PATIENT RECORD
-        // const response = await addHistoryLog(editedBy, "ADD", "Medical", patient_id, basePatient, success_message, ((savedBase) => {
-
-        //     if (category === 'students') {
-        //         // If the category is a student, create a new Student document
-        //         const studentData = { ...exclusiveData, details: savedBase._id }
-        //         const student = new Student(studentData)
-        //         return student
-        //     }
-        //     else if (category === 'employees') {
-        //         // If the category is an employee, create a new Employee document
-        //         const employeeData = { ...exclusiveData, details: savedBase._id }
-        //         const employee = new Employee(employeeData)
-        //         return employee
-        //     }
-        // }),
-        //     (async (base_id) => {
-        //         try {
-        //             const deletedBase = await BaseModel.findByIdAndDelete(base_id)
-        //             message = deletedBase ? 'Base patient was successfully deleted.' : 'Error in deleting base patient.';
-        //         }
-        //         catch (err) {
-        //             message = err.message
-        //         }
-        //         return ` Base Record Deletion status:${message}`
-        //     }))
-
-        // // Send overall response
-        // res.status(response.status).json(response)
-
     }
     catch (error) {
-        res.status(500).send({
+        res.status(500).json({
             successful: false,
             error: error.message
         })
@@ -524,12 +376,15 @@ const addRecord = async (req, res) => {
 }
 
 const getPatientList = async (req, res, next) => {
-    const { category, sort, operation } = req.body //user must input in body to select a category
-    const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
-    const pageSize = 50 //limit of records to be fetched
-    const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
-
     try {
+        const { category, sort, operation } = req.body //user must input in body to select a category
+        const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
+        const pageSize = 50 //limit of records to be fetched
+        const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
+
+        if (utils.checkIfNull(category)) utils.throwError('No category is provided.')
+        if (utils.checkIfNull(sort)) utils.throwError('No sort value is provided.')
+
         let patientModel
 
         if (category == 'students') {
@@ -539,11 +394,22 @@ const getPatientList = async (req, res, next) => {
             patientModel = Employee
         }
         else {
-            return res.status(400).send({
+            return res.status(400).json({
                 successful: false,
-                message: "The category input in the body is not recognized."
-            });
+                message: "Invalid patient category was provided."
+            })
         }
+
+        // CHECK IF pageNumber IS VALID BASED ON NUMBER OF AVAILABLE RECORDS
+        const totalCount = await patientModel.countDocuments()
+        if (skip >= totalCount && totalCount !== 0) { // lagyan ng pagenumber sa condition
+            return res.status(404).send({
+                successful: false,
+                message: "Invalid page number."
+            })
+        }
+
+        if (sort !== 1 && sort !== -1) utils.throwError('Invalid sort value', 400)
 
         // Default display of all records based on category
         let pipeline = [
@@ -617,14 +483,15 @@ const getPatientList = async (req, res, next) => {
         let patient = await patientModel.aggregate(pipeline)
 
         // Check if null
-        if (checkObjNull(patient)) {
-            res.status(404).send({
-                successful: false,
-                message: "No patients found"
-            })
+        if (utils.checkObjNull(patient)) {
+            utils.throwError('No patients found', 404)
+            // res.status(404).json({
+            //     successful: false,
+            //     message: "No patients found"
+            // })
         }
         else {
-            res.status(200).send({
+            res.status(200).json({
                 successful: true,
                 message: "Retrieved all patients.",
                 count: patient.length,
@@ -633,7 +500,7 @@ const getPatientList = async (req, res, next) => {
         }
     }
     catch (err) {
-        res.status(500).send({
+        res.status(500).json({
             successful: false,
             message: err.message
         })
@@ -641,13 +508,35 @@ const getPatientList = async (req, res, next) => {
 }
 
 const getPatient = async (req, res, next) => {
-    const { patientId, tab, category } = req.body //user must input the _id of the patient
-    const fieldName = tab
-    let projection = {} //for the project aggregation because project can't use dynamic variables, so we'll use an object
-    projection[fieldName] = `$patientDetails.${fieldName}` //creating properties for projection object which contains the fields of the user's selected tab
-
     try {
+        let { patientId, tab, category, role } = req.body //user must input the _id of the patient
+        const fieldName = tab
+        let projection = {} //for the project aggregation because project can't use dynamic variables, so we'll use an object
+        projection[fieldName] = `$patientDetails.${fieldName}` //creating properties for projection object which contains the fields of the user's selected tab
+
         let patientModel
+
+        if (utils.checkIfNull(patientId)) utils.throwError('No patientId provided.', 400)
+        if (utils.checkIfNull(tab)) utils.throwError('No tab value provided.', 400)
+        if (utils.checkIfNull(category)) utils.throwError('No category provided.', 400)
+        if (utils.checkIfNull(role)) utils.throwError('No role provided.', 400)
+
+        category = category.trim().toLowerCase()
+        role = role.trim().toLowerCase()
+        tab = tab.trim()
+
+        if (!utils.tabMedList.includes(tab) && !utils.tabDentalList.includes(tab)) {
+            utils.throwError(`${tab} tab does not exist`, 404)
+        }
+        else {
+            if (role === 'doctor' || role === 'nurse') {
+                if (!utils.tabMedList.includes(tab)) utils.throwError(`Current User is unauthorized to access ${tab} tab`)
+            } else if (role === 'dentist') {
+                if (!utils.tabDentalList.includes(tab)) utils.throwError(`Current User is unauthorized to access ${tab} tab`)
+            } else {
+                utils.throwError('Invalid role', 400)
+            }
+        }
 
         if (category == 'students') {
             patientModel = Student
@@ -665,9 +554,9 @@ const getPatient = async (req, res, next) => {
             }
         }
         else {
-            return res.status(400).send({
+            return res.status(400).json({
                 successful: false,
-                message: "The category input in the body is not recognized."
+                message: "Invalid patient category was provided."
             });
         }
 
@@ -699,14 +588,15 @@ const getPatient = async (req, res, next) => {
         ])
 
         //check if null
-        if (checkObjNull(patient)) {
-            res.status(404).send({
-                successful: false,
-                message: "Patient not found"
-            })
+        if (utils.checkObjNull(patient)) {
+            utils.throwError('Patient not found', 404)
+            // res.status(404).json({
+            //     successful: false,
+            //     message: "Patient not found"
+            // })
         }
         else {
-            res.status(200).send({
+            res.status(200).json({
                 successful: true,
                 message: "Retrieved the patient.",
                 data: patient
@@ -715,7 +605,7 @@ const getPatient = async (req, res, next) => {
     }
 
     catch (err) {
-        res.status(500).send({
+        res.status(500).json({
             successful: false,
             message: err.message
         })
@@ -723,17 +613,35 @@ const getPatient = async (req, res, next) => {
 }
 
 const searchPatientList = async (req, res, next) => {
-    const { category, sort, search } = req.body //user must input in body to select a category
-    const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
-    const pageSize = 50 //limit of records to be fetched
-    const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
-
     try {
+        const { category, sort, search } = req.body //user must input in body to select a category
+        const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
+        const pageSize = 50 //limit of records to be fetched
+        const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
+
+        if (utils.checkIfNull(category)) utils.throwError('No category provided.', 400)
+        if (utils.checkIfNull(sort)) utils.throwError('No sort value provided.', 400)
+        if (sort !== 1 && sort !== -1) utils.throwError('Invalid sort value', 400)
+
+        let patientModel
+        if (category == 'students') {
+            patientModel = Student
+        }
+        else if (category == 'employees') {
+            patientModel = Employee
+        }
+        else {
+            return res.status(400).json({
+                successful: false,
+                message: "Invalid patient category was provided."
+            })
+        }
+
         let matchCondition = {} // what the condition for the search would be
         let noHyphen = search.replace(/-/g, '') //remove the hyphen from the id in case there is
 
-        if (checkIfNull(search)) { //check if search field is empty
-            return res.status(400).send({
+        if (utils.checkIfNull(search)) { //check if search field is empty
+            return res.status(400).json({
                 successful: false,
                 message: "The search field is empty"
             });
@@ -766,20 +674,6 @@ const searchPatientList = async (req, res, next) => {
                     },
                 },
             ];
-        }
-
-        let patientModel
-        if (category == 'students') {
-            patientModel = Student
-        }
-        else if (category == 'employees') {
-            patientModel = Employee
-        }
-        else {
-            return res.status(400).send({
-                successful: false,
-                message: "The category input in the body is not recognized."
-            })
         }
 
         let patient = await patientModel.aggregate([
@@ -844,14 +738,15 @@ const searchPatientList = async (req, res, next) => {
         ])
 
         //check if null
-        if (checkObjNull(patient)) {
-            res.status(404).send({
-                successful: false,
-                message: "No patients found"
-            })
+        if (utils.checkObjNull(patient)) {
+            utils.throwError('No patients found', 404)
+            // res.status(404).json({
+            //     successful: false,
+            //     message: "No patients found"
+            // })
         }
         else {
-            res.status(200).send({
+            res.status(200).json({
                 successful: true,
                 message: "Retrieved all patients.",
                 count: patient.length,
@@ -861,7 +756,7 @@ const searchPatientList = async (req, res, next) => {
     }
 
     catch (err) {
-        res.status(500).send({
+        res.status(500).json({
             successful: false,
             message: err.message
         })
@@ -880,268 +775,260 @@ const addDentalRecord = async (req, res, next) => {
         let patientModel
 
         // CHECK IF STUDENT OR EMPLOYEE
-        if (category !== "students" && category !== "employees") {
-            res.status(404).send({
-                successful: false,
-                message: "Invalid patient category was provided."
-            })
+        if (category === "students") {
+            patientModel = Student
+        }
+        else if (category === "employees") {
+            patientModel = Employee
+        } else {
+            utils.throwError('Invalid patient category was provided.', 400)
+        }
+
+        let patient = await patientModel.findOne({ _id: patientId })
+        if (patient === null) {
+            utils.throwError(`Patient record with id ${patientId} does not exist.`, 404)
+            // res.status(404).json({
+            //     successful: false,
+            //     message: `Patient record with id ${patientId} does not exist.`
+            // })
+        }
+
+        let base = await BaseModel.findOne({ _id: patient.details })
+
+        if (base === null) {
+            utils.throwError(`Base record with id ${patient.details} does not exist.`, 404)
+            // res.status(404).json({
+            //     successful: false,
+            //     message: `Base record with id ${patient.details} does not exist.`
+            // })
+        }
+
+        // CHECK IF THE PATIENT RECORD ALREADY CONTAINS DENTAL RECORD
+        if (base.dentalRecord.isFilledOut === true) {
+            utils.throwError(`Base record with id ${base._id} already contains a dental record.`, 400)
+            // return res.status(400).json({
+            //     successful: false,
+            //     message: `Base record with id ${base._id} already contains a dental record.`
+            // })
+        }
+
+        // CHECK FOR NULL DENTAL FIELDS  
+        nullFields = []
+        message = (utils.checkFullArr(dentalRecord.q1, 'q1', null, true))
+        if (message !== null) nullFields.push(message)
+
+        if (utils.checkIfNull(dentalRecord.q2)) nullFields.push('q2')
+
+        if (utils.checkIfNull(dentalRecord.q3)) nullFields.push('q3')
+
+        if (utils.checkObjNull(dentalRecord.q4)) {
+            nullFields.push('q4')
+        }
+        // else {
+        //     if (utils.checkIfNull(dentalRecord.q4.hasDentures)) {
+        //         nullFields.push('q4: Has Dentures')
+        //     }
+        //     else {
+        //         if (dentalRecord.q4.hasDentures === true && utils.checkIfNull(dentalRecord.q4.dentureType)) nullFields.push('q4: Denture Type')
+        //     }
+        // }
+
+        if (utils.checkObjNull(dentalRecord.q5)) {
+            nullFields.push('q5')
         }
         else {
-            if (category === "students") {
-                patientModel = Student
-            }
-            else {
-                patientModel = Employee
-            }
-
-            let patient = await patientModel.findOne({ _id: patientId })
-            if (patient === null) {
-                res.status(404).send({
-                    successful: false,
-                    message: `Patient record with id ${patientId} does not exist.`
+            // if (utils.checkIfNull(dentalRecord.q5.hasDentalProcedure)) {
+            //     nullFields.push('q5: Has Dental Procedure')
+            // }
+            // else {
+            message = utils.checkFullArr(dentalRecord.q5, 'q5: Past Dental Surgery', (arr) => {
+                let list = []
+                arr.forEach((element, index) => {
+                    if (utils.checkIfNull(element.description)) list.push(`q5: Past Dental Surgery: description - Index no. ${index}`)
+                    if (utils.checkIfNull(element.date)) list.push(`q5: Past Dental Surgery: date - Index no. ${index}`)
                 })
+                return list
+            }, false)
+            if (message !== null) Array.isArray(message) ? nullFields = nullFields.concat(message) : nullFields.push(message)
+            // }
+        }
+
+        if (utils.checkObjNull(dentalRecord.q6)) {
+            nullFields.push('q6')
+        }
+        else {
+            odontogramKeys.forEach((key) => {
+                if (!dentalRecord.q6.hasOwnProperty(key.toString())) missingKeys.push(key)
+            })
+
+            if (missingKeys.length > 0) nullFields.push(`q6: keys: [${missingKeys.join(', ')}]`)
+        }
+
+        if (utils.checkObjNull(dentalRecord.q7)) {
+            nullFields.push('q7')
+        }
+        else {
+            if (utils.checkIfNull(dentalRecord.q7.presenceOfDebris)) nullFields.push('q7: Presence Of Debris')
+            if (utils.checkIfNull(dentalRecord.q7.presenceOfToothStain)) nullFields.push('q7: Presence Of Tooth Stain')
+            if (utils.checkIfNull(dentalRecord.q7.presenceOfGingivitis)) nullFields.push('q7: Presence Of Gingivitis')
+            if (utils.checkIfNull(dentalRecord.q7.presenceOfPeriodontalPocket)) nullFields.push('q7: Presence Of Periodontal Pocket')
+            if (utils.checkIfNull(dentalRecord.q7.presenceOfOralBiofilm)) nullFields.push('q7: Presence Of Oral Biofilm')
+
+            if (utils.checkObjNull(dentalRecord.q7.underOrthodonticTreatment)) {
+                nullFields.push('q7: Under Orthodontic Treatment')
             }
             else {
-                let base = await BaseModel.findOne({ _id: patient.details })
+                // if (utils.checkIfNull(dentalRecord.q7.underOrthodonticTreatment.hasTreatment)) {
+                //     nullFields.push('q7: Under Orthodontic Treatment: Has Treatment')
+                // }
+                // else {
+                // if (dentalRecord.q7.underOrthodonticTreatment.hasTreatment === true) {
 
-                if (base === null) {
-                    res.status(404).send({
-                        successful: false,
-                        message: `Base record with id ${patient.details} does not exist.`
+                // SERVER FAULT
+                if (utils.checkIfNull(dentalRecord.q7.underOrthodonticTreatment.yearStarted)) nullFields.push('q7: Under Orthodontic Treatment: yearStarted')
+                if (utils.checkIfNull(dentalRecord.q7.underOrthodonticTreatment.lastAdjustment)) nullFields.push('q7: Under Orthodontic Treatment: lastAdjustment')
+
+                // }
+                // }
+            }
+        }
+
+        if (utils.checkObjNull(dentalRecord.q8)) {
+            nullFields.push('q8')
+        }
+        else {
+            missingKeys = []
+            q8Keys.forEach((key) => {
+                if (!dentalRecord.q8.hasOwnProperty(key)) missingKeys.push(key)
+            })
+
+            if (missingKeys.length > 0) {
+                nullFields.push(`q8: keys: [${missingKeys.join(', ')}]`)
+            }
+            else {
+                q8Keys.forEach((key) => {
+                    if (utils.checkIfNull(dentalRecord.q8[key].temporary)) missingKeys.push(`q8: ${key}: temporary`)
+                    if (utils.checkIfNull(dentalRecord.q8[key].permanent)) missingKeys.push(`q8: ${key}: permanent`)
+                })
+
+                if (missingKeys.length > 0) {
+                    nullFields.push(missingKeys)
+                }
+            }
+        }
+
+        // if (utils.checkObjNull(dentalRecord.q9)) {
+        //     nullFields.push('q9')
+        // }
+        // else {
+        // if (utils.checkIfNull(dentalRecord.q9.hasDentofacialAb)) {
+        //     nullFields.push('q9: Has Dentofacial Abnormality')
+        // }
+        // else {
+        //if (dentalRecord.q9.hasDentofacialAb === true && utils.checkArrNull(dentalRecord.q9.name)) nullFields.push('q9: name')
+        message = utils.checkFullArr(dentalRecord.q9, 'q9', null, false)
+        if (message !== null) nullFields.push(message)
+        // }
+        // }
+
+        if (utils.checkObjNull(dentalRecord.q10)) {
+            nullFields.push('q10')
+        }
+        else {
+            if (utils.checkIfNull(dentalRecord.q10.needUpperDenture)) nullFields.push('q10: Need Upper Denture')
+            if (utils.checkIfNull(dentalRecord.q10.needLowerDenture)) nullFields.push('q10: Need Lower Denture')
+        }
+
+        // ENSURES THAT THE FF FIELDS ARE PRESENT   
+        if (!dentalRecord.hasOwnProperty('notes')) nullFields.push('notes')
+        // if (!dentalRecord.hasOwnProperty('attachments')) {
+        //     nullFields.push('attachments')
+        // }
+        // else {
+        message = utils.checkFullArr(dentalRecord.attachments, 'attachments', ((arr) => {
+            let list = []
+            arr.forEach((attachments, index) => {
+                if (typeof attachments.filename === "undefined") list.push(`attachment no. ${index}: filename`)
+                if (typeof attachments.urlLink === "undefined") list.push(`attachment no. ${index}: urlLink`)
+            })
+            return list
+        }), false)
+        if (message !== null) Array.isArray(message) ? nullFields = nullFields.concat(message) : nullFields.push(message)
+        // }
+
+        //CHECK FOR ANY NULL FIELDS 
+        if (nullFields.length > 0) {
+            utils.throwError(`Missing data for the following fields: ${nullFields.join(', ')}`, 400)
+            // res.status(404).json({
+            //     successful: false,
+            //     message: `Missing data for the following fields: ${nullFields.join(', ')}`
+            // })
+        }
+        else {
+            // CHECK FOR INVALID VALUES
+            invalidFields = []
+            // if (dentalRecord.q2 > Date.now()) invalidFields.push('q2 date is later than current date')
+            // if (!utils.q4Values.includes(dentalRecord.q4)) invalidFields.push('q4 invalid value')
+            // if (dentalRecord.q5.hasDentalProcedure === true) {
+            //     surgeries = dentalRecord.q5.pastDentalSurgery
+            //     surgeries.forEach((surgery, index) => {
+            //         if (surgery.date > Date.now()) invalidFields.push(`q5: Past Dental Surgery no. ${index}: provided date is later than current date`)
+            //     })
+            // }
+            for (let key in dentalRecord.q6) {
+                if (Array.isArray(dentalRecord.q6[key])) {
+                    dentalRecord.q6[key].forEach((element) => {
+                        if (!utils.q6Values.includes(element)) invalidFields.push(`q6: #${key}: ${element} is invalid value`)
                     })
                 }
                 else {
-                    // CHECK IF THE PATIENT RECORD ALREADY CONTAINS DENTAL RECORD
-                    if (base.dentalRecord.isFilledOut === true) {
-                        return res.status(400).send({
-                            successful: false,
-                            message: `Base record with id ${base._id} already contains a dental record.`
-                        })
-                    }
-
-
-                    // CHECK FOR NULL DENTAL FIELDS  
-                    nullFields = []
-                    message = (checkFullArr(dentalRecord.q1, 'q1', null))
-                    if (message !== null) nullFields.push(message)
-
-                    if (checkIfNull(dentalRecord.q2)) nullFields.push('q2')
-
-                    if (checkObjNull(dentalRecord.q3)) {
-                        nullFields.push('q3')
-
-                    }
-                    else {
-                        if (checkIfNull(dentalRecord.q3.hasDentures)) {
-                            nullFields.push('q3: Has Dentures')
-                        }
-                        else {
-                            if (dentalRecord.q3.hasDentures === true && checkIfNull(dentalRecord.q3.dentureType)) nullFields.push('q3: Denture Type')
-                        }
-                    }
-
-                    if (checkIfNull(dentalRecord.q4)) nullFields.push('q4')
-
-                    if (checkObjNull(dentalRecord.q5)) {
-                        nullFields.push('q5')
-                    }
-                    else {
-                        if (checkIfNull(dentalRecord.q5.hasDentalProcedure)) {
-                            nullFields.push('q5: Has Dental Procedure')
-                        }
-                        else {
-                            message = checkFullArr(dentalRecord.q5.pastDentalSurgery, 'q5: Past Dental Surgery', (arr) => {
-                                let list = []
-                                arr.forEach((element, index) => {
-                                    if (checkIfNull(element.name)) list.push(`q5: Past Dental Surgery: name - Index no. ${index}`)
-                                    if (checkIfNull(element.date)) list.push(`q5: Past Dental Surgery: date - Index no. ${index}`)
-                                })
-                                return list
-                            })
-                            if (message !== null) Array.isArray(message) ? nullFields = nullFields.concat(message) : nullFields.push(message)
-                        }
-                    }
-
-                    if (checkObjNull(dentalRecord.q6)) {
-                        nullFields.push('q6')
-                    }
-                    else {
-                        odontogramKeys.forEach((key) => {
-                            if (!dentalRecord.q6.hasOwnProperty(key.toString())) missingKeys.push(key)
-                        })
-
-                        if (missingKeys.length > 0) nullFields.push(`q6: keys: [${missingKeys.join(', ')}]`)
-                    }
-
-                    if (checkObjNull(dentalRecord.q7)) {
-                        nullFields.push('q7')
-                    }
-                    else {
-                        if (checkIfNull(dentalRecord.q7.presenceOfDebris)) nullFields.push('q7: Presence Of Debris')
-                        if (checkIfNull(dentalRecord.q7.presenceOfToothStain)) nullFields.push('q7: Presence Of Tooth Stain')
-                        if (checkIfNull(dentalRecord.q7.presenceOfGingivitis)) nullFields.push('q7: Presence Of Gingivitis')
-                        if (checkIfNull(dentalRecord.q7.presenceOfPeriodontalPocket)) nullFields.push('q7: Presence Of Periodontal Pocket')
-                        if (checkIfNull(dentalRecord.q7.presenceOfOralBiofilm)) nullFields.push('q7: Presence Of Oral Biofilm')
-
-                        if (checkObjNull(dentalRecord.q7.underOrthodonticTreatment)) {
-                            nullFields.push('q7: Under Orthodontic Treatment')
-                        }
-                        else {
-                            if (checkIfNull(dentalRecord.q7.underOrthodonticTreatment.hasTreatment)) {
-                                nullFields.push('q7: Under Orthodontic Treatment: Has Treatment')
-                            }
-                            else {
-                                if (dentalRecord.q7.underOrthodonticTreatment.hasTreatment === true) {
-                                    if (checkIfNull(dentalRecord.q7.underOrthodonticTreatment.yearStarted)) nullFields.push('q7: Under Orthodontic Treatment: yearStarted')
-                                    if (checkIfNull(dentalRecord.q7.underOrthodonticTreatment.lastAdjustment)) nullFields.push('q7: Under Orthodontic Treatment: lastAdjustment')
-                                }
-                            }
-                        }
-                    }
-
-                    if (checkObjNull(dentalRecord.q8)) {
-                        nullFields.push('q8')
-                    }
-                    else {
-                        missingKeys = []
-                        q8Keys.forEach((key) => {
-                            if (!dentalRecord.q8.hasOwnProperty(key)) missingKeys.push(key)
-                        })
-
-                        if (missingKeys.length > 0) {
-                            nullFields.push(`q8: keys: [${missingKeys.join(', ')}]`)
-                        }
-                        else {
-                            q8Keys.forEach((key) => {
-                                if (checkIfNull(dentalRecord.q8[key].temporary)) missingKeys.push(`q8: ${key}: temporary`)
-                                if (checkIfNull(dentalRecord.q8[key].permanent)) missingKeys.push(`q8: ${key}: permanent`)
-                            })
-
-                            if (missingKeys.length > 0) {
-                                nullFields.push(missingKeys)
-                            }
-                        }
-                    }
-
-                    if (checkObjNull(dentalRecord.q9)) {
-                        nullFields.push('q9')
-                    }
-                    else {
-                        if (checkIfNull(dentalRecord.q9.hasDentofacialAb)) {
-                            nullFields.push('q9: Has Dentofacial Abnormality')
-                        }
-                        else {
-                            //if (dentalRecord.q9.hasDentofacialAb === true && checkArrNull(dentalRecord.q9.name)) nullFields.push('q9: name')
-                            message = checkFullArr(dentalRecord.q9.name, 'q9: name', null)
-                            if (message !== null) nullFields.push(message)
-                        }
-                    }
-
-                    if (checkObjNull(dentalRecord.q10)) {
-                        nullFields.push('q10')
-                    }
-                    else {
-                        if (checkIfNull(dentalRecord.q10.needUpperDenture)) nullFields.push('q10: Need Upper Denture')
-                        if (checkIfNull(dentalRecord.q10.needLowerDenture)) nullFields.push('q10: Need Lower Denture')
-                    }
-
-                    // ENSURES THAT THE FF FIELDS ARE PRESENT   
-                    if (!dentalRecord.hasOwnProperty('notes')) nullFields.push('notes')
-                    if (!dentalRecord.hasOwnProperty('attachments')) {
-                        nullFields.push('attachments')
-                    }
-                    else {
-                        message = checkFullArr(dentalRecord.attachments, 'attachments', ((arr) => {
-                            let list = []
-                            arr.forEach((attachments, index) => {
-                                if (typeof attachments.filename === "undefined") list.push(`attachment no. ${index}: filename`)
-                                if (typeof attachments.urlLink === "undefined") list.push(`attachment no. ${index}: urlLink`)
-                            })
-                            return list
-                        }))
-                        if (message !== null) Array.isArray(message) ? nullFields = nullFields.concat(message) : nullFields.push(message)
-                    }
-
-                    //CHECK FOR ANY NULL FIELDS 
-                    if (nullFields.length > 0) {
-                        res.status(404).send({
-                            successful: false,
-                            message: `Missing data for the following fields: ${nullFields.join(', ')}`
-                        })
-                    }
-                    else {
-
-                        // CHECK FOR INVALID VALUES
-                        invalidFields = []
-                        if (dentalRecord.q2 > Date.now()) invalidFields.push('q2 date is later than current date')
-                        if (!q4Values.includes(dentalRecord.q4)) invalidFields.push('q4 invalid value')
-                        if (dentalRecord.q5.hasDentalProcedure === true) {
-                            surgeries = dentalRecord.q5.pastDentalSurgery
-                            surgeries.forEach((surgery, index) => {
-                                if (surgery.date > Date.now()) invalidFields.push(`q5: Past Dental Surgery no. ${index}: provided date is later than current date`)
-                            })
-                        }
-                        for (let key in dentalRecord.q6) {
-                            if (Array.isArray(dentalRecord.q6[key])) {
-                                dentalRecord.q6[key].forEach((element) => {
-                                    if (!q6Values.includes(element)) invalidFields.push(`q6: #${key}: ${element} is invalid value`)
-                                })
-                            }
-                            else {
-                                invalidFields.push(`q6 #${key} is not an array`)
-                            }
-                        }
-                        if (dentalRecord.q7.underOrthodonticTreatment.hasTreatment === true) {
-                            if (dentalRecord.q7.underOrthodonticTreatment.yearStarted > new Date().getFullYear()) invalidFields.push('q7: Under Orthodontic Treatment: yearStarted is later than current year')
-                            if (dentalRecord.q7.underOrthodonticTreatment.lastAdjustment > Date.now()) invalidFields.push('q7: Under Orthodontic Treatment: lastAdjustment is later than current date')
-                        }
-                        for (let key in dentalRecord.q8) {
-                            if (dentalRecord.q8[key].temporary < 0 || dentalRecord.q8[key].temporary > 50) invalidFields.push(`q8: ${key}: invalid number for temporary`)
-                            if (dentalRecord.q8[key].permanent < 0 || dentalRecord.q8[key].permanent > 50) invalidFields.push(`q8: ${key}: invalid number for permanent`)
-                        }
-                        if (dentalRecord.q10.needUpperDenture < 0 || dentalRecord.q10.needUpperDenture > 3) invalidFields.push('q10: Need Upper Denture invalid number')
-                        if (dentalRecord.q10.needLowerDenture < 0 || dentalRecord.q10.needLowerDenture > 3) invalidFields.push('q10: Need Lower Denture invalid number')
-
-                        // Copy original values in case of reverting
-                        const origDental = JSON.parse(JSON.stringify(base.dentalRecord))
-
-                        // Place the new dental record
-                        dentalRecord.isFilledOut = true
-                        base.dentalRecord = dentalRecord
-
-                        //ADD LOG FOR CREATION OF DENTAL RECORD
-                        let success_message = "Successfully added dental record & log."
-                        const response = await saveAndLog(editedBy, "ADD", "Dental", success_message, [BaseModel], ['Base Record'], [[base, null]],
-                            async (id, model, name) => {
-                                try { // Revert changes
-
-                                    let latestDoc = await model.findById(id)
-                                    if (!latestDoc) throw Error('Document to Revert: Not found.')
-
-                                    latestDoc.dentalRecord = origDental
-
-                                    const revertedDoc = await latestDoc.save()
-                                    message = revertedDoc ? 'Successfully reverted' : 'Error in reverting'
-
-                                } catch (error) {
-                                    message = error.message
-                                }
-                                return ` ${name} Revert status: ${message}.`
-                            })
-
-                        // Send overall response
-                        res.status(200).json(response)
-                    }
-
+                    invalidFields.push(`q6 #${key} is not an array`)
                 }
-
             }
+            // if (dentalRecord.q7.underOrthodonticTreatment.hasTreatment === true) {
+            //     if (dentalRecord.q7.underOrthodonticTreatment.yearStarted > new Date().getFullYear()) invalidFields.push('q7: Under Orthodontic Treatment: yearStarted is later than current year')
+            //     if (dentalRecord.q7.underOrthodonticTreatment.lastAdjustment > Date.now()) invalidFields.push('q7: Under Orthodontic Treatment: lastAdjustment is later than current date')
+            // }
+            // for (let key in dentalRecord.q8) {
+            //     if (dentalRecord.q8[key].temporary < 0 || dentalRecord.q8[key].temporary > 50) invalidFields.push(`q8: ${key}: invalid number for temporary`)
+            //     if (dentalRecord.q8[key].permanent < 0 || dentalRecord.q8[key].permanent > 50) invalidFields.push(`q8: ${key}: invalid number for permanent`)
+            // }
+            // if (dentalRecord.q10.needUpperDenture < 0 || dentalRecord.q10.needUpperDenture > 3) invalidFields.push('q10: Need Upper Denture invalid number')
+            // if (dentalRecord.q10.needLowerDenture < 0 || dentalRecord.q10.needLowerDenture > 3) invalidFields.push('q10: Need Lower Denture invalid number')
 
+            // Copy original values in case of reverting
+            const origDental = JSON.parse(JSON.stringify(base.dentalRecord))
+
+            // Place the new dental record
+            dentalRecord.isFilledOut = true
+            base.dentalRecord = dentalRecord
+
+            //ADD LOG FOR CREATION OF DENTAL RECORD
+            let success_message = "Successfully added dental record & log."
+            const response = await saveAndLog(editedBy, "ADD", "Dental", success_message, [BaseModel], ['Base Record'], [[base, null]],
+                async (id, model, name) => {
+                    try { // Revert changes
+
+                        let latestDoc = await model.findById(id)
+                        if (!latestDoc) throw Error('Document to Revert: Not found.')
+
+                        latestDoc.dentalRecord = origDental
+
+                        const revertedDoc = await latestDoc.save()
+                        message = revertedDoc ? 'Successfully reverted' : 'Error in reverting'
+
+                    } catch (error) {
+                        message = error.message
+                    }
+                    return ` ${name} Revert status: ${message}.`
+                })
+
+            // Send overall response
+            res.status(200).json(response)
         }
-
     }
     catch (error) {
-        res.status(error.status || 500).send({
+        res.status(error.status || 500).json({
             successful: false,
             message: error.message
         })
@@ -1153,9 +1040,12 @@ const updateRecord = async (req, res, next) => {
         const { role, studEmpId, category, editedBy, updatedData } = req.body
         let response, nullFields = []
 
-        if (!role || (role !== 'doctor' && role !== 'nurse' && role !== 'dentist' && role !== 'admin')) {
-            throwError('The role input is not recognized.', 404)
+        if (role !== 'doctor' && role !== 'nurse' && role !== 'dentist' && role !== 'admin') {
+            utils.throwError('Invalid role.', 400)
         }
+        if (checkIfNull(role)) utils.throwError('No role provided', 400)
+        if (checkIfNull(studEmpId)) utils.throwError('No student/employee Id provided', 400)
+        if (checkIfNull(category)) utils.throwError('No student/employee Id provided', 400)
 
         // Fetch base patient record using stud/emp id 
         const { patient, studEmp, model } = await studentToBase(studEmpId, category)
@@ -1171,21 +1061,21 @@ const updateRecord = async (req, res, next) => {
             // console.log("the orig studemp", origStudEmp)
 
             // TEMPORARY VALIDATIONS -- REMOVE IF VALIDATION SCHEMA IS COMPLETE
-            if (checkObjNull(updatedData.basicInfo)) nullFields.push('Basic Info')
-            if (checkObjNull(updatedData.laboratory)) nullFields.push('Laboratory')
-            if (checkObjNull(updatedData.vaccination)) nullFields.push('Vaccination')
-            if (checkObjNull(updatedData.medicalHistory)) nullFields.push('Medical History')
+            if (utils.checkObjNull(updatedData.basicInfo)) nullFields.push('Basic Info')
+            if (utils.checkObjNull(updatedData.laboratory)) nullFields.push('Laboratory')
+            if (utils.checkObjNull(updatedData.vaccination)) nullFields.push('Vaccination')
+            if (utils.checkObjNull(updatedData.medicalHistory)) nullFields.push('Medical History')
 
             if (category === 'students') {
                 // Student null validation
-                if (checkIfNull(updatedData.studentNo)) nullFields.push('Student number')
-                if (checkIfNull(updatedData.course)) nullFields.push('Course')
-                if (checkIfNull(updatedData.year)) nullFields.push('Year')
-                if (checkIfNull(updatedData.section)) nullFields.push('Section')
+                if (utils.checkIfNull(updatedData.studentNo)) nullFields.push('Student number')
+                if (utils.checkIfNull(updatedData.course)) nullFields.push('Course')
+                if (utils.checkIfNull(updatedData.year)) nullFields.push('Year')
+                if (utils.checkIfNull(updatedData.section)) nullFields.push('Section')
             } else {
                 // Employee null validation
-                if (checkIfNull(updatedData.employeeNo)) nullFields.push('Employee number')
-                if (checkIfNull(updatedData.department)) nullFields.push('Department')
+                if (utils.checkIfNull(updatedData.employeeNo)) nullFields.push('Employee number')
+                if (utils.checkIfNull(updatedData.department)) nullFields.push('Department')
             }
 
             if (nullFields.length > 0) {
@@ -1260,8 +1150,8 @@ const updateRecord = async (req, res, next) => {
 
         } else if (role === 'dentist' || role === 'admin') {
 
-            if (checkObjNull(updatedData.dentalRecord)) {
-                throwError('Missing dental record.', 404)
+            if (utils.checkObjNull(updatedData.dentalRecord)) {
+                utils.throwError('Missing dental record.', 404)
             }
 
             // Copy the original values in case of reverting
@@ -1317,12 +1207,15 @@ const archivePatient = async (req, res) => {
     try {
         const { category, studEmpId, editedBy } = req.body;
 
+        if (checkIfNull(studEmpId)) utils.throwError('No student/employee Id provided', 400)
+        if (checkIfNull(category)) utils.throwError('No student/employee Id provided', 400)
+
         // Fetch base patient record using stud/emp id
         const { patient } = await studentToBase(studEmpId, category)
 
         // Check if already archived
         if (patient.archived) {
-            throwError('Patient is already archived', 400)
+            utils.throwError('Patient is already archived', 400)
         }
 
         // Copy original values in case of reverting
@@ -1441,9 +1334,9 @@ const getFilterList = async (req, res, next) => {
             campus = await BaseModel.distinct('campus')
         }
         else {
-            return res.status(400).send({
+            return res.status(400).json({
                 successful: false,
-                message: "The category input in the body is not recognized."
+                message: "Invalid patient category was provided."
             });
         }
 
@@ -1458,7 +1351,7 @@ const getFilterList = async (req, res, next) => {
     }
 
     catch (err) {
-        res.status(500).send({
+        res.status(500).json({
             successful: false,
             message: err.message
         })
@@ -1466,43 +1359,47 @@ const getFilterList = async (req, res, next) => {
 }
 
 const getFilteredResultList = async (req, res, next) => {
-    const { filters, category, sort } = req.body
-    const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
-    const pageSize = 50 //limit of records to be fetched
-    const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
-
     try {
+        const { filters, category, sort } = req.body
+        const pageNumber = parseInt(req.params.pageNumber) || 1 //if page not specified in params, default to 1
+        const pageSize = 50 //limit of records to be fetched
+        const skip = (pageNumber - 1) * pageSize //number of pages to be skipped based on page number
+
         let patientModel
         let matchCondition = {}
+
+        if (utils.checkIfNull(category)) utils.throwError('No category provided.', 400)
+        if (utils.checkIfNull(sort)) utils.throwError('No sort value provided.', 400)
+        if (sort !== 1 && sort !== -1) utils.throwError('Invalid sort value', 400)
 
         if (category == 'students') {
             patientModel = Student
 
-            if (filters.course) {
+            if (filters && filters.course) {
                 matchCondition['course'] = { $in: filters.course }
             }
-            if (filters.year) {
+            if (filters && filters.year) {
                 matchCondition['year'] = { $in: filters.year }
             }
         }
         else if (category == 'employees') {
             patientModel = Employee
 
-            if (filters.department) {
+            if (filters && filters.department) {
                 matchCondition['department'] = { $in: filters.department }
             }
-            if (filters.role) {
+            if (filters && filters.role) {
                 matchCondition['role'] = { $in: filters.role }
             }
         }
         else {
-            return res.status(400).send({
+            return res.status(400).json({
                 successful: false,
-                message: "The category input in the body is not recognized."
+                message: "Invalid patient category was provided."
             })
         }
 
-        if (filters.campus) {
+        if (filters && filters.campus) {
             matchCondition['patientDetails.basicInfo.campus'] = { $in: filters.campus }
         }
 
@@ -1554,6 +1451,7 @@ const getFilteredResultList = async (req, res, next) => {
                     course: 1, //will only display for student
                     year: 1, //will only display for student
                     department: 1, //will only display for employee
+                    role: 1, // will only display for employee
                     campus: '$patientDetails.basicInfo.campus',
                     // _id: 0 //exlude _id from results
                 }
@@ -1571,14 +1469,14 @@ const getFilteredResultList = async (req, res, next) => {
             },
         ])
 
-        if (checkObjNull(patient)) {
-            res.status(404).send({
+        if (utils.checkObjNull(patient)) {
+            res.status(404).json({
                 successful: false,
                 message: "No patients found"
             })
         }
         else {
-            res.status(200).send({
+            res.status(200).json({
                 successful: true,
                 message: "Retrieved all patients.",
                 count: patient.length,
@@ -1588,7 +1486,7 @@ const getFilteredResultList = async (req, res, next) => {
     }
 
     catch (err) {
-        res.status(500).send({
+        res.status(500).json({
             successful: false,
             message: err.message
         })
