@@ -2,6 +2,7 @@ const utils = require('../../utils')
 const { toProperCase } = require('../../utils')
 const { BaseModel, Student, Employee } = require('../models/patient_model')
 const HistoryLog = require('../models/historylog_model')
+const User = require('../models/user_model')
 const { addLog } = require('./historylog_controller')
 const mongoose = require('mongoose')
 const convertExcelToJson = require('convert-excel-to-json')
@@ -1322,17 +1323,76 @@ const getFilterList = async (req, res, next) => {
         let courseOrDepartment
         let yearOrRole
         let campus
+        let userType
+        // let dateTime (commented bc too many)
+        let editedBy
+        let historyType
+        let recordClass
 
-        if (category == 'students') {
+        if (category == 'students') { //students
             courseOrDepartment = await Student.distinct('course')
             yearOrRole = await Student.distinct('year')
             campus = await BaseModel.distinct('basicInfo.campus')
+
+            res.status(200).json({
+                success: true,
+                data: {
+                    courseOrDepartment,
+                    yearOrRole,
+                    campus,
+                },
+            });
         }
-        else if (category == 'employees') {
+
+        else if (category == 'employees') { //employees
             courseOrDepartment = await Employee.distinct('department')
             yearOrRole = await Employee.distinct('role')
-            campus = await BaseModel.distinct('campus')
+            campus = await BaseModel.distinct('basicInfo.campus')
+
+            res.status(200).json({
+                success: true,
+                data: {
+                    courseOrDepartment,
+                    yearOrRole,
+                    campus,
+                },
+            });
         }
+
+        else if (category == 'users') { //users
+            userType = await User.distinct('userType')
+
+            res.status(200).json({
+                success: true,
+                data: {
+                    userType
+                },
+            });
+        }
+
+        else if (category == 'logs') { //logs
+            // dateTime = await HistoryLog.distinct('dateTime')
+            editedBy = await User.distinct('fullName')
+            historyType = await HistoryLog.distinct('historyType')
+            recordClass = await HistoryLog.distinct('recordClass')
+
+            const formattedEditedBy = editedBy.map(name => {
+                const { firstName, middleName, lastName } = name
+                const middleInitial = middleName ? `${middleName.charAt(0)}.` : ''
+                return `${lastName}, ${firstName} ${middleInitial}`
+            })
+
+            res.status(200).json({
+                success: true,
+                data: {
+                    // dateTime,
+                    formattedEditedBy,
+                    historyType,
+                    recordClass
+                },
+            });
+        }
+
         else {
             return res.status(400).json({
                 successful: false,
@@ -1340,14 +1400,7 @@ const getFilterList = async (req, res, next) => {
             });
         }
 
-        res.status(200).json({
-            success: true,
-            data: {
-                courseOrDepartment,
-                yearOrRole,
-                campus,
-            },
-        });
+        
     }
 
     catch (err) {
